@@ -24,8 +24,9 @@ async def parse_resume_pipeline(pdf_bytes: bytes) -> Profile:
             inputs={"resume_text": text},
             schema=Profile,
         )
-    except (ValidationError, Exception) as first_err:  # noqa: BLE001
-        # Retry once with validation error in prompt
+    except ValidationError as first_err:
+        # Retry once with the validation error in the prompt. BharatCode failures (busy,
+        # cut off, key) are not schema problems and go straight to the user instead.
         try:
             raw_profile = await acomplete(
                 tier="small",
@@ -33,7 +34,7 @@ async def parse_resume_pipeline(pdf_bytes: bytes) -> Profile:
                 inputs={"resume_text": text, "validation_error": str(first_err)},
                 schema=Profile,
             )
-        except Exception as second_err:
+        except ValidationError as second_err:
             raise HTTPException(
                 status_code=422,
                 detail=f"Resume schema validation failed after retry: {second_err}",
