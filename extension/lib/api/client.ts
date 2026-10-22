@@ -1,6 +1,6 @@
-import { z, type ZodSchema } from 'zod';
-import { getBackendUrl } from '../settings';
+import { type z, type ZodSchema, type ZodTypeAny } from 'zod';
 import { ErrorResponseSchema } from '../schemas/common';
+import { requestBackend, type BackendRequest, type BackendResult } from './transport';
 
 export class ApiError extends Error {
   status?: number;
@@ -14,75 +14,42 @@ export class ApiError extends Error {
   }
 }
 
+/** Turn a backend reply into validated data or an ApiError ({error, detail} bodies included). */
+export function readBackendResult<S extends ZodTypeAny>(result: BackendResult, schema: S): z.output<S> {
+  if (result.networkError !== undefined) {
+    throw new ApiError(`Network request failed: ${result.networkError}`);
+  }
+  const json: any = result.body;
+  if (json === null) {
+    if (!result.ok) throw new ApiError(`HTTP ${result.status}`, result.status);
+    throw new ApiError('Failed to parse response JSON', result.status);
+  }
+  if (!result.ok) {
+    const parsedError = ErrorResponseSchema.safeParse(json);
+    if (parsedError.success) {
+      throw new ApiError(parsedError.data.error, result.status, parsedError.data.detail);
+    }
+    throw new ApiError(`HTTP ${result.status}: ${JSON.stringify(json)}`, result.status);
+  }
+  const validation = schema.safeParse(json);
+  if (!validation.success) {
+    throw new ApiError(`Response schema validation failed: ${validation.error.message}`, result.status);
+  }
+  return validation.data;
+}
+
 export class ApiClient {
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit,
-    schema: ZodSchema<T>
-  ): Promise<T> {
-    const baseUrl = await getBackendUrl();
-    const url = `${baseUrl.replace(/\/$/, '')}/${endpoint.replace(/^\//, '')}`;
-
-    let response: Response;
-    try {
-      response = await fetch(url, options);
-    } catch (err: any) {
-      throw new ApiError(`Network request failed: ${err?.message || 'unknown error'}`);
-    }
-
-    let json: any;
-    try {
-      json = await response.json();
-    } catch {
-      if (!response.ok) {
-        throw new ApiError(`HTTP ${response.status}: ${response.statusText}`, response.status);
-      }
-      throw new ApiError('Failed to parse response JSON', response.status);
-    }
-
-    if (!response.ok) {
-      const parsedError = ErrorResponseSchema.safeParse(json);
-      if (parsedError.success) {
-        throw new ApiError(parsedError.data.error, response.status, parsedError.data.detail);
-      }
-      throw new ApiError(`HTTP ${response.status}: ${JSON.stringify(json)}`, response.status);
-    }
-
-    const validation = schema.safeParse(json);
-    if (!validation.success) {
-      throw new ApiError(
-        `Response schema validation failed: ${validation.error.message}`,
-        response.status
-      );
-    }
-
-    return validation.data;
+  private async request<T>(request: BackendRequest, schema: ZodSchema<T>): Promise<T> {
+    // The background service worker makes the call and adds the BharatCode key.
+    return readBackendResult(await requestBackend(request), schema);
   }
 
   async get<T = any>(endpoint: string, schema: any): Promise<T> {
-    return this.request(
-      endpoint,
-      {
-        method: 'GET',
-        headers: { Accept: 'application/json' },
-      },
-      schema
-    );
+    return this.request({ endpoint, method: 'GET' }, schema);
   }
 
   async post<T = any>(endpoint: string, data: any, schema: any): Promise<T> {
-    return this.request(
-      endpoint,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify(data),
-      },
-      schema
-    );
+    return this.request({ endpoint, method: 'POST', json: data }, schema);
   }
 }
 

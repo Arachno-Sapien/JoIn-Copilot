@@ -3,6 +3,7 @@ import { setupSidePanelBehavior } from './sidepanel';
 import { handleApplicationSubmitted, handleTrackerAlarm } from '../../lib/tracker';
 import { syncGmail } from '../../lib/gmail';
 import { testConnection } from '../../lib/ai/bharatcode';
+import { sendToBackend } from '../../lib/api/transport';
 
 export default defineBackground(() => {
   // Configure side panel to open on action click
@@ -19,6 +20,9 @@ export default defineBackground(() => {
         handleApplicationSubmitted(message)
           .then((app) => sendResponse({ success: true, application: app }))
           .catch((err) => sendResponse({ success: false, error: err.message }));
+        return true;
+      } else if (message?.type === 'BACKEND_REQUEST') {
+        sendToBackend(message.request).then(sendResponse);
         return true;
       } else if (message?.type === 'BHARATCODE_TEST_CONNECTION') {
         testConnection().then(sendResponse);

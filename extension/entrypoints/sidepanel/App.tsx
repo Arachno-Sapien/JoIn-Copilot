@@ -7,6 +7,7 @@ import { FillReview } from '../../components/sidepanel/FillReview';
 import { AddJob } from '../../components/sidepanel/AddJob';
 import { TrackerTable } from '../../components/tracker/TrackerTable';
 import { EmailConfirmations } from '../../components/sidepanel/EmailConfirmations';
+import { KeyNotice } from '../../components/sidepanel/KeyNotice';
 import { Profile } from '../../lib/schemas/profile';
 import { Application } from '../../lib/schemas/application';
 import { ScoredJob } from '../../lib/schemas/search';
@@ -60,6 +61,8 @@ export function App() {
           <p style={{ margin: 0, fontSize: '11px', color: '#6b7280' }}>Local-First Agentic Search & Application Assistant</p>
         </div>
       </header>
+
+      <KeyNotice />
 
       {/* Tabs Navigation */}
       <nav style={{ display: 'flex', borderBottom: '1px solid #e5e7eb', backgroundColor: '#ffffff', overflowX: 'auto' }}>
