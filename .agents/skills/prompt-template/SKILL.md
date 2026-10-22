@@ -17,11 +17,11 @@ Untrusted inputs are job descriptions, page text, form labels, emails and anythi
 
 ## Calling the model
 
-The wrapper's entry point is `complete(template, inputs, schema, tier)`. It returns a validated Pydantic object.
+The wrapper's entry point is `await acomplete(template, inputs, schema, tier)` (endpoints are async; `complete` is a blocking form for scripts). It returns a validated Pydantic object. The call goes to BharatCode (`POST /responses`, `store: false`, structured output from the schema) through `backend/app/llm/bharatcode.py`, using the user's key from the request.
 
 - Always pass a Pydantic `schema`. Never parse free text or use regex on model output.
-- Pick the tier by task: `small` for extraction, field mapping and classification, `strong` for drafting and judging claims.
-- Model names come only from `JC_LLM_SMALL_MODEL` and `JC_LLM_STRONG_MODEL`. Never hard-code a model id.
+- Both tiers run `qwen-3.8-27b`; the tier only separates cache entries. Give a new prompt its output budget and reasoning effort in `TASK_LIMITS` in `backend/app/llm/client.py` (default 2000 tokens, effort `none`). A cut-off answer raises `TruncatedError`; never retry it with the same budget.
+- Never add another model id or provider, and never use `deepseek-v4.1-flash`.
 - Never pass `tools`, `tool_choice`, `functions` or `function_call`. The model gets no actions. The `non-goals` oracle fails if any of those appear as arguments under `backend/app`.
 
 ## Changing a prompt
