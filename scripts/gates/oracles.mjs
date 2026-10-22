@@ -21,6 +21,7 @@ export const ALLOWED_PERMISSIONS = ["sidePanel", "storage", "alarms", "identity"
 export const ALLOWED_HOSTS = [
   "https://boards.greenhouse.io/*", "https://job-boards.greenhouse.io/*", "https://jobs.lever.co/*",
   "https://gmail.googleapis.com/*", "https://www.googleapis.com/*",
+  "https://bharatcode.ai/*", // the user's own key, background worker only (owner-approved)
 ];
 const BROAD_HOSTS = ["<all_urls>", "*://*/*", "http://*/*", "https://*/*"];
 const GMAIL_SCOPE = "https://www.googleapis.com/auth/gmail.readonly";

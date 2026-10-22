@@ -1,4 +1,5 @@
 import React from 'react';
+import { BharatCodeKey } from '../../components/options/BharatCodeKey';
 import { GeneralSettings } from '../../components/options/GeneralSettings';
 import { PrivacySettings } from '../../components/options/PrivacySettings';
 import { DataExport } from '../../components/options/DataExport';
@@ -18,6 +19,7 @@ export const OptionsApp: React.FC = () => {
 
       {/* Settings Sections */}
       <main style={{ maxWidth: '800px', margin: '0 auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <BharatCodeKey />
         <GeneralSettings />
         <PrivacySettings />
         <DataExport />

@@ -2,6 +2,7 @@ import { defineBackground } from 'wxt/sandbox';
 import { setupSidePanelBehavior } from './sidepanel';
 import { handleApplicationSubmitted, handleTrackerAlarm } from '../../lib/tracker';
 import { syncGmail } from '../../lib/gmail';
+import { testConnection } from '../../lib/ai/bharatcode';
 
 export default defineBackground(() => {
   // Configure side panel to open on action click
@@ -18,6 +19,9 @@ export default defineBackground(() => {
         handleApplicationSubmitted(message)
           .then((app) => sendResponse({ success: true, application: app }))
           .catch((err) => sendResponse({ success: false, error: err.message }));
+        return true;
+      } else if (message?.type === 'BHARATCODE_TEST_CONNECTION') {
+        testConnection().then(sendResponse);
         return true;
       } else if (message?.type === 'SYNC_GMAIL_MANUAL') {
         syncGmail()
