@@ -68,7 +68,8 @@ export async function handleApplicationSubmitted(
 export async function updateApplicationStatus(
   id: string,
   newStatus: ApplicationStatus,
-  source: 'user' | 'gmail' | 'portal' | 'auto'
+  source: 'user' | 'gmail' | 'portal' | 'auto',
+  at: string = new Date().toISOString() // when it happened, e.g. the recruiter email's date
 ): Promise<Application> {
   const parseResult = ApplicationStatusSchema.safeParse(newStatus);
   if (!parseResult.success) {
@@ -80,7 +81,6 @@ export async function updateApplicationStatus(
     throw new Error(`Application ${id} not found in database`);
   }
 
-  const at = new Date().toISOString();
   app.status = parseResult.data;
   app.status_history.push({
     status: parseResult.data,

@@ -79,7 +79,7 @@ export async function handleEmailClassificationResult(params: {
       offer: 'offer',
     };
     const targetStatus = statusMap[classification] || 'viewed';
-    await updateApplicationStatus(matched_application_id, targetStatus, 'gmail');
+    await updateApplicationStatus(matched_application_id, targetStatus, 'gmail', params.email.date);
     return null;
   }
 

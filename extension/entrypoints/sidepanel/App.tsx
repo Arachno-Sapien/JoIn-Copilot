@@ -41,7 +41,7 @@ export function App() {
       interview: 'interview',
       offer: 'offer',
     };
-    await updateApplicationStatus(conf.applicationId, statusMap[conf.detectedStatus] || 'viewed', 'gmail');
+    await updateApplicationStatus(conf.applicationId, statusMap[conf.detectedStatus] || 'viewed', 'gmail', conf.date);
     setPendingConfirmations((prev) => prev.filter((c) => c.id !== conf.id));
     const refreshed = await db.applications.toArray();
     setApplications(refreshed);
