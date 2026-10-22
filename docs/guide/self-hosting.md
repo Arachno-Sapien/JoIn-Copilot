@@ -15,7 +15,7 @@ cd job-copilot
 
 # Configure environment variables
 cp .env.example .env
-# Edit .env with your LLM API keys (e.g. OPENAI_API_KEY, ANTHROPIC_API_KEY, or local Ollama URL)
+# No model key goes in .env: each user pastes their own BharatCode key in the extension options.
 
 # Start services
 docker compose up -d

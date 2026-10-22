@@ -1,6 +1,6 @@
 # Privacy Policy for Job Copilot
 
-**Last updated:** October 18, 2026
+**Last updated:** October 22, 2026
 
 Job Copilot is an open-source, local-first AI job search assistant. Our architecture is designed around one core principle: **the user's browser is the trust boundary**.
 
@@ -21,7 +21,7 @@ When you interact with Job Copilot features:
 
 1. **Resume Parsing & Profile Generation:**
    - When you upload a resume, its plain text is sent to the configured backend endpoint (`/profile/parse`) to extract structured fields.
-   - The backend processes the text in memory and streams it to the designated LLM provider.
+   - The backend processes the text in memory and sends it to BharatCode for processing (see section 3).
    - The backend never logs request bodies and never saves resume text to disk or database.
 
 2. **Job Search & Matching:**
@@ -40,13 +40,23 @@ When you interact with Job Copilot features:
 
 ---
 
-## 3. Telemetry & Analytics
+## 3. BharatCode, the AI provider
+
+Every AI feature runs on the BharatCode API (https://bharatcode.ai), model `qwen-3.8-27b`.
+
+- **What is sent to BharatCode:** the text each feature needs. That means your resume text, job descriptions and page text, form field labels, the questions you ask Job Copilot to answer with the relevant resume bullets, and recruiter email text if Gmail sync is on.
+- **How it is sent:** your backend calls `POST /responses` with `store: false`, so BharatCode is asked not to keep the conversation. BharatCode's own terms govern how it handles the data.
+- **Your API key:** you paste your own key on the extension's options page. It is stored only in `chrome.storage.local` on your device (never synced). The extension's background worker sends it to BharatCode for the connection test and to your Job Copilot backend with each request. The backend uses it for that one request and never stores or logs it.
+
+---
+
+## 4. Telemetry & Analytics
 
 - **No Remote Telemetry:** Job Copilot does not include Google Analytics, Mixpanel, Sentry, or third-party trackers.
 - **Export & Deletion:** You can export all your data anytime (in JSON and RFC 4180 CSV formats) or permanently delete all local data with a single click in the extension Options page.
 
 ---
 
-## 4. Open Source & Auditability
+## 5. Open Source & Auditability
 
 Job Copilot is 100% open source under the MIT License. You can inspect every line of code, build the extension bundle from source, and self-host the backend on your own hardware.

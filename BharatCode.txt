@@ -1,0 +1,13 @@
+Project name: Job Copilot (AI Job Search Copilot)
+Description: A Chrome extension that turns your resume into a profile, finds and ranks jobs that fit it, drafts application answers it checks against your resume, and tracks every application.
+BharatCode account name: [FILL IN]
+Model used: qwen-3.8-27b, through POST https://bharatcode.ai/api/model/v1/responses (store: false, structured JSON output). The options page tests the key with GET /models.
+
+Features that call the BharatCode API (all through backend/app/llm/bharatcode.py, using each user's own key):
+- Resume parsing (POST /profile/parse): PDF text to a structured profile, with one retry on a schema failure.
+- Job extraction from any page (POST /jobs/extract).
+- Job matching (POST /jobs/search): structured fit facts used to compute the fit score in code.
+- Tailored application drafting (POST /draft): the draft, claim extraction, a per-claim fabrication check and a rewrite that keeps only supported claims.
+- Form field mapping (POST /fill/map-fields).
+- Recruiter email classification for the application tracker (POST /email/classify).
+- Scam and prompt-injection check on job postings (POST /jobs/{id}/scam-check).

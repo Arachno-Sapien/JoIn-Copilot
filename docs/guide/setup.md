@@ -22,7 +22,7 @@ cd backend
 uv sync
 
 # Set up environment variables
-cp ../.env.example .env
+cp ../.env.example ../.env   # the backend reads the repository-root .env
 
 # Run FastAPI development server
 uv run uvicorn app.main:app --reload --host 127.0.0.1 --port 8000

@@ -1,138 +1,101 @@
 # Job Copilot
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/)
-[![Node 22](https://img.shields.io/badge/Node-22-green.svg)](https://nodejs.org/)
 
-An open-source, local-first AI Job Search Copilot browser extension (Chrome MV3) and FastAPI backend. It finds job openings tailored to your background, drafts honest cover letters and application answers verified against your resume, assists with filling complex multi-step application forms, and tracks application statuses from recruiter emails—all with **you in complete control**.
+A Chrome extension that turns your resume into a structured profile, finds and ranks jobs that fit it, drafts application answers it checks against your resume, and tracks every application. All AI features run on the [BharatCode](https://bharatcode.ai/build) API with your own key.
 
-![Job Copilot Demo](docs/assets/demo.gif)
+Built for the BharatCode Build League hackathon. Still under development: see [What works today](#what-works-today).
 
----
+## Screenshots and demo
 
-## Key Features
+> Screenshots and a demo GIF go here.
 
-- **Resume to Structured Profile:** Parses PDF or plaintext resumes into a structured, user-confirmed profile.
-- **Explainable Job Matching:** 3-stage funnel (hard filters &rarr; embedding vector recall &rarr; LLM rerank) computing stable fit scores with matched and missing skill breakdowns.
-- **Hallucination-Proof Drafting:** Generates cover letters and open question answers with claim-level evidence verification against your verified resume bullet points.
-- **Assisted Form Filling:** Observes, maps, and fills fields across Greenhouse, Lever, and generic portals. **Never auto-submits**—human always reviews and clicks submit.
-- **Scam & Injection Defenses:** Dual-layer scam detection (heuristic rules + classifier) and prompt injection guardrails on untrusted postings.
-- **Recruiter Email Tracking:** Optional Gmail sync categorizes incoming responses (interviews, rejections, offers) without saving emails to any backend.
-- **Local-First Privacy:** All personal data stays inside your browser's IndexedDB. Export anytime to JSON and RFC 4180 CSV, or delete with one click.
+## What it does
 
----
+- **Resume to profile:** upload a PDF resume and get a structured profile you can review and edit. Every bullet gets a stable id so later checks can cite it.
+- **Job matching:** filters and ranks cached jobs. The model reports which required skills match and which are missing, and the fit score is computed in code from those facts.
+- **Tailored application answers:** drafts an answer for a job, splits it into claims, checks each claim against your resume and flags anything your resume does not support.
+- **Application tracker:** records an application when you submit a Greenhouse or Lever form, tracks status changes, marks silent applications after 28 days, and can read recruiter emails from Gmail (read-only) to update statuses.
+- **Safety:** warns about likely scam postings and text that tries to instruct the AI.
 
-## Architecture
+The extension never submits an application for you. It fills fields, and you review and click submit.
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                       Chrome Browser                        │
-│                                                             │
-│  ┌─────────────────────────┐   ┌─────────────────────────┐  │
-│  │     Side Panel UI       │   │    Content Scripts      │  │
-│  │  (Search, Match, Draft) │   │  (Observe, Map, Fill)   │  │
-│  └───────────┬─────────────┘   └────────────┬────────────┘  │
-│              │                              │               │
-│              ▼                              ▼               │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │             IndexedDB (Browser Storage)               │  │
-│  │       Profiles • Resumes • Applications • Notes       │  │
-│  └──────────────────────────┬────────────────────────────┘  │
-└─────────────────────────────┼───────────────────────────────┘
-                              │ HTTP / REST (API Key Isolation)
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                      FastAPI Backend                        │
-│                                                             │
-│  ┌─────────────────────────┐   ┌─────────────────────────┐  │
-│  │     Job Aggregators     │   │   GenAI Pipeline Core   │  │
-│  │   (Adzuna, Greenhouse)  │   │   (Small & Strong LLMs) │  │
-│  └───────────┬─────────────┘   └────────────┬────────────┘  │
-│              │                              │               │
-│              ▼                              ▼               │
-│  ┌─────────────────────────┐   ┌─────────────────────────┐  │
-│  │   Public Jobs SQLite    │   │     LiteLLM Gateway     │  │
-│  └─────────────────────────┘   └─────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
-```
+## What works today
 
----
+| Feature | Status |
+|---|---|
+| Resume parsing and profile editing | Works from the side panel |
+| Adding a job from the current page | Works from the side panel |
+| Application tracker and dashboard | Works; records come from submissions on Greenhouse and Lever pages |
+| Gmail status updates | Needs a real Google OAuth client ID in `extension/wxt.config.ts` |
+| Job matching, drafting, form filling, scam check | Backend endpoints work; the side panel does not call them yet |
 
-## Quickstart
+## Install
 
-### 1. Running Backend with Docker Compose
+You need Node 22, npm, Python 3.12 and [uv](https://docs.astral.sh/uv/). Docker is optional.
 
-Configure your environment:
-```bash
-cp .env.example .env
-# Edit .env with your model keys (or point to local Ollama)
-```
+1. Start the backend:
 
-Start the containerized backend:
-```bash
-docker compose up -d
-```
+   ```bash
+   cp .env.example .env
+   cd backend
+   uv sync
+   uv run uvicorn app.main:app --port 8000
+   ```
 
-Verify backend health at `http://127.0.0.1:8000/health`.
+   Or run `docker compose up -d backend` from the repository root.
 
-### 2. Loading the Unpacked Extension in Chrome
+2. Build the extension:
 
-1. Build the extension:
    ```bash
    cd extension
    npm install
    npm run build
    ```
-2. Open Google Chrome and navigate to `chrome://extensions/`.
-3. Enable **Developer mode** in the top-right corner.
-4. Click **Load unpacked** and select the directory:
-   `extension/.output/chrome-mv3`
-5. The Job Copilot icon will appear in your extension toolbar.
 
-### 3. Pointing the Extension at a Self-Hosted Backend
+3. Load it in Chrome: open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked** and select `extension/.output/chrome-mv3`.
+4. Open the extension's options page, paste your BharatCode key, click **Store key**, then **Test connection**. If your backend is not at `http://127.0.0.1:8000`, set its URL on the same page.
+5. Click the toolbar icon to open the side panel.
 
-1. Right-click the extension icon and select **Options** (or open `chrome-extension://<id>/options.html`).
-2. Set **Backend Server URL** to `http://127.0.0.1:8000` (or your remote HTTPS endpoint).
-3. Test the connection.
+## Get a BharatCode API key
 
----
+Sign in at [bharatcode.ai/account](https://bharatcode.ai/account) and create a key. It is free for students with an `.ac.in` or `.edu.in` email; Lite and Pro plans also include API access. Until a key is saved, the side panel shows how to get one, and AI requests return a "key missing" message instead of failing silently.
 
-## Evaluation & Benchmarks
+## Model and endpoints
 
-The repository includes a reproducible evaluation suite (`backend/eval/`) evaluating the seven GenAI components against rule-based and classical baselines:
+- **Model:** `qwen-3.8-27b` for every feature.
+- **Base URL:** `https://bharatcode.ai/api/model/v1`, with `Authorization: Bearer <your key>`.
+- **Generation:** `POST /responses` with `store: false`, so each call is stateless and resends its full context. Anything machine-readable, such as fit facts and claim verdicts, uses structured output (`text.format` with a JSON schema).
+- **Connection test:** `GET /models`, from the options page.
+- **Limits:** output budgets are 8,000 tokens for resume parsing, 4,000 for drafts and rewrites, and 2,000 for everything else. Reasoning effort is `none` except for drafting, rewriting and claim judging.
+- **Errors:**
+  - A cut-off answer is reported and never parsed or retried with the same budget.
+  - A `503` is retried after 2, 4 and 8 seconds, then shown as "BharatCode is busy, try again".
+  - Failures log the `x-request-id` header.
 
-| Component | Metric | Baseline | Result |
-| --- | --- | --- | --- |
-| **Resume Parser** | Field accuracy & Skills F1 | Regex parser | 1.00 / 0.92 |
-| **Matching & Fit** | NDCG@10 | Embedding similarity alone | 0.98 / 0.74 |
-| **Fabrication Checker** | Unsupported claim F1 | Keyword overlap | 1.00 / 0.71 |
-| **Scam Detector** | Scam detection F1 | Heuristic rules only | 1.00 / 0.83 |
-| **Email Classifier** | Macro F1 | Keyword rules | 1.00 / 0.80 |
-| **Form Agent** | Field mapping accuracy | Rules-only mapping | 1.00 / 0.60 |
-| **Injection Defense** | Attack block rate | Unprotected pipeline | 1.00 / 0.00 |
+All model calls go through one module, [`backend/app/llm/bharatcode.py`](backend/app/llm/bharatcode.py). The extension's background service worker is the only part of the extension that sends your key anywhere: to BharatCode for the connection test, and to your backend with each request.
 
-Run the smoke evaluation suite:
+## Privacy
+
+- **Sent to BharatCode for processing:** your resume text, job descriptions and page text, form field labels, recruiter email text (only if Gmail sync is on), and the profile details each request needs. Requests use `store: false`.
+- **Stays in your browser:** your profile, resume file and applications live in IndexedDB.
+- **Your API key:** stored only in `chrome.storage.local` on your device. It is never synced, bundled, logged or committed.
+- **The backend:** stores only public job postings. It keeps no profiles, resumes or keys and never logs request bodies.
+
+See [PRIVACY.md](PRIVACY.md) for details.
+
+## Development
+
 ```bash
-cd backend
-uv run python eval/generate_datasets.py
-uv run pytest tests/acceptance/test_leaf_1_4_4_g3.py
+cd backend && uv run pytest && uv run ruff check .
 ```
 
-Results are logged to `backend/eval/results/*.csv`.
+```bash
+cd extension && npm test && npm run compile
+```
 
----
-
-## Privacy & Security Guarantees
-
-- **No auto-submit:** The extension never submits an application for you. You always review filled fields and click submit.
-- **Data stays on your device:** Resumes, profile data, and notes never persist on the backend.
-- **No scraping:** Fully complies with platform terms of service.
-- **No passwords stored:** Authentication runs within your existing browser session.
-
-See [PRIVACY.md](PRIVACY.md) for our complete privacy policy and [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
-
----
+Tests never call BharatCode: the backend runs in mock mode and HTTP calls are mocked.
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+MIT
