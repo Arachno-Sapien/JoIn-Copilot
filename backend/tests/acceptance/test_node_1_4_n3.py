@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+
 import pytest
 from httpx import ASGITransport, AsyncClient
 
@@ -56,8 +57,7 @@ async def test_write_tracking_and_safety_snapshots(fake_llm):
 
         # Save snapshot
         email_snapshot_path = SNAPSHOTS_DIR / "email_classify.json"
-        with open(email_snapshot_path, "w", encoding="utf-8") as f:
-            json.dump(email_data, f, indent=2)
+        email_snapshot_path.write_text(json.dumps(email_data, indent=2), encoding="utf-8")
 
     # 3. Test /jobs/{id}/scam-check
     cache = JobCache(db_path=settings.JC_DB_PATH)
@@ -87,8 +87,7 @@ async def test_write_tracking_and_safety_snapshots(fake_llm):
 
         # Save snapshot
         scam_snapshot_path = SNAPSHOTS_DIR / "scam_check.json"
-        with open(scam_snapshot_path, "w", encoding="utf-8") as f:
-            json.dump(scam_data, f, indent=2)
+        scam_snapshot_path.write_text(json.dumps(scam_data, indent=2), encoding="utf-8")
 
     assert email_snapshot_path.exists()
     assert scam_snapshot_path.exists()

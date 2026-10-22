@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import pytest
 from httpx import ASGITransport, AsyncClient
 
@@ -156,6 +157,6 @@ async def test_canary_profile_leaves_no_trace_in_logs_or_disk(fake_llm, caplog):
     for sqlite_file in repo_root.glob("**/*.sqlite"):
         try:
             content = sqlite_file.read_bytes()
-            assert canary_token.encode("utf-8") not in content, f"Canary found in SQLite file: {sqlite_file}"
-        except Exception:
-            pass
+        except OSError:
+            continue  # unreadable file: nothing to inspect
+        assert canary_token.encode("utf-8") not in content, f"Canary found in SQLite file: {sqlite_file}"

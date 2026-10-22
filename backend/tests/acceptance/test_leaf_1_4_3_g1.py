@@ -1,4 +1,3 @@
-import pytest
 from app.schemas.job import Job
 from app.services.safety.rules import check_rule_signals
 

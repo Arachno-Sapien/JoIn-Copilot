@@ -1,4 +1,3 @@
-import pytest
 from app.services.jobs.scheduler import JobSchedulerService
 
 

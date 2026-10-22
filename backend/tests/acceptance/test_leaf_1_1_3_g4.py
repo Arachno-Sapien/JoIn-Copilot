@@ -1,6 +1,4 @@
-import hashlib
 import sqlite3
-import pytest
 
 from app.schemas.job import Job
 from app.services.jobs.cache import JobCache

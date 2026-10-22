@@ -1,5 +1,4 @@
 import re
-from typing import Optional
 
 INJECTION_PATTERNS = [
     re.compile(r"ignore\s+(all\s+)?(previous|prior)\s+(instructions|prompts|directions)", re.IGNORECASE),
@@ -12,7 +11,7 @@ INJECTION_PATTERNS = [
 ]
 
 
-def detect_prompt_injection(text: str) -> Optional[str]:
+def detect_prompt_injection(text: str) -> str | None:
     if not text:
         return None
 

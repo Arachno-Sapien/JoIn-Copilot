@@ -1,6 +1,5 @@
 import sys
 from pathlib import Path
-import pytest
 
 # Ensure repo root and mock-portal can be imported
 REPO_ROOT = Path(__file__).resolve().parents[3]

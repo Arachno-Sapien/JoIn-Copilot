@@ -1,4 +1,5 @@
 import json
+
 from app.llm.client import acomplete
 from app.schemas.email import CandidateApplication, EmailClassifyResponse, EmailInput
 
@@ -33,7 +34,7 @@ async def classify_email(
     elif isinstance(raw, dict):
         result = EmailClassifyResponse.model_validate(raw)
     else:
-        raise ValueError(f"Unexpected output from classifier LLM: {type(raw)}")
+        raise TypeError(f"Unexpected output from classifier LLM: {type(raw)}")
 
     # Ensure matched_application_id is actually in candidate list if specified
     valid_candidate_ids = {c.id for c in candidates}

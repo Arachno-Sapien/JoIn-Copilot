@@ -1,4 +1,5 @@
 import hashlib
+
 import pytest
 import respx
 
@@ -62,7 +63,7 @@ def test_greenhouse_mapping():
         assert isinstance(job, Job)
         assert job.source == "greenhouse"
         assert job.company == "acme"
-        expected_id = hashlib.sha1(f"greenhouse{job.source_id}".encode("utf-8")).hexdigest()
+        expected_id = hashlib.sha1(f"greenhouse{job.source_id}".encode()).hexdigest()
         assert job.id == expected_id
         Job.model_validate(job.model_dump())
 
@@ -79,7 +80,7 @@ def test_lever_mapping():
         assert isinstance(job, Job)
         assert job.source == "lever"
         assert job.company == "figma"
-        expected_id = hashlib.sha1(f"lever{job.source_id}".encode("utf-8")).hexdigest()
+        expected_id = hashlib.sha1(f"lever{job.source_id}".encode()).hexdigest()
         assert job.id == expected_id
         Job.model_validate(job.model_dump())
 

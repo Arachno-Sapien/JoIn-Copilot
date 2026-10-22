@@ -1,4 +1,5 @@
-from typing import Literal, Optional
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 EmailClassification = Literal[
@@ -25,7 +26,7 @@ class EmailClassifyRequest(BaseModel):
 
 
 class EmailClassifyResponse(BaseModel):
-    matched_application_id: Optional[str] = None
+    matched_application_id: str | None = None
     classification: EmailClassification
     confidence: float = Field(ge=0.0, le=1.0)
-    reasoning: Optional[str] = None
+    reasoning: str | None = None

@@ -1,4 +1,5 @@
-from typing import Literal, Optional
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 ScamRiskLevel = Literal["low", "medium", "high"]
@@ -11,7 +12,7 @@ class ScamCheckRequest(BaseModel):
 class ScamModelOutput(BaseModel):
     risk_level: ScamRiskLevel
     flags: list[str] = Field(default_factory=list)
-    reasoning: Optional[str] = None
+    reasoning: str | None = None
 
 
 class ScamCheckResponse(BaseModel):
@@ -20,4 +21,4 @@ class ScamCheckResponse(BaseModel):
     reasons: list[str] = Field(default_factory=list)
     rule_signals: list[str] = Field(default_factory=list)
     llm_flags: list[str] = Field(default_factory=list)
-    injection_warning: Optional[str] = None
+    injection_warning: str | None = None

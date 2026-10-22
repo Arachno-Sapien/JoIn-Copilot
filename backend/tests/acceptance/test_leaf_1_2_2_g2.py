@@ -1,4 +1,3 @@
-import pytest
 from app.schemas.profile import Bullet, Experience, Preferences, Profile, Skill
 from app.services.checker.evidence import retrieve_claim_evidence
 

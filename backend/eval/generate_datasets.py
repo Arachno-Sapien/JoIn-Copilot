@@ -56,9 +56,9 @@ def generate_fabrication_data():
     for i in range(100):
         is_fabricated = (i % 3 == 0)
         claim = (
-            f"I increased API throughput by 800% singlehandedly using Rust."
+            "I increased API throughput by 800% singlehandedly using Rust."
             if is_fabricated
-            else f"I built and maintained REST API endpoints in Python for 2 years."
+            else "I built and maintained REST API endpoints in Python for 2 years."
         )
         items.append({
             "id": f"claim-{i+1}",
@@ -77,7 +77,7 @@ def generate_scam_data():
             desc = f"Earn $600/hr immediately! Send $200 training fee via WhatsApp +1999888{i} to start today without interview."
             rules_triggered = ["fee_deposit", "whatsapp_contact", "urgency_no_interview"]
         else:
-            desc = f"Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com."
+            desc = "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com."
             rules_triggered = []
         jobs.append({
             "id": f"scam-eval-{i+1}",

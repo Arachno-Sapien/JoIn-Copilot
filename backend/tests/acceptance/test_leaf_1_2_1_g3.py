@@ -1,4 +1,5 @@
 import pytest
+
 from app.schemas.job import Job
 from app.schemas.profile import Bullet, Experience, Preferences, Profile, Skill
 from app.schemas.search import RerankFacts

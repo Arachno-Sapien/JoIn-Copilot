@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+
 from app.schemas.email import EmailClassifyRequest, EmailClassifyResponse
 from app.services.classifier.service import classify_email
 

@@ -2,7 +2,6 @@ import csv
 import subprocess
 import sys
 from pathlib import Path
-import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 EVAL_DIR = REPO_ROOT / "backend" / "eval"
@@ -28,8 +27,9 @@ def test_evaluation_scripts_run_smoke_and_write_csv(monkeypatch):
         assert script_path.exists(), f"Evaluation script {script_name} must exist under backend/eval/"
 
         # Run script in smoke mode
-        res = subprocess.run(
+        res = subprocess.run(  # exit code is asserted below
             [sys.executable, str(script_path), "--smoke"],
+            check=False,
             cwd=str(REPO_ROOT / "backend"),
             capture_output=True,
             text=True,

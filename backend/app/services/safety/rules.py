@@ -1,4 +1,5 @@
 import re
+
 from app.schemas.job import Job
 
 # Regex patterns for scam red flags

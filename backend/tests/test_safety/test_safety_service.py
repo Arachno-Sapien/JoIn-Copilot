@@ -1,4 +1,5 @@
 import pytest
+
 from app.schemas.job import Job
 from app.services.safety.injection import detect_prompt_injection
 from app.services.safety.rules import check_rule_signals

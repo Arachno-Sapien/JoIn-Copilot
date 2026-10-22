@@ -1,6 +1,7 @@
 import io
 import sqlite3
 from pathlib import Path
+
 import pytest
 from httpx import ASGITransport, AsyncClient
 
@@ -180,7 +181,7 @@ async def test_canary_leaves_no_trace_in_storage_files_or_logs(fake_llm):
         if p.is_file() and not str(p).endswith(".py"):
             try:
                 content = p.read_text(encoding="utf-8", errors="ignore")
-                assert CANARY_TOKEN not in content, f"Canary token leaked into file {p}"
-                assert CANARY_EMAIL not in content, f"Canary email leaked into file {p}"
-            except Exception:
-                pass
+            except OSError:
+                continue  # unreadable file: nothing to inspect
+            assert CANARY_TOKEN not in content, f"Canary token leaked into file {p}"
+            assert CANARY_EMAIL not in content, f"Canary email leaked into file {p}"

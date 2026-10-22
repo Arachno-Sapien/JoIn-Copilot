@@ -1,4 +1,5 @@
 import hashlib
+
 import pytest
 from httpx import ASGITransport, AsyncClient
 
@@ -48,7 +49,7 @@ async def test_extract_job_from_page_text(fake_llm):
         assert data["fetched_at"] is not None
 
         # Check id format
-        expected_id = hashlib.sha1(f"manual{data['source_id']}".encode("utf-8")).hexdigest()
+        expected_id = hashlib.sha1(f"manual{data['source_id']}".encode()).hexdigest()
         assert data["id"] == expected_id
 
         # Validate with pydantic

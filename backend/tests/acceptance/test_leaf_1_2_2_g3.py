@@ -1,4 +1,5 @@
 import pytest
+
 from app.schemas.draft import ClaimVerdict
 from app.schemas.profile import Bullet
 from app.services.checker.judge import judge_claim

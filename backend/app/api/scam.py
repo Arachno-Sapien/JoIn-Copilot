@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+
 from app.config import settings
 from app.schemas.scam import ScamCheckResponse
 from app.services.jobs.cache import JobCache

@@ -1,4 +1,3 @@
-import pytest
 from app.schemas.search import RerankFacts
 from app.services.matching.scoring import compute_fit_score
 

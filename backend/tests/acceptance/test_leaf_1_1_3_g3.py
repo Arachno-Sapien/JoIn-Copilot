@@ -1,4 +1,5 @@
 import hashlib
+
 from app.schemas.job import Job
 from app.services.jobs.dedup import deduplicate_jobs, normalize_company_name
 
@@ -12,7 +13,7 @@ def _make_job(
     description: str = "Job description",
 ) -> Job:
     return Job(
-        id=hashlib.sha1(f"{source}{source_id}".encode("utf-8")).hexdigest(),
+        id=hashlib.sha1(f"{source}{source_id}".encode()).hexdigest(),
         source=source,  # type: ignore[arg-type]
         source_id=source_id,
         url=f"https://example.com/{source}/{source_id}",

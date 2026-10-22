@@ -1,7 +1,7 @@
 import hashlib
+
 import pytest
 import respx
-from httpx import Response
 
 from app.schemas.job import Job
 from app.services.jobs.adzuna import AdzunaFetcher, map_adzuna_job, map_adzuna_response
@@ -42,7 +42,7 @@ def test_map_adzuna_job_direct():
     assert job.source_id == "49123456"
 
     # id is sha1 of source plus source_id (design §5.2)
-    expected_id = hashlib.sha1("adzuna49123456".encode("utf-8")).hexdigest()
+    expected_id = hashlib.sha1(b"adzuna49123456").hexdigest()
     assert job.id == expected_id
 
     assert job.title == "Junior Python Developer"
@@ -86,4 +86,4 @@ async def test_adzuna_fetcher_with_respx_mock():
         assert len(jobs) == 2
         assert jobs[0].source == "adzuna"
         assert jobs[0].company == "Acme Tech Solutions"
-        assert jobs[0].id == hashlib.sha1("adzuna49123456".encode("utf-8")).hexdigest()
+        assert jobs[0].id == hashlib.sha1(b"adzuna49123456").hexdigest()

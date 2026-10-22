@@ -1,4 +1,5 @@
 import pytest
+
 from app.schemas.email import CandidateApplication, EmailClassifyResponse, EmailInput
 from app.services.classifier.service import classify_email
 

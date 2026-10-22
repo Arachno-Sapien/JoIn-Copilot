@@ -1,4 +1,5 @@
 import pytest
+
 from app.schemas.draft import ClaimWithVerdict
 from app.schemas.profile import Bullet, Experience, Preferences, Profile, Skill
 from app.services.drafting.rewrite import generate_rewrite_offer

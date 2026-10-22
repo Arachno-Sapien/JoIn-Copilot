@@ -1,6 +1,5 @@
 import sys
 from pathlib import Path
-import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 MOCK_PORTAL_DIR = REPO_ROOT / "mock-portal"

@@ -1,4 +1,3 @@
-import pytest
 from app.schemas.job import Job
 from app.schemas.profile import Bullet, Experience, Preferences, Profile, Skill
 from app.services.matching.recall import embedding_recall
