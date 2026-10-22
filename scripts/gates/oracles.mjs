@@ -108,8 +108,9 @@ const RULES = {
     if (!walk(root, ".github/ISSUE_TEMPLATE", /./).some(nonEmpty)) fails.push("no issue template in .github/ISSUE_TEMPLATE");
     if (nonEmpty(".env.example")) {
       const env = readFileSync(join(root, ".env.example"), "utf8");
-      for (const name of ["JC_LLM_SMALL_MODEL", "JC_LLM_STRONG_MODEL"]) {
-        if (!new RegExp("^" + name + "=", "m").test(env)) fails.push(".env.example does not declare " + name);
+      // Model calls use each user's own BharatCode key from the extension, never a server key.
+      for (const m of env.matchAll(/^((?:OPENAI|ANTHROPIC|GEMINI|GROQ|MISTRAL|COHERE|BHARATCODE)_[A-Z0-9_]*)=/gm)) {
+        fails.push(".env.example declares an LLM provider key: " + m[1]);
       }
       for (const m of env.matchAll(/^([A-Z0-9_]*(?:KEY|SECRET|TOKEN|PASSWORD)[A-Z0-9_]*)=(.*)$/gm)) {
         if (m[2].trim()) fails.push(".env.example sets a value for secret " + m[1]);
@@ -154,9 +155,7 @@ const RULES = {
       let environment = {};
       try { environment = JSON.parse(compose("config", "--format", "json").stdout).services?.backend?.environment || {}; }
       catch { fails.push("docker compose config did not return JSON"); }
-      for (const name of ["JC_LLM_SMALL_MODEL", "JC_LLM_STRONG_MODEL"]) {
-        if (!(name in environment)) fails.push("docker compose does not pass " + name + " to the backend");
-      }
+      if (!("JC_LLM_MODE" in environment)) fails.push("docker compose does not pass JC_LLM_MODE to the backend");
     } finally {
       clearInterval(keepAlive);
       compose("down");

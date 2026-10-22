@@ -101,11 +101,12 @@ try {
 
   // scaffold
   const scaffold = { LICENSE: "MIT", "README.md": "# x", "CONTRIBUTING.md": "x", ".gitignore": ".env\n.unlazy/\n",
-    ".env.example": "JC_LLM_SMALL_MODEL=\nJC_LLM_STRONG_MODEL=\nOPENAI_API_KEY=\n",
+    ".env.example": "JC_LLM_MODE=live\nADZUNA_APP_KEY=\n",
     ".github/dependabot.yml": "version: 2", ".github/workflows/ci.yml": "on: push", ".github/ISSUE_TEMPLATE/adapter.md": "x",
     "backend/uv.lock": "x", "backend/.python-version": "3.12\n" };
   passes(tree(scaffold), "scaffold");
-  fails(tree({ ...scaffold, ".env.example": "JC_LLM_SMALL_MODEL=\nJC_LLM_STRONG_MODEL=\nOPENAI_API_KEY=sk-123\n" }), "scaffold");
+  fails(tree({ ...scaffold, ".env.example": "JC_LLM_MODE=live\nADZUNA_APP_KEY=abc123\n" }), "scaffold");
+  fails(tree({ ...scaffold, ".env.example": "JC_LLM_MODE=live\nOPENAI_API_KEY=\n" }), "scaffold");
   fails(tree({ ...scaffold, LICENSE: "" }), "scaffold");
   fails(tree({ ...scaffold, ".gitignore": "node_modules/\n" }), "scaffold");
 

@@ -10,9 +10,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=ENV_FILE, env_file_encoding="utf-8", extra="ignore")
 
     # LLM Settings
+    # The model is fixed (app/llm/bharatcode.py) and the key comes from the extension.
     JC_LLM_MODE: str = "live"  # "live" or "mock"
-    JC_LLM_SMALL_MODEL: str = ""
-    JC_LLM_STRONG_MODEL: str = ""
     JC_LLM_FIXTURES: str | None = None
 
     # Embedding Settings

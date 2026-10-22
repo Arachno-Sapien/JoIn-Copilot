@@ -17,12 +17,12 @@ def test_compose_loads_the_optional_env_file_for_provider_keys():
     assert all(e.get("required") is False for e in entries if isinstance(e, dict) and e.get("path") == ".env")
 
 
-def test_compose_defaults_to_live_mode_and_hard_codes_no_model():
+def test_compose_defaults_to_live_mode_and_sets_no_model_or_provider_key():
     env = COMPOSE["environment"]
-    assert ":-mock" not in str(env.get("JC_LLM_MODE", ""))
-    for name in ("JC_LLM_SMALL_MODEL", "JC_LLM_STRONG_MODEL"):
-        assert name in env
-        assert not re.search(r":-\s*[^}\s]", str(env[name])), f"{name} has a hard-coded default model"
+    assert "JC_LLM_MODE" in env
+    assert ":-mock" not in str(env["JC_LLM_MODE"])
+    # The model is fixed in code and each user's BharatCode key comes from the extension.
+    assert not {"JC_LLM_SMALL_MODEL", "JC_LLM_STRONG_MODEL", "OPENAI_API_KEY"} & set(env)
 
 
 def test_container_starts_without_installing_dev_dependencies():
