@@ -1,3 +1,4 @@
+import asyncio
 import json
 import os
 from collections.abc import Callable
@@ -7,6 +8,7 @@ from typing import Any
 from pydantic import BaseModel
 
 from app.config import settings
+from app.llm import bharatcode
 from app.llm.cache import (
     cache_get,
     cache_set,
@@ -27,7 +29,19 @@ __all__ = [
     "get_model_for_tier",
 ]
 
-TIER_SETTINGS = {"small": "JC_LLM_SMALL_MODEL", "strong": "JC_LLM_STRONG_MODEL"}
+TIERS = ("small", "strong")
+
+# Output budget (reasoning included) and reasoning effort per prompt. None leaves
+# reasoning to the model, for the tasks that need judgment. A truncated answer is
+# reported, never retried with the same budget.
+TASK_LIMITS: dict[str, tuple[int, str | None]] = {
+    "parse_resume": (8000, "none"),
+    "parse_resume_retry": (8000, "none"),
+    "draft": (4000, None),
+    "rewrite": (4000, None),
+    "judge": (2000, None),
+}
+DEFAULT_LIMITS = (2000, "none")
 
 
 class MockLLMUnregisteredError(RuntimeError):
@@ -72,10 +86,14 @@ def get_mock_registry() -> MockRegistry:
 
 
 def get_model_for_tier(tier: str) -> str:
-    if tier not in TIER_SETTINGS:
+    """Both tiers run on the one BharatCode model; the tier still sets the cache key."""
+    if tier not in TIERS:
         raise ValueError(f"unknown model tier {tier!r}; use 'small' or 'strong'")
-    name = TIER_SETTINGS[tier]
-    return os.environ.get(name) or getattr(settings, name)
+    return bharatcode.MODEL
+
+
+def _task_limits(template: str) -> tuple[int, str | None]:
+    return TASK_LIMITS.get(Path(template).name.split(".")[0], DEFAULT_LIMITS)
 
 
 def _validate[T: BaseModel](schema: type[T], value: BaseModel | dict[str, Any]) -> T:
@@ -94,15 +112,20 @@ def _fixture_output(template: str, inputs: dict[str, Any]) -> dict[str, Any] | N
 
 def _prepare[T: BaseModel](
     template: str, inputs: dict[str, Any], schema: type[T], tier: str
-) -> tuple[str, str, T | None]:
-    """Return (cache key, model, answer). The answer is None when the provider must be called."""
+) -> tuple[str, T | None]:
+    """Return (cache key, answer). The answer is None when BharatCode must be called."""
     model = get_model_for_tier(tier)
+    mock = (os.environ.get("JC_LLM_MODE") or settings.JC_LLM_MODE) == "mock"
+    if not mock and not bharatcode.request_key.get():
+        # Checked before the cache, so a cached answer never hides the missing-key message.
+        raise bharatcode.MissingKeyError()
+
     key = make_cache_key(template, inputs, tier, model)
     cached = cache_get(key)
     if cached is not None:
-        return key, model, _validate(schema, cached)
+        return key, _validate(schema, cached)
 
-    if (os.environ.get("JC_LLM_MODE") or settings.JC_LLM_MODE) == "mock":
+    if mock:
         output = _GLOBAL_MOCK_REGISTRY.get_output(template, inputs)
         if output is None:
             output = _fixture_output(template, inputs)
@@ -113,34 +136,8 @@ def _prepare[T: BaseModel](
             )
         answer = _validate(schema, output)
         cache_set(key, answer)
-        return key, model, answer
-
-    if not model:
-        raise ValueError(f"{TIER_SETTINGS[tier]} is not set; configure a model for the {tier} tier")
-    return key, model, None
-
-
-def complete[T: BaseModel](
-    template: str,
-    inputs: dict[str, Any],
-    schema: type[T],
-    tier: str = "small",
-) -> T:
-    """Blocking call for scripts and evaluations. Endpoints use acomplete."""
-    key, model, answer = _prepare(template, inputs, schema, tier)
-    if answer is not None:
-        return answer
-    import litellm
-
-    # Never pass tools or functions, only prompt messages.
-    response = litellm.completion(
-        model=model,
-        messages=render_prompt_template(template, inputs),
-        response_format={"type": "json_object"},
-    )
-    answer = schema.model_validate_json(response.choices[0].message.content)
-    cache_set(key, answer)
-    return answer
+        return key, answer
+    return key, None
 
 
 async def acomplete[T: BaseModel](
@@ -149,18 +146,31 @@ async def acomplete[T: BaseModel](
     schema: type[T],
     tier: str = "small",
 ) -> T:
-    """Async call for FastAPI endpoints, so a slow model never blocks the event loop."""
-    key, model, answer = _prepare(template, inputs, schema, tier)
+    """Ask BharatCode for a reply matching schema. Endpoints await this."""
+    key, answer = _prepare(template, inputs, schema, tier)
     if answer is not None:
         return answer
-    import litellm
 
-    # Never pass tools or functions, only prompt messages.
-    response = await litellm.acompletion(
-        model=model,
-        messages=render_prompt_template(template, inputs),
-        response_format={"type": "json_object"},
+    system, user = render_prompt_template(template, inputs)
+    max_output_tokens, effort = _task_limits(template)
+    text = await bharatcode.respond(
+        instructions=system["content"],
+        user_input=user["content"],
+        schema_name=schema.__name__,
+        json_schema=schema.model_json_schema(),
+        max_output_tokens=max_output_tokens,
+        effort=effort,
     )
-    answer = schema.model_validate_json(response.choices[0].message.content)
+    answer = schema.model_validate_json(text)
     cache_set(key, answer)
     return answer
+
+
+def complete[T: BaseModel](
+    template: str,
+    inputs: dict[str, Any],
+    schema: type[T],
+    tier: str = "small",
+) -> T:
+    """Blocking form of acomplete for scripts and tests. Never call it inside an event loop."""
+    return asyncio.run(acomplete(template, inputs, schema, tier))

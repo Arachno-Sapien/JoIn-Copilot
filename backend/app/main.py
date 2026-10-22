@@ -19,6 +19,7 @@ from app.api.profile import router as profile_router
 from app.api.scam import router as scam_router
 from app.api.search import router as search_router
 from app.config import settings
+from app.llm.bharatcode import BharatCodeError, request_key
 from app.schemas.common import ErrorResponse
 from app.services.jobs.scheduler import get_job_scheduler
 
@@ -56,6 +57,20 @@ async def validation_error(request: Request, exc: RequestValidationError) -> JSO
     return error_response(422, fields)
 
 
+async def bharatcode_error(request: Request, exc: BharatCodeError) -> JSONResponse:
+    body = ErrorResponse(error=str(exc), detail=exc.detail)
+    return JSONResponse(body.model_dump(exclude_none=True), status_code=exc.status_code)
+
+
+async def use_bharatcode_key(request: Request, call_next):
+    # The user's own key, sent by the extension for this request only. Never stored or logged.
+    token = request_key.set(request.headers.get("x-bharatcode-key") or None)
+    try:
+        return await call_next(request)
+    finally:
+        request_key.reset(token)
+
+
 async def log_requests_metadata_only(request: Request, call_next):
     start_time = time.perf_counter()
     try:
@@ -86,6 +101,7 @@ async def log_requests_metadata_only(request: Request, call_next):
 def create_app() -> FastAPI:
     app = FastAPI(title="Job Copilot Backend", version="0.1.0", lifespan=lifespan)
     app.middleware("http")(log_requests_metadata_only)
+    app.middleware("http")(use_bharatcode_key)
     # Added last so it wraps everything, including the 500 answer above.
     app.add_middleware(
         CORSMiddleware,
@@ -96,6 +112,7 @@ def create_app() -> FastAPI:
     )
     app.add_exception_handler(StarletteHTTPException, http_error)
     app.add_exception_handler(RequestValidationError, validation_error)
+    app.add_exception_handler(BharatCodeError, bharatcode_error)
     app.include_router(health_router)
     app.include_router(extract_router)
     app.include_router(profile_router)

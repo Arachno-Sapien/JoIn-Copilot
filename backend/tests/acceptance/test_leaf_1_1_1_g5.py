@@ -2,6 +2,7 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
+from app.llm import bharatcode
 from app.llm import cache as llm_cache
 from app.llm.client import clear_llm_cache, complete, get_llm_cache
 
@@ -39,7 +40,7 @@ def test_template_version_inputs_tier_and_model_each_change_the_key(fake_llm, mo
     ask("key_test.v2", {"p": 1})
     ask("key_test.v1", {"p": 2})
     ask("key_test.v1", {"p": 1}, tier="strong")
-    monkeypatch.setenv("JC_LLM_SMALL_MODEL", "provider/another-small")
+    monkeypatch.setattr(bharatcode, "MODEL", "another-model")
     ask("key_test.v1", {"p": 1})
     assert calls["count"] == 4
     assert len(get_llm_cache()) == 5
