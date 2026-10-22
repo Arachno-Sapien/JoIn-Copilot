@@ -81,15 +81,30 @@ export async function updateApplicationStatus(
     throw new Error(`Application ${id} not found in database`);
   }
 
+  // `at` may come from an email's sender-controlled Date header: keep it between the
+  // latest known event and now, so history never moves backwards or into the future.
+  const nowMs = Date.now();
+  let atMs = new Date(at).getTime();
+  if (Number.isNaN(atMs) || atMs > nowMs) atMs = nowMs;
+  atMs = Math.max(atMs, latestEventMs(app));
+
   app.status = parseResult.data;
   app.status_history.push({
     status: parseResult.data,
-    at,
+    at: new Date(atMs).toISOString(),
     source,
   });
 
   await db.applications.put(app);
   return app;
+}
+
+/** Latest valid timestamp across applied_at and the whole status history (0 if none). */
+function latestEventMs(app: Application): number {
+  const times = [app.applied_at, ...(app.status_history ?? []).map((h) => h.at)]
+    .map((t) => new Date(t).getTime())
+    .filter((ms) => !Number.isNaN(ms));
+  return times.length ? Math.max(...times) : 0;
 }
 
 const TERMINAL_STATUSES: Set<string> = new Set(['rejected', 'offer', 'withdrawn', 'no_response']);
@@ -107,17 +122,7 @@ export async function sweepNoResponseApplications(now: Date = new Date()): Promi
       continue;
     }
 
-    // Determine the timestamp of the latest status update
-    let lastUpdateMs = new Date(app.applied_at).getTime();
-    if (app.status_history && app.status_history.length > 0) {
-      const latestHistory = app.status_history[app.status_history.length - 1];
-      const historyMs = new Date(latestHistory.at).getTime();
-      if (!isNaN(historyMs)) {
-        lastUpdateMs = historyMs;
-      }
-    }
-
-    if (now.getTime() - lastUpdateMs >= NO_RESPONSE_THRESHOLD_MS) {
+    if (now.getTime() - latestEventMs(app) >= NO_RESPONSE_THRESHOLD_MS) {
       app.status = 'no_response';
       app.status_history.push({
         status: 'no_response',
