@@ -1,0 +1,602 @@
+[
+  {
+    "id": "claim-1",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-2",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-3",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-4",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-5",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-6",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-7",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-8",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-9",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-10",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-11",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-12",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-13",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-14",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-15",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-16",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-17",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-18",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-19",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-20",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-21",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-22",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-23",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-24",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-25",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-26",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-27",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-28",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-29",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-30",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-31",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-32",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-33",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-34",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-35",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-36",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-37",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-38",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-39",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-40",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-41",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-42",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-43",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-44",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-45",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-46",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-47",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-48",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-49",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-50",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-51",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-52",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-53",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-54",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-55",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-56",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-57",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-58",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-59",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-60",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-61",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-62",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-63",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-64",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-65",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-66",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-67",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-68",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-69",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-70",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-71",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-72",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-73",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-74",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-75",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-76",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-77",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-78",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-79",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-80",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-81",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-82",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-83",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-84",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-85",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-86",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-87",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-88",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-89",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-90",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-91",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-92",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-93",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-94",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-95",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-96",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-97",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-98",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-99",
+    "claim": "I built and maintained REST API endpoints in Python for 2 years.",
+    "is_unsupported": false,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  },
+  {
+    "id": "claim-100",
+    "claim": "I increased API throughput by 800% singlehandedly using Rust.",
+    "is_unsupported": true,
+    "profile_bullet": "Built REST API endpoints using Python and FastAPI in an agile team."
+  }
+]

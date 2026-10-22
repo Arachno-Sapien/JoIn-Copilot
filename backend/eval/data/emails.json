@@ -1,0 +1,722 @@
+[
+  {
+    "id": "email-1",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-2",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-3",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-4",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-5",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-6",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-7",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-8",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-9",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-10",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-11",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-12",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-13",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-14",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-15",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-16",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-17",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-18",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-19",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-20",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-21",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-22",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-23",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-24",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-25",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-26",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-27",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-28",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-29",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-30",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-31",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-32",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-33",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-34",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-35",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-36",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-37",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-38",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-39",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-40",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-41",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-42",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-43",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-44",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-45",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-46",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-47",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-48",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-49",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-50",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-51",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-52",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-53",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-54",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-55",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-56",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-57",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-58",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-59",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-60",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-61",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-62",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-63",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-64",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-65",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-66",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-67",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-68",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-69",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-70",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-71",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-72",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-73",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-74",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-75",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-76",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-77",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-78",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-79",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-80",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-81",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-82",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-83",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-84",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-85",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-86",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-87",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-88",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-89",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-90",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-91",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-92",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-93",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-94",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-95",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-96",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-97",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-98",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-99",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-100",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-101",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-102",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-103",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-104",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-105",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-106",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-107",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-108",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-109",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-110",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-111",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-112",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-113",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-114",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-115",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  },
+  {
+    "id": "email-116",
+    "subject": "Invitation to interview with TechCorp",
+    "body": "We would love to schedule a 45-minute technical screen next week.",
+    "ground_truth_status": "interview"
+  },
+  {
+    "id": "email-117",
+    "subject": "Update on your application",
+    "body": "Thank you for your interest. While your background is impressive, we have chosen other candidates.",
+    "ground_truth_status": "rejection"
+  },
+  {
+    "id": "email-118",
+    "subject": "Job Offer - Software Engineer",
+    "body": "Congratulations! We are thrilled to offer you the position of Software Engineer.",
+    "ground_truth_status": "offer"
+  },
+  {
+    "id": "email-119",
+    "subject": "Recruiter phone chat",
+    "body": "Let's connect for 15 minutes to discuss the role.",
+    "ground_truth_status": "screening"
+  },
+  {
+    "id": "email-120",
+    "subject": "We received your application",
+    "body": "Your application has been received and is currently under review.",
+    "ground_truth_status": "acknowledgment"
+  }
+]

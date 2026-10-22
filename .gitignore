@@ -1,0 +1,34 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# unlazy runtime state and local plan files (machine-specific, never commit)
+.unlazy/
+.unlazy-hook-state.json
+.claude/settings.local.json
+
+# IDE settings with machine-specific paths
+.kiro/settings/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+backend/data/
+
+# Node and WXT
+node_modules/
+extension/.output/
+extension/.wxt/
+extension/test-results/
+extension/playwright-report/
+
+# Gate artifacts
+backend/tests/acceptance/snapshots/
+
+# OS
+.DS_Store
+Thumbs.db

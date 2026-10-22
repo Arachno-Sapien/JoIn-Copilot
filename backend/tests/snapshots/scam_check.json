@@ -1,0 +1,8 @@
+{
+  "job_id": "job-node14-safe",
+  "risk_level": "low",
+  "reasons": [],
+  "rule_signals": [],
+  "llm_flags": [],
+  "injection_warning": null
+}

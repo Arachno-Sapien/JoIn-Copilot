@@ -1,0 +1,2 @@
+component,metric,baseline_metric,cost,latency
+resume_parser,1.0,1.0,0.0015,0.0

@@ -1,0 +1,20 @@
+name: Bug report
+description: Create a report to help us improve Job Copilot
+body:
+  - type: markdown
+    attributes:
+      value: Thank you for reporting an issue!
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: A concise summary of the issue
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Clear steps to reproduce the behavior
+    validations:
+      required: true

@@ -1,0 +1,49 @@
+{
+  "results": [
+    {
+      "job": {
+        "id": "snap-job-1",
+        "source": "manual",
+        "source_id": "snap-1",
+        "url": "https://example.com/jobs/snap-1",
+        "title": "Backend Engineer",
+        "company": "Snap Corp",
+        "location": "San Francisco, CA",
+        "remote": "hybrid",
+        "job_type": "full-time",
+        "required_skills": [
+          "Python",
+          "FastAPI"
+        ],
+        "nice_to_have_skills": [
+          "Docker"
+        ],
+        "experience_years_min": 2,
+        "description": "Looking for backend engineer.",
+        "posted_at": "2026-10-18T00:00:00Z",
+        "deadline": null,
+        "fetched_at": "2026-10-18T12:00:00Z"
+      },
+      "fit_score": 90.0,
+      "fit_reasons": [
+        "Matched required skills: Python, FastAPI",
+        "Bonus skills: Docker",
+        "Strong skill match for backend role."
+      ],
+      "missing_skills": [],
+      "facts": {
+        "matched_required": [
+          "Python",
+          "FastAPI"
+        ],
+        "missing_required": [],
+        "matched_nice_to_have": [
+          "Docker"
+        ],
+        "experience_gap": "",
+        "summary": "Strong skill match for backend role."
+      }
+    }
+  ],
+  "total_evaluated": 1
+}

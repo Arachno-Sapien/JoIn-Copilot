@@ -1,0 +1,402 @@
+[
+  {
+    "id": "scam-eval-1",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +19998880 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-2",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-3",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +19998882 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-4",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-5",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +19998884 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-6",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-7",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +19998886 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-8",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-9",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +19998888 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-10",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-11",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988810 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-12",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-13",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988812 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-14",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-15",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988814 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-16",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-17",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988816 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-18",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-19",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988818 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-20",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-21",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988820 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-22",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-23",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988822 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-24",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-25",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988824 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-26",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-27",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988826 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-28",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-29",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988828 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-30",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-31",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988830 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-32",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-33",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988832 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-34",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-35",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988834 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-36",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-37",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988836 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-38",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-39",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988838 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-40",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-41",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988840 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-42",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-43",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988842 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-44",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-45",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988844 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-46",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-47",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988846 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-48",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  },
+  {
+    "id": "scam-eval-49",
+    "is_scam": true,
+    "description": "Earn $600/hr immediately! Send $200 training fee via WhatsApp +199988848 to start today without interview.",
+    "expected_rules": [
+      "fee_deposit",
+      "whatsapp_contact",
+      "urgency_no_interview"
+    ]
+  },
+  {
+    "id": "scam-eval-50",
+    "is_scam": false,
+    "description": "Apex Tech is hiring a Software Engineer. Structured interview process. Contact us at jobs@apextech.com.",
+    "expected_rules": []
+  }
+]

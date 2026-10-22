@@ -1,0 +1,2 @@
+component,metric,baseline_metric,cost,latency
+fabrication_checker,1.0,1.0,0.008,0.0

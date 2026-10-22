@@ -1,0 +1,23 @@
+{
+  "id": "77fdc5e2ac210f0a7fcec9a53af10f93f0529ee2",
+  "source": "manual",
+  "source_id": "d111e8e7fec7291c",
+  "url": "https://example.com/jobs/42",
+  "title": "Backend Software Engineer",
+  "company": "Tech Corp",
+  "location": "Remote",
+  "remote": "remote",
+  "job_type": "full-time",
+  "required_skills": [
+    "Python",
+    "FastAPI"
+  ],
+  "nice_to_have_skills": [
+    "Docker"
+  ],
+  "experience_years_min": 2,
+  "description": "Looking for backend engineer to scale services.",
+  "posted_at": "2026-10-18T00:00:00Z",
+  "deadline": null,
+  "fetched_at": "2026-10-18T18:44:02.679332+00:00"
+}

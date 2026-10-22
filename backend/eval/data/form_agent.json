@@ -1,0 +1,182 @@
+[
+  {
+    "id": "form-1",
+    "field_label": "Full Name",
+    "field_type": "text",
+    "expected_profile_key": "name"
+  },
+  {
+    "id": "form-2",
+    "field_label": "Email Address",
+    "field_type": "email",
+    "expected_profile_key": "email"
+  },
+  {
+    "id": "form-3",
+    "field_label": "Phone Number",
+    "field_type": "tel",
+    "expected_profile_key": "phone"
+  },
+  {
+    "id": "form-4",
+    "field_label": "LinkedIn Profile",
+    "field_type": "url",
+    "expected_profile_key": "links.linkedin"
+  },
+  {
+    "id": "form-5",
+    "field_label": "Earliest Start Date",
+    "field_type": "date",
+    "expected_profile_key": "start_date"
+  },
+  {
+    "id": "form-6",
+    "field_label": "Full Name",
+    "field_type": "text",
+    "expected_profile_key": "name"
+  },
+  {
+    "id": "form-7",
+    "field_label": "Email Address",
+    "field_type": "email",
+    "expected_profile_key": "email"
+  },
+  {
+    "id": "form-8",
+    "field_label": "Phone Number",
+    "field_type": "tel",
+    "expected_profile_key": "phone"
+  },
+  {
+    "id": "form-9",
+    "field_label": "LinkedIn Profile",
+    "field_type": "url",
+    "expected_profile_key": "links.linkedin"
+  },
+  {
+    "id": "form-10",
+    "field_label": "Earliest Start Date",
+    "field_type": "date",
+    "expected_profile_key": "start_date"
+  },
+  {
+    "id": "form-11",
+    "field_label": "Full Name",
+    "field_type": "text",
+    "expected_profile_key": "name"
+  },
+  {
+    "id": "form-12",
+    "field_label": "Email Address",
+    "field_type": "email",
+    "expected_profile_key": "email"
+  },
+  {
+    "id": "form-13",
+    "field_label": "Phone Number",
+    "field_type": "tel",
+    "expected_profile_key": "phone"
+  },
+  {
+    "id": "form-14",
+    "field_label": "LinkedIn Profile",
+    "field_type": "url",
+    "expected_profile_key": "links.linkedin"
+  },
+  {
+    "id": "form-15",
+    "field_label": "Earliest Start Date",
+    "field_type": "date",
+    "expected_profile_key": "start_date"
+  },
+  {
+    "id": "form-16",
+    "field_label": "Full Name",
+    "field_type": "text",
+    "expected_profile_key": "name"
+  },
+  {
+    "id": "form-17",
+    "field_label": "Email Address",
+    "field_type": "email",
+    "expected_profile_key": "email"
+  },
+  {
+    "id": "form-18",
+    "field_label": "Phone Number",
+    "field_type": "tel",
+    "expected_profile_key": "phone"
+  },
+  {
+    "id": "form-19",
+    "field_label": "LinkedIn Profile",
+    "field_type": "url",
+    "expected_profile_key": "links.linkedin"
+  },
+  {
+    "id": "form-20",
+    "field_label": "Earliest Start Date",
+    "field_type": "date",
+    "expected_profile_key": "start_date"
+  },
+  {
+    "id": "form-21",
+    "field_label": "Full Name",
+    "field_type": "text",
+    "expected_profile_key": "name"
+  },
+  {
+    "id": "form-22",
+    "field_label": "Email Address",
+    "field_type": "email",
+    "expected_profile_key": "email"
+  },
+  {
+    "id": "form-23",
+    "field_label": "Phone Number",
+    "field_type": "tel",
+    "expected_profile_key": "phone"
+  },
+  {
+    "id": "form-24",
+    "field_label": "LinkedIn Profile",
+    "field_type": "url",
+    "expected_profile_key": "links.linkedin"
+  },
+  {
+    "id": "form-25",
+    "field_label": "Earliest Start Date",
+    "field_type": "date",
+    "expected_profile_key": "start_date"
+  },
+  {
+    "id": "form-26",
+    "field_label": "Full Name",
+    "field_type": "text",
+    "expected_profile_key": "name"
+  },
+  {
+    "id": "form-27",
+    "field_label": "Email Address",
+    "field_type": "email",
+    "expected_profile_key": "email"
+  },
+  {
+    "id": "form-28",
+    "field_label": "Phone Number",
+    "field_type": "tel",
+    "expected_profile_key": "phone"
+  },
+  {
+    "id": "form-29",
+    "field_label": "LinkedIn Profile",
+    "field_type": "url",
+    "expected_profile_key": "links.linkedin"
+  },
+  {
+    "id": "form-30",
+    "field_label": "Earliest Start Date",
+    "field_type": "date",
+    "expected_profile_key": "start_date"
+  }
+]

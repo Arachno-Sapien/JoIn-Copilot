@@ -1,0 +1,8 @@
+import { z } from 'zod';
+
+export const ErrorResponseSchema = z.object({
+  error: z.string(),
+  detail: z.string().optional().nullable(),
+});
+
+export type ErrorResponse = z.infer<typeof ErrorResponseSchema>;

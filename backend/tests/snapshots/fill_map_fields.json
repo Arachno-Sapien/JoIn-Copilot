@@ -1,0 +1,34 @@
+{
+  "mappings": [
+    {
+      "field_id": "f_name",
+      "field_name": "Full Name",
+      "action": "fill",
+      "profile_path": "name",
+      "value": "Alex Doe",
+      "is_open_question": false,
+      "is_flagged": false,
+      "flag_reason": null
+    },
+    {
+      "field_id": "f_email",
+      "field_name": "Email",
+      "action": "fill",
+      "profile_path": "email",
+      "value": "alex@example.com",
+      "is_open_question": false,
+      "is_flagged": false,
+      "flag_reason": null
+    },
+    {
+      "field_id": "f_q",
+      "field_name": "Why this role?",
+      "action": "open_question",
+      "profile_path": null,
+      "value": null,
+      "is_open_question": true,
+      "is_flagged": false,
+      "flag_reason": null
+    }
+  ]
+}

@@ -1,0 +1,427 @@
+[
+  {
+    "id": "resume-1",
+    "text": "Name: Candidate 1\nEmail: candidate1@example.com\nSkills: Python, FastAPI, React, TypeScript\nExperience: Software Engineer at Company 1 for 2 years.",
+    "ground_truth": {
+      "name": "Candidate 1",
+      "email": "candidate1@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript"
+      ],
+      "years_experience": 2
+    }
+  },
+  {
+    "id": "resume-2",
+    "text": "Name: Candidate 2\nEmail: candidate2@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL\nExperience: Software Engineer at Company 2 for 3 years.",
+    "ground_truth": {
+      "name": "Candidate 2",
+      "email": "candidate2@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL"
+      ],
+      "years_experience": 3
+    }
+  },
+  {
+    "id": "resume-3",
+    "text": "Name: Candidate 3\nEmail: candidate3@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL, Docker\nExperience: Software Engineer at Company 3 for 4 years.",
+    "ground_truth": {
+      "name": "Candidate 3",
+      "email": "candidate3@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL",
+        "Docker"
+      ],
+      "years_experience": 4
+    }
+  },
+  {
+    "id": "resume-4",
+    "text": "Name: Candidate 4\nEmail: candidate4@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL, Docker, AWS\nExperience: Software Engineer at Company 4 for 5 years.",
+    "ground_truth": {
+      "name": "Candidate 4",
+      "email": "candidate4@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL",
+        "Docker",
+        "AWS"
+      ],
+      "years_experience": 5
+    }
+  },
+  {
+    "id": "resume-5",
+    "text": "Name: Candidate 5\nEmail: candidate5@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL, Docker, AWS, Git\nExperience: Software Engineer at Company 5 for 2 years.",
+    "ground_truth": {
+      "name": "Candidate 5",
+      "email": "candidate5@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL",
+        "Docker",
+        "AWS",
+        "Git"
+      ],
+      "years_experience": 2
+    }
+  },
+  {
+    "id": "resume-6",
+    "text": "Name: Candidate 6\nEmail: candidate6@example.com\nSkills: Python, FastAPI, React, TypeScript\nExperience: Software Engineer at Company 6 for 3 years.",
+    "ground_truth": {
+      "name": "Candidate 6",
+      "email": "candidate6@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript"
+      ],
+      "years_experience": 3
+    }
+  },
+  {
+    "id": "resume-7",
+    "text": "Name: Candidate 7\nEmail: candidate7@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL\nExperience: Software Engineer at Company 7 for 4 years.",
+    "ground_truth": {
+      "name": "Candidate 7",
+      "email": "candidate7@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL"
+      ],
+      "years_experience": 4
+    }
+  },
+  {
+    "id": "resume-8",
+    "text": "Name: Candidate 8\nEmail: candidate8@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL, Docker\nExperience: Software Engineer at Company 8 for 5 years.",
+    "ground_truth": {
+      "name": "Candidate 8",
+      "email": "candidate8@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL",
+        "Docker"
+      ],
+      "years_experience": 5
+    }
+  },
+  {
+    "id": "resume-9",
+    "text": "Name: Candidate 9\nEmail: candidate9@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL, Docker, AWS\nExperience: Software Engineer at Company 9 for 2 years.",
+    "ground_truth": {
+      "name": "Candidate 9",
+      "email": "candidate9@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL",
+        "Docker",
+        "AWS"
+      ],
+      "years_experience": 2
+    }
+  },
+  {
+    "id": "resume-10",
+    "text": "Name: Candidate 10\nEmail: candidate10@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL, Docker, AWS, Git\nExperience: Software Engineer at Company 10 for 3 years.",
+    "ground_truth": {
+      "name": "Candidate 10",
+      "email": "candidate10@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL",
+        "Docker",
+        "AWS",
+        "Git"
+      ],
+      "years_experience": 3
+    }
+  },
+  {
+    "id": "resume-11",
+    "text": "Name: Candidate 11\nEmail: candidate11@example.com\nSkills: Python, FastAPI, React, TypeScript\nExperience: Software Engineer at Company 11 for 4 years.",
+    "ground_truth": {
+      "name": "Candidate 11",
+      "email": "candidate11@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript"
+      ],
+      "years_experience": 4
+    }
+  },
+  {
+    "id": "resume-12",
+    "text": "Name: Candidate 12\nEmail: candidate12@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL\nExperience: Software Engineer at Company 12 for 5 years.",
+    "ground_truth": {
+      "name": "Candidate 12",
+      "email": "candidate12@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL"
+      ],
+      "years_experience": 5
+    }
+  },
+  {
+    "id": "resume-13",
+    "text": "Name: Candidate 13\nEmail: candidate13@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL, Docker\nExperience: Software Engineer at Company 13 for 2 years.",
+    "ground_truth": {
+      "name": "Candidate 13",
+      "email": "candidate13@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL",
+        "Docker"
+      ],
+      "years_experience": 2
+    }
+  },
+  {
+    "id": "resume-14",
+    "text": "Name: Candidate 14\nEmail: candidate14@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL, Docker, AWS\nExperience: Software Engineer at Company 14 for 3 years.",
+    "ground_truth": {
+      "name": "Candidate 14",
+      "email": "candidate14@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL",
+        "Docker",
+        "AWS"
+      ],
+      "years_experience": 3
+    }
+  },
+  {
+    "id": "resume-15",
+    "text": "Name: Candidate 15\nEmail: candidate15@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL, Docker, AWS, Git\nExperience: Software Engineer at Company 15 for 4 years.",
+    "ground_truth": {
+      "name": "Candidate 15",
+      "email": "candidate15@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL",
+        "Docker",
+        "AWS",
+        "Git"
+      ],
+      "years_experience": 4
+    }
+  },
+  {
+    "id": "resume-16",
+    "text": "Name: Candidate 16\nEmail: candidate16@example.com\nSkills: Python, FastAPI, React, TypeScript\nExperience: Software Engineer at Company 16 for 5 years.",
+    "ground_truth": {
+      "name": "Candidate 16",
+      "email": "candidate16@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript"
+      ],
+      "years_experience": 5
+    }
+  },
+  {
+    "id": "resume-17",
+    "text": "Name: Candidate 17\nEmail: candidate17@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL\nExperience: Software Engineer at Company 17 for 2 years.",
+    "ground_truth": {
+      "name": "Candidate 17",
+      "email": "candidate17@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL"
+      ],
+      "years_experience": 2
+    }
+  },
+  {
+    "id": "resume-18",
+    "text": "Name: Candidate 18\nEmail: candidate18@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL, Docker\nExperience: Software Engineer at Company 18 for 3 years.",
+    "ground_truth": {
+      "name": "Candidate 18",
+      "email": "candidate18@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL",
+        "Docker"
+      ],
+      "years_experience": 3
+    }
+  },
+  {
+    "id": "resume-19",
+    "text": "Name: Candidate 19\nEmail: candidate19@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL, Docker, AWS\nExperience: Software Engineer at Company 19 for 4 years.",
+    "ground_truth": {
+      "name": "Candidate 19",
+      "email": "candidate19@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL",
+        "Docker",
+        "AWS"
+      ],
+      "years_experience": 4
+    }
+  },
+  {
+    "id": "resume-20",
+    "text": "Name: Candidate 20\nEmail: candidate20@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL, Docker, AWS, Git\nExperience: Software Engineer at Company 20 for 5 years.",
+    "ground_truth": {
+      "name": "Candidate 20",
+      "email": "candidate20@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL",
+        "Docker",
+        "AWS",
+        "Git"
+      ],
+      "years_experience": 5
+    }
+  },
+  {
+    "id": "resume-21",
+    "text": "Name: Candidate 21\nEmail: candidate21@example.com\nSkills: Python, FastAPI, React, TypeScript\nExperience: Software Engineer at Company 21 for 2 years.",
+    "ground_truth": {
+      "name": "Candidate 21",
+      "email": "candidate21@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript"
+      ],
+      "years_experience": 2
+    }
+  },
+  {
+    "id": "resume-22",
+    "text": "Name: Candidate 22\nEmail: candidate22@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL\nExperience: Software Engineer at Company 22 for 3 years.",
+    "ground_truth": {
+      "name": "Candidate 22",
+      "email": "candidate22@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL"
+      ],
+      "years_experience": 3
+    }
+  },
+  {
+    "id": "resume-23",
+    "text": "Name: Candidate 23\nEmail: candidate23@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL, Docker\nExperience: Software Engineer at Company 23 for 4 years.",
+    "ground_truth": {
+      "name": "Candidate 23",
+      "email": "candidate23@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL",
+        "Docker"
+      ],
+      "years_experience": 4
+    }
+  },
+  {
+    "id": "resume-24",
+    "text": "Name: Candidate 24\nEmail: candidate24@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL, Docker, AWS\nExperience: Software Engineer at Company 24 for 5 years.",
+    "ground_truth": {
+      "name": "Candidate 24",
+      "email": "candidate24@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL",
+        "Docker",
+        "AWS"
+      ],
+      "years_experience": 5
+    }
+  },
+  {
+    "id": "resume-25",
+    "text": "Name: Candidate 25\nEmail: candidate25@example.com\nSkills: Python, FastAPI, React, TypeScript, SQL, Docker, AWS, Git\nExperience: Software Engineer at Company 25 for 2 years.",
+    "ground_truth": {
+      "name": "Candidate 25",
+      "email": "candidate25@example.com",
+      "skills": [
+        "Python",
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "SQL",
+        "Docker",
+        "AWS",
+        "Git"
+      ],
+      "years_experience": 2
+    }
+  }
+]

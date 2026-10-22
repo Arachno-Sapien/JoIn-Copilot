@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "name": "Alex Doe",
+  "email": "alex@example.com",
+  "phone": "+1234567890",
+  "location": "San Francisco, CA",
+  "links": {
+    "linkedin": "https://linkedin.com/in/alexdoe",
+    "github": "https://github.com/alexdoe"
+  },
+  "education": [
+    {
+      "id": "edu-1",
+      "degree": "B.S. CS",
+      "institution": "University",
+      "start": "2018",
+      "end": "2022",
+      "score": null
+    }
+  ],
+  "experience": [
+    {
+      "id": "exp-1",
+      "role": "Software Engineer",
+      "org": "Acme Corp",
+      "start": "2022",
+      "end": "present",
+      "bullets": [
+        {
+          "id": "exp-1-b1",
+          "text": "Built distributed services with FastAPI."
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "name": "Job Copilot",
+      "bullets": [
+        {
+          "id": "proj-1-b1",
+          "text": "Created Chrome extension."
+        }
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "name": "Python",
+      "level": "strong"
+    },
+    {
+      "name": "TypeScript",
+      "level": "familiar"
+    }
+  ],
+  "certifications": [],
+  "preferences": {
+    "locations": [
+      "San Francisco"
+    ],
+    "remote": "hybrid",
+    "job_types": [
+      "full-time"
+    ],
+    "min_stipend": null,
+    "avoid_keywords": []
+  }
+}

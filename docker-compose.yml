@@ -1,0 +1,15 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    # Provider keys (OPENAI_API_KEY, ADZUNA_APP_KEY, ...) come from your .env; copy .env.example to start.
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      JC_LLM_MODE: ${JC_LLM_MODE:-live}
+      JC_LLM_SMALL_MODEL: ${JC_LLM_SMALL_MODEL:-}
+      JC_LLM_STRONG_MODEL: ${JC_LLM_STRONG_MODEL:-}

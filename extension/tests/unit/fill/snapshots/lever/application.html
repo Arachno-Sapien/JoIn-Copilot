@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Acme Corp - Full Stack Developer</title>
+</head>
+<body>
+  <div class="application-page">
+    <div class="posting-header">
+      <h2>Full Stack Developer</h2>
+      <div class="posting-categories">
+        <span class="location">Remote</span>
+        <span class="commitment">Full Time</span>
+        <span class="workplaceTypes">Remote</span>
+      </div>
+    </div>
+    <form id="application-form" action="/acme/12345-abc-def/apply" method="POST" enctype="multipart/form-data">
+      <div class="application-question">
+        <label>Full name <span class="required">*</span></label>
+        <input name="name" type="text" placeholder="Full name" required />
+      </div>
+      <div class="application-question">
+        <label>Email <span class="required">*</span></label>
+        <input name="email" type="email" placeholder="Email" required />
+      </div>
+      <div class="application-question">
+        <label>Phone <span class="required">*</span></label>
+        <input name="phone" type="tel" placeholder="Phone" required />
+      </div>
+      <div class="application-question">
+        <label>Current company</label>
+        <input name="org" type="text" placeholder="Current company" />
+      </div>
+      <div class="application-question">
+        <label>Resume/CV <span class="required">*</span></label>
+        <input type="file" name="resume" class="resume-upload" required />
+      </div>
+      <div class="application-question">
+        <label>Why do you want to join Acme Corp?</label>
+        <textarea name="comments" placeholder="Add a cover letter or comments" rows="4"></textarea>
+      </div>
+      <div class="application-action">
+        <button type="submit" id="btn-submit" class="postings-btn">Submit application</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

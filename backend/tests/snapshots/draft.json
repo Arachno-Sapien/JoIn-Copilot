@@ -1,0 +1,25 @@
+{
+  "draft": "I have built REST APIs with FastAPI [exp-1-b1] and managed databases [exp-1-b2].",
+  "claims": [
+    {
+      "claim": "I have built REST APIs with FastAPI.",
+      "verdict": "supported",
+      "reason": "Directly supported by resume bullet.",
+      "cited_ids": [
+        "exp-1-b1"
+      ],
+      "is_flagged": false
+    },
+    {
+      "claim": "I managed databases.",
+      "verdict": "supported",
+      "reason": "Directly supported by resume bullet.",
+      "cited_ids": [
+        "exp-1-b2"
+      ],
+      "is_flagged": false
+    }
+  ],
+  "flagged_spans": [],
+  "rewrite": "I have built REST APIs with FastAPI [exp-1-b1] and managed databases [exp-1-b2]."
+}

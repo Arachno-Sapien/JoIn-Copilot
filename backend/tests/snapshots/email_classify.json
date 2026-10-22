@@ -1,0 +1,6 @@
+{
+  "matched_application_id": "app-123",
+  "classification": "interview",
+  "confidence": 0.95,
+  "reasoning": "Email invites candidate for a technical round."
+}

@@ -1,0 +1,2 @@
+component,metric,baseline_metric,cost,latency
+email_classifier,1.0,1.0,0.004,0.0
