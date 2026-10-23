@@ -118,7 +118,7 @@ The code does not depend on one LLM provider, and anyone can run the backend the
 
 1. The user uploads a resume in the side panel. The extension sends it to the backend, which returns a structured profile. The extension saves it to IndexedDB and shows it for correction.
 2. The extension asks the backend for matches, sending the profile. The backend filters and ranks cached jobs and returns them with fit reasons.
-3. The user opens a job. On a supported site, the content script reads the form and asks the backend for field values and drafted answers.
+3. The user opens a job. On a supported site, the content script reads the form and sends it to the side panel, which asks the backend for field values and drafted answers.
 4. The backend drafts answers, runs the fabrication checker, and returns drafts with any flagged claims.
 5. The content script fills the form and highlights every filled field. The user edits and clicks submit.
 6. The extension detects the submission and logs it in the tracker.
@@ -266,11 +266,11 @@ All schemas are defined once in Pydantic on the backend and mirrored as Zod sche
 
 | Context | Responsibility |
 | --- | --- |
-| Background service worker | Central message router, Gmail sync on a timer, calls to the backend |
-| Content scripts | Read job pages, detect forms, fill fields, detect submission |
-| Side panel | Main UI: profile, job list, current job, drafts, review |
+| Background service worker | Messages from content scripts, scheduled jobs (Gmail sync, no-response sweep). Calls the backend only for scheduled Gmail sync |
+| Content scripts | Read job pages, detect forms, fill fields, detect submission. Never call the backend or read the BharatCode key |
+| Side panel | Main UI: profile, job list, current job, drafts, review. Calls the backend |
 | Dashboard page | Full tracker table and analytics |
-| Options page | Backend URL, model choices if self-hosting, privacy controls, data export and delete |
+| Options page | Backend URL, BharatCode key and connection test, privacy controls, data export and delete |
 
 ### 6.2 MV3 service worker lifecycle
 
@@ -279,7 +279,7 @@ Chrome stops an MV3 service worker after about 30 seconds of inactivity. Anythin
 **Decisions that follow:**
 - Never keep state in service worker variables. Read from storage on every event.
 - Use `chrome.alarms` for periodic tasks (Gmail sync), not `setInterval`, which dies with the worker.
-- Keep long LLM calls short or let the side panel make them, since the side panel stays alive while open.
+- Extension pages (side panel, options) make the backend and BharatCode calls, since they stay alive while open. Chrome also stops the worker when a fetch takes over 30 seconds, and BharatCode answers can take minutes. The worker calls the backend only for scheduled Gmail sync.
 
 ### 6.3 Messaging
 
