@@ -177,6 +177,9 @@ async def respond(
         for attempt, delay in enumerate((*BUSY_RETRY_DELAYS, None), start=1):
             try:
                 response = await http.post("/responses", json=body, headers=headers)
+            except httpx.ReadTimeout as err:
+                logger.warning("BharatCode sent nothing for %ss", timeout.read)
+                raise RequestFailedError("BharatCode took too long to answer, try again") from err
             except httpx.HTTPError as err:
                 logger.warning("BharatCode unreachable: %s", type(err).__name__)
                 raise RequestFailedError("Could not reach BharatCode, check your connection") from err

@@ -129,6 +129,15 @@ async def test_failed_reply_keeps_bharatcode_reason(key, caplog):
 
 
 @respx.mock
+async def test_a_stalled_reply_is_not_blamed_on_the_connection(key):
+    # Live BharatCode once went quiet for over 180 seconds in the middle of a stream.
+    respx.post(URL).mock(side_effect=httpx.ReadTimeout("no bytes for 180 seconds"))
+    with pytest.raises(RequestFailedError, match="took too long") as err:
+        await call()
+    assert "connection" not in str(err.value)
+
+
+@respx.mock
 async def test_stream_that_stops_before_its_final_event_is_reported(key):
     respx.post(URL).mock(return_value=streamed(final=None))
     with pytest.raises(RequestFailedError, match="ended before it finished"):
