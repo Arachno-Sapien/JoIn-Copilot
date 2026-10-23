@@ -1,31 +1,23 @@
-# Self-Hosting Job Copilot
+# Self-hosting the backend
 
-Job Copilot is designed with a **browser-local trust boundary**:
-- All personal data (profile, resumes, application history, notes) is stored strictly in your browser's IndexedDB.
-- The backend server is stateless regarding personal data; it caches public job postings only and processes model inference in memory.
+You can run the Job Copilot backend on your own server instead of your laptop. Personal data still stays in each user's browser: the backend keeps only public job postings, and every AI request uses the BharatCode key of the person who sent it.
 
-## Docker Compose Deployment
-
-You can self-host the backend on any virtual private server (VPS), home lab, or local machine using Docker Compose:
+## Run it with Docker Compose
 
 ```bash
-# Clone the repository
-git clone https://github.com/user/job-copilot.git
-cd job-copilot
-
-# Configure environment variables
+git clone https://github.com/Arachno-Sapien/JoIn-Copilot.git
+cd JoIn-Copilot
 cp .env.example .env
-# No model key goes in .env: each user pastes their own BharatCode key in the extension options.
-
-# Start services
 docker compose up -d
 ```
 
-The backend will be available on port `8000`.
+No AI key goes in `.env`. Each user pastes their own BharatCode key on the extension's options page.
 
-## Reverse Proxy & HTTPS
+The backend listens on port 8000. Check it with `curl http://<your-server>:8000/health`, which should answer `{"status":"ok"}`.
 
-For remote hosting, put the backend behind a reverse proxy (e.g., Caddy, Nginx, or Cloudflare Tunnel) with HTTPS:
+## Put it behind HTTPS
+
+If the backend runs on another machine, put it behind a reverse proxy with HTTPS, such as Caddy, Nginx or a Cloudflare Tunnel. With Caddy:
 
 ```caddy
 copilot-api.yourdomain.com {
@@ -33,4 +25,4 @@ copilot-api.yourdomain.com {
 }
 ```
 
-Then in your extension options page, point the Backend URL to `https://copilot-api.yourdomain.com`.
+Then open the extension's options page, set **Backend URL** to `https://copilot-api.yourdomain.com` and click **Save Settings**.

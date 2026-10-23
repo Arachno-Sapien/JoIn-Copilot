@@ -1,6 +1,6 @@
-# Prompts Directory
+# Prompt templates
 
-Prompt templates are versioned markdown files: `<name>.v<N>.md`. Call them by name without the extension, for example `complete("extract_job.v1", inputs, schema, tier)` or `await acomplete(...)` inside endpoints.
+Each prompt is a versioned markdown file named `<name>.v<N>.md`. Pass its file name, with or without `.md`, to `await acomplete(template, inputs, schema, tier)` in endpoints or to `complete(...)` in scripts.
 
 ## Format
 
@@ -19,7 +19,7 @@ Preferred location: {{ location }}
 ```
 
 - The front matter must list every input written by someone other than the user under `untrusted:`, as a list.
-- `system:` and `user:` lines split the body into the two messages. Without them, the whole body is the user message.
+- A `system:` line starts the part sent to BharatCode as `instructions`, and a `user:` line starts the part sent as `input`. Without them, the whole body is the input.
 - `{{ name }}` (spaces optional) is replaced by the input of that name in one pass, so a value is never scanned for further placeholders. A placeholder without an input raises `KeyError`. A template that does not exist raises `FileNotFoundError`.
 
 ## Safety

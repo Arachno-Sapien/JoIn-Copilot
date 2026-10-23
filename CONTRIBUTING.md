@@ -1,23 +1,31 @@
-# Contributing to Job Copilot
+# Contributing
 
-Thank you for your interest in contributing to Job Copilot!
+To get a working copy running, follow the [setup guide](docs/guide/setup.md).
 
-## Development Guidelines
+## Ground rules
 
-1. **Local-first & Privacy:** Personal data must never leave the browser.
-2. **No Auto-Submit:** The extension fills forms but never clicks submit automatically.
-3. **Structured Outputs Only:** The backend LLM pipeline uses Pydantic structured outputs without tool/function execution.
-4. **Offline Tests:** All gates and acceptance tests run with mock LLMs and mock data.
-5. **Conventional Commits:** Use standard conventional commit format (`feat:`, `fix:`, `chore:`, `test:`).
+The full list is in [`.agents/rules/job-copilot.md`](.agents/rules/job-copilot.md). These matter most:
 
-## Running Tests
+- The extension never submits an application. It fills the form, and the user clicks submit.
+- The backend never stores personal data. Profiles, resumes, drafts, applications and emails pass through it in memory only.
+- Every model call goes through `backend/app/llm/bharatcode.py` and returns data checked against a Pydantic schema. The model gets no tools.
+- Tests never call BharatCode or a real job site. Use mock mode and mocked HTTP.
+- Use conventional commit messages (`feat:`, `fix:`, `docs:`, `test:`, `chore:`).
+
+## Run the checks
+
+Backend, from `backend/`:
 
 ```bash
-# Backend tests
-cd backend
+uv run --locked ruff check .
 uv run --locked pytest
-
-# Extension tests
-cd extension
-npx vitest run
 ```
+
+Extension, from `extension/`:
+
+```bash
+npm run compile
+npm test
+```
+
+CI runs the backend checks on every push and pull request.

@@ -4,7 +4,7 @@
 
 A Chrome extension that turns your resume into a structured profile, finds and ranks jobs that fit it, drafts application answers it checks against your resume, and tracks every application. All AI features run on the [BharatCode](https://bharatcode.ai/build) API with your own key.
 
-Built for the BharatCode Build League hackathon. Still under development: see [What works today](#what-works-today).
+Built for the BharatCode Build League hackathon. It is still under development: see [What works today](#what-works-today).
 
 ## Screenshots and demo
 
@@ -12,13 +12,13 @@ Built for the BharatCode Build League hackathon. Still under development: see [W
 
 ## What it does
 
-- **Resume to profile:** upload a PDF resume and get a structured profile you can review and edit. Every bullet gets a stable id so later checks can cite it.
-- **Job matching:** filters and ranks cached jobs. The model reports which required skills match and which are missing, and the fit score is computed in code from those facts.
-- **Tailored application answers:** drafts an answer for a job, splits it into claims, checks each claim against your resume and flags anything your resume does not support.
-- **Application tracker:** records an application when you submit a Greenhouse or Lever form, tracks status changes, marks silent applications after 28 days, and can read recruiter emails from Gmail (read-only) to update statuses.
-- **Safety:** warns about likely scam postings and text that tries to instruct the AI.
+- Turns a PDF resume into a structured profile you can review and edit. Each bullet gets a stable id, so later checks can point to it.
+- Ranks cached jobs against your profile. The model lists which required skills you have and which you're missing, and code turns those facts into the fit score.
+- Drafts answers to application questions, splits each draft into claims and checks every claim against your resume. Anything your resume doesn't back up is flagged.
+- Records an application when you submit a Greenhouse or Lever form and tracks its status. Applications with no reply for 28 days are marked as no response. With Gmail connected (read-only), recruiter emails update the status.
+- Warns about postings that look like scams or that contain text trying to give the AI instructions.
 
-The extension never submits an application for you. It fills fields, and you review and click submit.
+The extension never submits an application for you. It fills in fields, and you review them and click submit.
 
 ## What works today
 
@@ -32,9 +32,9 @@ The extension never submits an application for you. It fills fields, and you rev
 
 ## Install
 
-You need Node 22, npm, Python 3.12 and [uv](https://docs.astral.sh/uv/). Docker is optional.
+You need Node 22, npm, Python 3.12 and [uv](https://docs.astral.sh/uv/). Docker is optional. The [setup guide](docs/guide/setup.md) walks through each step in more detail.
 
-1. Start the backend:
+1. Start the backend from the repository root:
 
    ```bash
    cp .env.example .env
@@ -45,7 +45,7 @@ You need Node 22, npm, Python 3.12 and [uv](https://docs.astral.sh/uv/). Docker 
 
    Or run `docker compose up -d backend` from the repository root.
 
-2. Build the extension:
+2. In a second terminal, build the extension from the repository root:
 
    ```bash
    cd extension
@@ -53,49 +53,44 @@ You need Node 22, npm, Python 3.12 and [uv](https://docs.astral.sh/uv/). Docker 
    npm run build
    ```
 
-3. Load it in Chrome: open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked** and select `extension/.output/chrome-mv3`.
-4. Open the extension's options page, paste your BharatCode key, click **Store key**, then **Test connection**. If your backend is not at `http://127.0.0.1:8000`, set its URL on the same page.
+3. Load it in Chrome: open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked** and choose `extension/.output/chrome-mv3`.
+4. Right-click the Job Copilot icon and choose **Options**. Paste your BharatCode key, click **Store key**, then **Test connection**. If your backend is not at `http://127.0.0.1:8000`, change **Backend URL** on the same page and click **Save Settings**.
 5. Click the toolbar icon to open the side panel.
 
 ## Get a BharatCode API key
 
-Sign in at [bharatcode.ai/account](https://bharatcode.ai/account) and create a key. It is free for students with an `.ac.in` or `.edu.in` email; Lite and Pro plans also include API access. Until a key is saved, the side panel shows how to get one, and AI requests return a "key missing" message instead of failing silently.
+Sign in at [bharatcode.ai/account](https://bharatcode.ai/account) and create a key. Students get free access after verifying an `.ac.in` or `.edu.in` email, and the Lite and Pro plans also include API access. Until your access is active, AI requests fail with a message that says how to get it.
+
+If no key is saved, the side panel shows how to get one, and AI requests return a "key missing" message instead of failing silently.
 
 ## Model and endpoints
 
-- **Model:** `qwen-3.8-27b` for every feature.
-- **Base URL:** `https://bharatcode.ai/api/model/v1`, with `Authorization: Bearer <your key>`.
-- **Generation:** `POST /responses` with `store: false`, so each call is stateless and resends its full context. Anything machine-readable, such as fit facts and claim verdicts, uses structured output (`text.format` with a JSON schema).
-- **Connection test:** `GET /models`, then a 16-token `POST /responses`, from the options page. BharatCode answers `GET /models` for any key, so only the model call confirms that the key and its plan work.
-- **Limits:** output budgets are 8,000 tokens for resume parsing, 4,000 for drafts and rewrites, and 2,000 for everything else. Reasoning effort is `none` except for drafting, rewriting and claim judging.
-- **Errors:**
-  - A cut-off answer is reported and never parsed or retried with the same budget.
-  - A `503` is retried after 2, 4 and 8 seconds, then shown as "BharatCode is busy, try again".
-  - A `402` means the account's plan has no API access yet, and the message says how to get it.
-  - Failures log the `x-request-id` header.
+Every feature uses the model `qwen-3.8-27b` at `https://bharatcode.ai/api/model/v1`, sending your key as `Authorization: Bearer <your key>`.
 
-All model calls go through one module, [`backend/app/llm/bharatcode.py`](backend/app/llm/bharatcode.py). The extension's background service worker is the only part of the extension that sends your key anywhere: to BharatCode for the connection test, and to your backend with each request.
+- Generation uses `POST /responses` with `store: false`, so each call is stateless and resends its full context. Anything the code reads back, such as fit facts and claim verdicts, comes back as structured output (`text.format` with a JSON schema).
+- Test connection on the options page calls `GET /models`, then sends a 16-token `POST /responses`. BharatCode answers `GET /models` for any key, so only the model call proves that the key and its plan work.
+- Output budgets are 8,000 tokens for resume parsing, 4,000 for drafts and rewrites, and 2,000 for everything else. Reasoning effort is `none` except for drafting, rewriting and claim judging.
+
+When a call fails:
+
+- A cut-off answer is reported, never parsed and never retried with the same budget.
+- A `503` is retried after 2, 4 and 8 seconds, then shown as "BharatCode is busy, try again".
+- A `402` means the account has no API access yet, and the message says how to get it.
+- The backend logs the `x-request-id` header when BharatCode sends one.
+
+All model calls go through one module, [`backend/app/llm/bharatcode.py`](backend/app/llm/bharatcode.py). In the extension, only the background service worker sends your key anywhere: to BharatCode for the connection test, and to your backend with each request.
 
 ## Privacy
 
-- **Sent to BharatCode for processing:** your resume text, job descriptions and page text, form field labels, recruiter email text (only if Gmail sync is on), and the profile details each request needs. Requests use `store: false`.
-- **Stays in your browser:** your profile, resume file and applications live in IndexedDB.
-- **Your API key:** stored only in `chrome.storage.local` on your device. It is never synced, bundled, logged or committed.
-- **The backend:** stores only public job postings. It keeps no profiles, resumes or keys and never logs request bodies.
+Your resume text, job page text, form field labels, recruiter emails (only if Gmail sync is on) and the profile details each request needs go to BharatCode through your backend, with `store: false`. Your profile, resume files and applications stay in your browser's IndexedDB.
 
-See [PRIVACY.md](PRIVACY.md) for details.
+Your API key is stored only in `chrome.storage.local` on your device. It is never synced, bundled, logged or committed. The backend stores public job postings only: it keeps no profiles, resumes or keys, and it never logs request bodies.
+
+[PRIVACY.md](PRIVACY.md) has the full details.
 
 ## Development
 
-```bash
-cd backend && uv run pytest && uv run ruff check .
-```
-
-```bash
-cd extension && npm test && npm run compile
-```
-
-Tests never call BharatCode: the backend runs in mock mode and HTTP calls are mocked.
+[CONTRIBUTING.md](CONTRIBUTING.md) lists the project rules and the commands that run the tests and checks. Tests never call BharatCode: the backend runs in mock mode and its HTTP calls are mocked.
 
 ## License
 
