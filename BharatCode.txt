@@ -1,7 +1,7 @@
 Project name: Job Copilot (AI Job Search Copilot)
 Description: A Chrome extension that turns your resume into a profile, finds and ranks jobs that fit it, drafts application answers it checks against your resume, and tracks every application.
 BharatCode account name: [FILL IN]
-Model used: qwen-3.8-27b, through POST https://bharatcode.ai/api/model/v1/responses (store: false, structured JSON output). The options page tests the key with GET /models.
+Model used: qwen-3.8-27b, through POST https://bharatcode.ai/api/model/v1/responses (store: false, structured JSON output). The options page tests the key with GET /models and a 16-token POST /responses.
 
 Features that call the BharatCode API (all through backend/app/llm/bharatcode.py, using each user's own key):
 - Resume parsing (POST /profile/parse): PDF text to a structured profile, with one retry on a schema failure.

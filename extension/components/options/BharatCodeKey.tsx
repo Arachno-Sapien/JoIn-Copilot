@@ -55,11 +55,7 @@ export const BharatCodeKey: React.FC = () => {
       // The background service worker makes the request.
       const result: ConnectionResult = await chrome.runtime.sendMessage({ type: 'BHARATCODE_TEST_CONNECTION' });
       if (result.ok) {
-        setStatus(
-          result.modelAvailable
-            ? { tone: 'ok', text: `Connected. ${BHARATCODE_MODEL} is available.` }
-            : { tone: 'error', text: `Connected, but ${BHARATCODE_MODEL} is not available to this key.` }
-        );
+        setStatus({ tone: 'ok', text: `Connected. Your key can use ${BHARATCODE_MODEL}.` });
       } else {
         const id = result.requestId ? ` (request id ${result.requestId})` : '';
         setStatus({ tone: 'error', text: result.message + id });

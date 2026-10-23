@@ -66,11 +66,12 @@ Sign in at [bharatcode.ai/account](https://bharatcode.ai/account) and create a k
 - **Model:** `qwen-3.8-27b` for every feature.
 - **Base URL:** `https://bharatcode.ai/api/model/v1`, with `Authorization: Bearer <your key>`.
 - **Generation:** `POST /responses` with `store: false`, so each call is stateless and resends its full context. Anything machine-readable, such as fit facts and claim verdicts, uses structured output (`text.format` with a JSON schema).
-- **Connection test:** `GET /models`, from the options page.
+- **Connection test:** `GET /models`, then a 16-token `POST /responses`, from the options page. BharatCode answers `GET /models` for any key, so only the model call confirms that the key and its plan work.
 - **Limits:** output budgets are 8,000 tokens for resume parsing, 4,000 for drafts and rewrites, and 2,000 for everything else. Reasoning effort is `none` except for drafting, rewriting and claim judging.
 - **Errors:**
   - A cut-off answer is reported and never parsed or retried with the same budget.
   - A `503` is retried after 2, 4 and 8 seconds, then shown as "BharatCode is busy, try again".
+  - A `402` means the account's plan has no API access yet, and the message says how to get it.
   - Failures log the `x-request-id` header.
 
 All model calls go through one module, [`backend/app/llm/bharatcode.py`](backend/app/llm/bharatcode.py). The extension's background service worker is the only part of the extension that sends your key anywhere: to BharatCode for the connection test, and to your backend with each request.
