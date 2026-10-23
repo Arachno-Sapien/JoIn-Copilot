@@ -3,6 +3,7 @@ import {
   BHARATCODE_BASE_URL,
   clearApiKey,
   getApiKey,
+  hideStorageFromContentScripts,
   saveApiKey,
   testConnection,
 } from '../../../lib/ai/bharatcode';
@@ -55,6 +56,13 @@ describe('BharatCode key storage', () => {
   it('treats a blank key as no key', async () => {
     await saveApiKey('   ');
     expect(await getApiKey()).toBeNull();
+  });
+
+  it('keeps content scripts from reading chrome.storage.local, where the key lives', async () => {
+    const setAccessLevel = vi.fn(async () => {});
+    (globalThis as any).chrome.storage.local.setAccessLevel = setAccessLevel;
+    await hideStorageFromContentScripts();
+    expect(setAccessLevel).toHaveBeenCalledWith({ accessLevel: 'TRUSTED_CONTEXTS' });
   });
 });
 

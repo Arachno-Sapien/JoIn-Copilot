@@ -5,6 +5,7 @@ import {
   clearApiKey,
   getApiKey,
   saveApiKey,
+  testConnection,
   type ConnectionResult,
 } from '../../lib/ai/bharatcode';
 
@@ -52,8 +53,7 @@ export const BharatCodeKey: React.FC = () => {
     setTesting(true);
     setStatus(null);
     try {
-      // The background service worker makes the request.
-      const result: ConnectionResult = await chrome.runtime.sendMessage({ type: 'BHARATCODE_TEST_CONNECTION' });
+      const result: ConnectionResult = await testConnection();
       if (result.ok) {
         setStatus({ tone: 'ok', text: `Connected. Your key can use ${BHARATCODE_MODEL}.` });
       } else {

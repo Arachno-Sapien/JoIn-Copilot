@@ -2,16 +2,18 @@ import { getApiKey } from '../ai/bharatcode';
 import { getBackendUrl } from '../settings';
 
 /**
- * Every call to the Job Copilot backend runs in the background service worker,
- * which attaches the user's BharatCode key (X-BharatCode-Key) for that request.
- * Extension pages never fetch the backend or read the key themselves.
+ * Calls the Job Copilot backend with the user's BharatCode key (X-BharatCode-Key).
+ * It runs in the extension context that calls it: the side panel and options page,
+ * or the background worker for scheduled Gmail sync. Pages call the backend
+ * themselves because Chrome stops the background worker when a fetch takes more
+ * than 30 seconds, and BharatCode answers can take minutes. Content scripts never
+ * import this module and cannot read the key (see hideStorageFromContentScripts).
  */
 export interface BackendRequest {
   endpoint: string;
   method: 'GET' | 'POST';
   json?: unknown;
-  // Extension messages cannot carry a Blob, so uploads travel as base64.
-  file?: { name: string; type: string; base64: string };
+  file?: { name: string; blob: Blob };
 }
 
 export interface BackendResult {
@@ -21,8 +23,7 @@ export interface BackendResult {
   networkError?: string;
 }
 
-/** Background worker only: call the backend with the saved key. */
-export async function sendToBackend(request: BackendRequest): Promise<BackendResult> {
+export async function requestBackend(request: BackendRequest): Promise<BackendResult> {
   const baseUrl = await getBackendUrl();
   const url = `${baseUrl.replace(/\/$/, '')}/${request.endpoint.replace(/^\//, '')}`;
   const headers: Record<string, string> = { Accept: 'application/json' };
@@ -32,7 +33,7 @@ export async function sendToBackend(request: BackendRequest): Promise<BackendRes
   let body: BodyInit | undefined;
   if (request.file) {
     const form = new FormData();
-    form.append('file', base64ToBlob(request.file.base64, request.file.type), request.file.name);
+    form.append('file', request.file.blob, request.file.name);
     body = form;
   } else if (request.json !== undefined) {
     headers['Content-Type'] = 'application/json';
@@ -47,30 +48,4 @@ export async function sendToBackend(request: BackendRequest): Promise<BackendRes
   }
   const parsed = await response.json().catch(() => null);
   return { status: response.status, ok: response.ok, body: parsed };
-}
-
-/** From any extension page: hand the request to the background worker. */
-export async function requestBackend(request: BackendRequest): Promise<BackendResult> {
-  const inPage = typeof window !== 'undefined';
-  if (inPage && typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
-    return chrome.runtime.sendMessage({ type: 'BACKEND_REQUEST', request });
-  }
-  // Already in the background worker, or a test without extension messaging.
-  return sendToBackend(request);
-}
-
-export async function blobToBase64(blob: Blob): Promise<string> {
-  const bytes = new Uint8Array(await blob.arrayBuffer());
-  let binary = '';
-  for (let i = 0; i < bytes.length; i += 0x8000) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
-  }
-  return btoa(binary);
-}
-
-function base64ToBlob(base64: string, type: string): Blob {
-  const binary = atob(base64);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-  return new Blob([bytes], { type });
 }

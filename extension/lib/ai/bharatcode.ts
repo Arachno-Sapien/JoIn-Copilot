@@ -2,9 +2,10 @@
  * BharatCode settings for the extension (https://bharatcode.ai/build).
  *
  * The user's own key lives only in chrome.storage.local: never in sync storage,
- * the bundle, logs or git. The background service worker is the only place that
- * sends it anywhere: to BharatCode for the connection test, and to the backend
- * (X-BharatCode-Key header) which makes the model calls.
+ * the bundle, logs or git. Extension pages and the background worker send it, to
+ * BharatCode for the connection test (from the options page) and to the backend
+ * (X-BharatCode-Key header), which makes the model calls. Content scripts cannot
+ * read it.
  */
 
 export const BHARATCODE_BASE_URL = 'https://bharatcode.ai/api/model/v1';
@@ -30,6 +31,11 @@ export async function saveApiKey(key: string): Promise<void> {
 
 export async function clearApiKey(): Promise<void> {
   await chrome.storage.local.remove(STORAGE_KEY);
+}
+
+/** Background worker, at startup: content scripts never need extension storage, so keep the key out of reach. */
+export async function hideStorageFromContentScripts(): Promise<void> {
+  await chrome.storage.local.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' });
 }
 
 export type ConnectionResult = { ok: true } | { ok: false; message: string; requestId?: string | null };
@@ -75,7 +81,8 @@ async function request(
 /**
  * GET /models, then a tiny POST /responses with the saved key. BharatCode answers
  * /models for any key, so only the model call shows the key and its plan work.
- * Runs in the background service worker.
+ * Runs in the options page: the queue can hold a request past the 30 seconds after
+ * which Chrome stops the background worker.
  */
 export async function testConnection(
   fetchImpl: typeof fetch = fetch,

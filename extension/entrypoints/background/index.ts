@@ -2,13 +2,16 @@ import { defineBackground } from 'wxt/sandbox';
 import { setupSidePanelBehavior } from './sidepanel';
 import { handleApplicationSubmitted, handleTrackerAlarm } from '../../lib/tracker';
 import { syncGmail } from '../../lib/gmail';
-import { testConnection } from '../../lib/ai/bharatcode';
-import { sendToBackend } from '../../lib/api/transport';
+import { hideStorageFromContentScripts } from '../../lib/ai/bharatcode';
 
 export default defineBackground(() => {
   // Configure side panel to open on action click
   setupSidePanelBehavior().catch((err) => {
     console.error('Failed to setup side panel behavior:', err);
+  });
+
+  hideStorageFromContentScripts().catch((err) => {
+    console.error('Failed to restrict storage to extension pages:', err);
   });
 
   // Background message listener for extension messaging
@@ -20,12 +23,6 @@ export default defineBackground(() => {
         handleApplicationSubmitted(message)
           .then((app) => sendResponse({ success: true, application: app }))
           .catch((err) => sendResponse({ success: false, error: err.message }));
-        return true;
-      } else if (message?.type === 'BACKEND_REQUEST') {
-        sendToBackend(message.request).then(sendResponse);
-        return true;
-      } else if (message?.type === 'BHARATCODE_TEST_CONNECTION') {
-        testConnection().then(sendResponse);
         return true;
       } else if (message?.type === 'SYNC_GMAIL_MANUAL') {
         syncGmail()

@@ -40,7 +40,7 @@ export function readBackendResult<S extends ZodTypeAny>(result: BackendResult, s
 
 export class ApiClient {
   private async request<T>(request: BackendRequest, schema: ZodSchema<T>): Promise<T> {
-    // The background service worker makes the call and adds the BharatCode key.
+    // requestBackend calls the backend from this extension context and adds the BharatCode key.
     return readBackendResult(await requestBackend(request), schema);
   }
 

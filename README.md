@@ -78,7 +78,7 @@ When a call fails:
 - A `402` means the account has no API access yet, and the message says how to get it.
 - The backend logs the `x-request-id` header when BharatCode sends one.
 
-All model calls go through one module, [`backend/app/llm/bharatcode.py`](backend/app/llm/bharatcode.py). In the extension, only the background service worker sends your key anywhere: to BharatCode for the connection test, and to your backend with each request.
+All model calls go through one module, [`backend/app/llm/bharatcode.py`](backend/app/llm/bharatcode.py). In the extension, the side panel and options page send your key: to BharatCode for the connection test, and to your backend with each request. The background worker sends it only for scheduled Gmail sync. The scripts that run on job sites can't read it.
 
 ## Privacy
 

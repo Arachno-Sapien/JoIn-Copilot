@@ -30,7 +30,7 @@ Each feature sends only what it needs to your backend, and the backend sends it 
 
 Every AI feature runs on the BharatCode API (https://bharatcode.ai) with the model `qwen-3.8-27b`. The backend calls `POST /responses` with `store: false`, which asks BharatCode not to keep the conversation. BharatCode's own terms govern how it handles the data it receives.
 
-You paste your own BharatCode key on the options page. Only the extension's background worker sends it anywhere: to BharatCode when you click Test connection, and to your backend with each AI request. The backend uses the key for that one request and never stores or logs it.
+You paste your own BharatCode key on the options page. The extension's own pages send it: to BharatCode when you click Test connection, and to your backend with each AI request. The background worker also sends it to your backend for scheduled Gmail sync. The scripts Job Copilot runs on job sites can't read it. The backend uses the key for that one request and never stores or logs it.
 
 ## No tracking
 
