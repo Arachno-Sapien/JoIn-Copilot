@@ -2,12 +2,14 @@
 
 Every model call in the backend ends here. It uses POST /responses with
 store false, so each call resends its full context and nothing is kept on
-BharatCode's side. The user's own key arrives per request from the extension
+BharatCode's side, and with stream true, so a request stays alive while it
+waits in BharatCode's queue. The user's own key arrives per request from the extension
 (the X-BharatCode-Key header, read in app.main) and is never stored or logged.
 """
 
 import asyncio
 import contextvars
+import json
 import logging
 from typing import Any
 
@@ -101,6 +103,30 @@ def _output_text(body: dict[str, Any]) -> str:
     )
 
 
+FINAL_EVENTS = {"response.completed", "response.incomplete", "response.failed"}
+
+
+def _final_response(response: httpx.Response) -> dict[str, Any] | None:
+    """The response object: a plain JSON body, or the final event of a stream."""
+    try:
+        return response.json()
+    except ValueError:
+        pass
+    final = None
+    for line in response.text.splitlines():
+        if not line.startswith("data:"):
+            continue  # event names and ": bharatcode queued" keep-alives
+        try:
+            event = json.loads(line[5:])
+        except ValueError:
+            continue
+        if event.get("type") in FINAL_EVENTS:
+            final = event.get("response")
+        elif event.get("type") == "error":
+            final = {"status": "failed", "error": event}
+    return final
+
+
 def _error_message(response: httpx.Response) -> str:
     try:
         error = response.json().get("error")
@@ -127,6 +153,9 @@ async def respond(
     body: dict[str, Any] = {
         "model": MODEL,
         "store": False,
+        # BharatCode queues requests. A stream sends keep-alives while queued; a plain call
+        # sends nothing until it is done and can outlast the read timeout below.
+        "stream": True,
         "instructions": instructions,
         "input": user_input,
         "max_output_tokens": min(max_output_tokens, MAX_OUTPUT_TOKENS),
@@ -174,11 +203,10 @@ async def respond(
                     f"BharatCode request failed (HTTP {status_code}){suffix}", request_id
                 )
 
-            try:
-                data = response.json()
-            except ValueError as err:
-                logger.warning("BharatCode sent a non-JSON reply, x-request-id=%s", request_id)
-                raise RequestFailedError("BharatCode sent an unreadable reply", request_id) from err
+            data = _final_response(response)
+            if not isinstance(data, dict):
+                logger.warning("BharatCode reply ended early, x-request-id=%s", request_id)
+                raise RequestFailedError("BharatCode's reply ended before it finished", request_id)
 
             status = data.get("status")
             if status == "incomplete":
@@ -188,8 +216,12 @@ async def respond(
                     raise TruncatedError(_output_text(data), request_id)
                 raise RequestFailedError(f"BharatCode's reply was incomplete ({reason})", request_id)
             if status not in (None, "completed"):
-                logger.warning("BharatCode reply status %s, x-request-id=%s", status, request_id)
-                raise RequestFailedError(f"BharatCode's reply {status}", request_id)
+                error = data.get("error") if isinstance(data.get("error"), dict) else {}
+                logger.warning(
+                    "BharatCode reply %s (%s), x-request-id=%s", status, error.get("code"), request_id
+                )
+                reason = f": {str(error['message'])[:200]}" if error.get("message") else ""
+                raise RequestFailedError(f"BharatCode's reply {status}{reason}", request_id)
             return _output_text(data)
 
     raise AssertionError("unreachable")  # the loop always returns or raises

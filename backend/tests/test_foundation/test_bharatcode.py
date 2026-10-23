@@ -15,6 +15,7 @@ from app.llm.bharatcode import (
     KeyRejectedError,
     MissingKeyError,
     NoApiAccessError,
+    RequestFailedError,
     TruncatedError,
     respond,
 )
@@ -36,6 +37,15 @@ def reply(text, status="completed", reason=None):
     if reason:
         body["incomplete_details"] = {"reason": reason}
     return body
+
+
+def streamed(body=None, final="response.completed"):
+    """A streamed reply shaped like live BharatCode's: queue keep-alives, then events."""
+    started = {"type": "response.created", "response": {"status": "in_progress", "output": []}}
+    events = [": bharatcode queued", "", "event: response.created", f"data: {json.dumps(started)}", ""]
+    if final:
+        events += [f"event: {final}", f"data: {json.dumps({'type': final, 'response': body})}", ""]
+    return httpx.Response(200, text="\n".join(events), headers={"content-type": "text/event-stream"})
 
 
 @pytest.fixture
@@ -85,6 +95,44 @@ async def test_sends_a_stateless_structured_request_with_the_user_key(key):
     assert body["reasoning"] == {"effort": "none"}
     assert body["max_output_tokens"] == 2000
     assert not {"tools", "tool_choice", "previous_response_id"} & body.keys()
+
+
+@respx.mock
+async def test_asks_for_a_stream_and_reads_its_final_event(key):
+    # Live BharatCode queues requests. A non-streamed call sends nothing until it is done and
+    # outlasted the read timeout; a stream sends keep-alives while queued.
+    route = respx.post(URL).mock(return_value=streamed(reply('{"ok": true}')))
+    assert await call() == '{"ok": true}'
+    assert json.loads(route.calls.last.request.content)["stream"] is True
+
+
+@respx.mock
+async def test_streamed_cut_off_reply_keeps_partial_text(key, sleeps):
+    body = reply("1, 2, 3", status="incomplete", reason="max_output_tokens")
+    route = respx.post(URL).mock(return_value=streamed(body, final="response.incomplete"))
+    with pytest.raises(TruncatedError) as err:
+        await call()
+    assert err.value.partial_text == "1, 2, 3"
+    assert route.call_count == 1
+
+
+@respx.mock
+async def test_failed_reply_keeps_bharatcode_reason(key, caplog):
+    # Live BharatCode failed four calls with response.failed after about 20 minutes.
+    caplog.set_level(logging.DEBUG)
+    body = {"status": "failed", "error": {"code": "queue_timeout", "message": "Waited too long in the queue"}}
+    respx.post(URL).mock(return_value=streamed(body, final="response.failed"))
+    with pytest.raises(RequestFailedError, match="Waited too long in the queue"):
+        await call()
+    assert "queue_timeout" in caplog.text
+    assert KEY not in caplog.text
+
+
+@respx.mock
+async def test_stream_that_stops_before_its_final_event_is_reported(key):
+    respx.post(URL).mock(return_value=streamed(final=None))
+    with pytest.raises(RequestFailedError, match="ended before it finished"):
+        await call()
 
 
 @respx.mock
