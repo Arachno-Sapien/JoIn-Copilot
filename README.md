@@ -25,7 +25,7 @@ The extension never submits an application for you. It fills in fields, and you 
 | Feature | Status |
 |---|---|
 | Resume parsing and profile editing | Works from the side panel |
-| Adding a job from the current page | Works from the side panel |
+| Adding a job from the current page | Works from the side panel on Greenhouse and Lever job pages. LinkedIn and Naukri are never read |
 | Application tracker and dashboard | Works; records come from submissions on Greenhouse and Lever pages |
 | Gmail status updates | Needs a real Google OAuth client ID in `extension/wxt.config.ts` |
 | Job matching, drafting, form filling, scam check | Backend endpoints work; the side panel does not call them yet |

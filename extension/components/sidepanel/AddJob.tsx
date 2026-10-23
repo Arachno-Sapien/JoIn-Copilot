@@ -3,6 +3,20 @@ import { extractJob } from '../../lib/api/extract';
 import { ApiClient } from '../../lib/api/client';
 import { Job } from '../../lib/schemas/job';
 
+// Project rule 5: never read LinkedIn or Naukri pages.
+const BLOCKED_SITES = /(^|\.)(linkedin\.com|naukri\.com)$/;
+const BLOCKED_MESSAGE =
+  "Job Copilot doesn't read LinkedIn or Naukri pages. Open this job on the company's own careers page, then try again.";
+const NO_ACCESS_MESSAGE = "Job Copilot can't read this page. It works on Greenhouse and Lever job pages.";
+
+function hostOf(url: string | undefined): string {
+  try {
+    return new URL(url ?? '').hostname;
+  } catch {
+    return '';
+  }
+}
+
 export interface AddJobProps {
   onJobAdded?: (job: Job) => void;
 }
@@ -28,11 +42,19 @@ export const AddJob: React.FC<AddJobProps> = ({ onJobAdded }) => {
         throw new Error('No active browser tab found');
       }
 
-      // Execute script in active tab to get page text
-      const injectionResults = await chrome.scripting.executeScript({
-        target: { tabId: activeTab.id },
-        func: () => document.body.innerText || '',
-      });
+      if (BLOCKED_SITES.test(hostOf(activeTab.url))) {
+        throw new Error(BLOCKED_MESSAGE);
+      }
+
+      // Read the page text. Chrome refuses on sites outside the extension's host permissions.
+      const injectionResults = await chrome.scripting
+        .executeScript({
+          target: { tabId: activeTab.id },
+          func: () => document.body.innerText || '',
+        })
+        .catch(() => {
+          throw new Error(NO_ACCESS_MESSAGE);
+        });
 
       const pageText = injectionResults[0]?.result || '';
       if (!pageText.trim()) {
@@ -60,7 +82,7 @@ export const AddJob: React.FC<AddJobProps> = ({ onJobAdded }) => {
         Add Job From Page
       </h3>
       <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '12px' }}>
-        Browse to any job posting and click below to extract and save it to your Job Copilot.
+        Open a job posting on Greenhouse or Lever, then click below to save it to Job Copilot.
       </p>
 
       <button
