@@ -14,6 +14,7 @@ from app.llm.bharatcode import (
     BusyError,
     KeyRejectedError,
     MissingKeyError,
+    NoApiAccessError,
     TruncatedError,
     respond,
 )
@@ -147,6 +148,20 @@ async def test_rejected_key_is_reported_without_logging_the_key(key, caplog):
         await call()
     assert "req-401" in caplog.text
     assert KEY not in caplog.text
+
+
+@respx.mock
+async def test_account_without_api_access_says_how_to_get_it(key, sleeps):
+    # Live BharatCode answers 402 when the account's plan has no API access.
+    route = respx.post(URL).mock(
+        return_value=httpx.Response(402, json={"error": {"message": "Coding and API use need Lite or Pro."}})
+    )
+    with pytest.raises(NoApiAccessError) as err:
+        await call()
+    assert err.value.status_code == 402
+    assert "bharatcode.ai/account" in str(err.value)
+    assert route.call_count == 1
+    assert sleeps == []
 
 
 class Answer(BaseModel):

@@ -51,6 +51,19 @@ class KeyRejectedError(BharatCodeError):
         self.detail = "Check the key in the extension options. " + KEY_HELP
 
 
+class NoApiAccessError(BharatCodeError):
+    """HTTP 402: the key is valid but its plan does not include API use."""
+
+    status_code = 402
+
+    def __init__(self, request_id: str | None) -> None:
+        super().__init__(
+            "Your BharatCode account has no API access yet. Students can verify an .ac.in or "
+            ".edu.in email for free access at https://bharatcode.ai/account, or choose Lite or Pro there."
+        )
+        self.detail = f"Request id {request_id}." if request_id else None
+
+
 class BusyError(BharatCodeError):
     status_code = 503
 
@@ -150,6 +163,9 @@ async def respond(
             if status_code in (401, 403):
                 logger.warning("BharatCode rejected the key (%d), x-request-id=%s", status_code, request_id)
                 raise KeyRejectedError()
+            if status_code == 402:
+                logger.warning("BharatCode plan has no API access (402), x-request-id=%s", request_id)
+                raise NoApiAccessError(request_id)
             if status_code != 200:
                 logger.warning("BharatCode returned %d, x-request-id=%s", status_code, request_id)
                 message = _error_message(response)
