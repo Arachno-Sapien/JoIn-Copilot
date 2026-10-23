@@ -83,6 +83,8 @@ describe('testConnection', () => {
     const body = JSON.parse(init.body as string);
     expect(body.model).toBe('qwen-3.8-27b');
     expect(body.store).toBe(false);
+    // Live BharatCode queues requests: only a stream sends the status before the answer is done.
+    expect(body.stream).toBe(true);
     expect(body.reasoning).toEqual({ effort: 'none' });
     expect(body.max_output_tokens).toBeLessThanOrEqual(16);
     expect(Object.keys(body)).not.toContain('tools');

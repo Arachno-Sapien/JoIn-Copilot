@@ -101,6 +101,8 @@ export async function testConnection(
       body: JSON.stringify({
         model: BHARATCODE_MODEL,
         store: false,
+        // BharatCode queues requests; a stream sends the status before the answer is done.
+        stream: true,
         input: 'Reply with OK.',
         max_output_tokens: 16,
         reasoning: { effort: 'none' },
@@ -109,5 +111,7 @@ export async function testConnection(
     fetchImpl,
     sleep
   );
-  return reply instanceof Response ? { ok: true } : reply;
+  if (!(reply instanceof Response)) return reply;
+  reply.body?.cancel().catch(() => {}); // the status is all the test needs
+  return { ok: true };
 }
