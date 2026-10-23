@@ -2,6 +2,17 @@
 
 This guide gets Job Copilot running on your computer: the backend, the Chrome extension and your BharatCode key.
 
+## Quick setup on Windows
+
+Double-click `setup.bat` in the project folder. It:
+
+- checks for Google Chrome, uv and Node.js 22, and offers to install uv or Node.js with winget if they're missing
+- creates `.env` from `.env.example` if you don't have one
+- sets up the backend (uv downloads Python 3.12 if needed) and builds the extension
+- prints how to load the extension and add your key, and can start the backend for you
+
+If it installs anything, close the window and run it again so Windows can find the new tools. When it finishes, follow the steps it prints, which match steps 3 and 4 below. If it stops with an error, or you're not on Windows, use the manual steps below.
+
 ## What you need
 
 - Python 3.12 and [uv](https://docs.astral.sh/uv/)

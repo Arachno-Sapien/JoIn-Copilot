@@ -32,7 +32,9 @@ The extension never submits an application for you. It fills in fields, and you 
 
 ## Install
 
-You need Node 22, npm, Python 3.12 and [uv](https://docs.astral.sh/uv/). Docker is optional. The [setup guide](docs/guide/setup.md) walks through each step in more detail.
+On Windows, double-click `setup.bat` in the project folder. It checks for Chrome, uv and Node.js 22, offers to install missing tools with winget, sets up the backend, builds the extension and tells you how to load it. If it stops with an error, follow the steps below.
+
+To set up by hand, you need Node 22, npm, Python 3.12 and [uv](https://docs.astral.sh/uv/). Docker is optional. The [setup guide](docs/guide/setup.md) walks through each step in more detail.
 
 1. Start the backend from the repository root:
 
