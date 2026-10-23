@@ -32,3 +32,5 @@ backend/tests/acceptance/snapshots/
 # OS
 .DS_Store
 Thumbs.db
+
+bharatcodeapi.txt
