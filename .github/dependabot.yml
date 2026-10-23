@@ -4,7 +4,14 @@ updates:
     directory: "/backend"
     schedule:
       interval: "weekly"
+    # Major versions usually break something; upgrade those on purpose, not from a bot.
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: "npm"
     directory: "/extension"
     schedule:
       interval: "weekly"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]

@@ -10,10 +10,10 @@ jobs:
   backend-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v3
+        uses: astral-sh/setup-uv@v10
         with:
           version: "latest"
 
@@ -26,3 +26,23 @@ jobs:
           uv sync --locked
           uv run --locked ruff check .
           uv run --locked pytest
+
+  extension-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: extension/package-lock.json
+
+      - name: Run extension checks
+        run: |
+          cd extension
+          npm ci
+          npm run compile
+          npm test
+          npm run build
