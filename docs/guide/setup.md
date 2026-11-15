@@ -34,7 +34,9 @@ uv sync
 uv run uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-The backend reads `.env` from the repository root. You don't need to change anything in it, and no AI key goes in it.
+The backend reads `.env` from the repository root, and no AI key goes in it. To find jobs, list job sources in it first, for example `JC_GREENHOUSE_BOARDS=stripe,airbnb` or `JC_LEVER_COMPANIES=netflix`. The README's [Job sources](../../README.md#job-sources) section lists every setting. The backend fetches them a few seconds after it starts and then daily.
+
+The first time it ranks jobs, the backend downloads its embedding model, so that search takes longer. Without internet access it falls back to a simpler word match.
 
 Check that the backend is running:
 
@@ -68,7 +70,7 @@ Job Copilot now appears in the toolbar. Click its icon to open the side panel.
 
 ## 4. Set up your AI provider
 
-1. Choose a provider that speaks the OpenAI chat completions format, and a model on it that supports structured (JSON schema) output. For example, OpenAI (`https://api.openai.com/v1`), OpenRouter (`https://openrouter.ai/api/v1`) or Ollama on your computer (`http://localhost:11434/v1`, no key needed). If the backend runs in Docker, use `http://host.docker.internal:11434/v1` for Ollama.
+1. Choose a provider that speaks the OpenAI chat completions format, and a model on it that supports structured (JSON schema) output. For example, OpenAI (`https://api.openai.com/v1`), OpenRouter (`https://openrouter.ai/api/v1`) or Ollama on your computer (`http://localhost:11434/v1`, no key needed). If the backend runs in Docker, use `http://host.docker.internal:11434/v1` for Ollama. The backend calls only https providers and providers on its own computer, so for a model server elsewhere on your network, add its base URL to `JC_LLM_BASE_URLS` in `.env`.
 2. Right-click the Job Copilot icon and choose **Options**.
 3. Under **AI provider**, enter the base URL, the model id and your key, if the provider needs one. Click **Store provider**, then click **Test connection**.
 

@@ -13,7 +13,7 @@ It is still under development: see [What works today](#what-works-today).
 ## What it does
 
 - Turns a PDF resume into a structured profile you can review and edit. Each bullet gets a stable id, so later checks can point to it.
-- Ranks cached jobs against your profile. The model lists which required skills you have and which you're missing, and code turns those facts into the fit score.
+- Fetches public postings from the Greenhouse boards, Lever companies and Adzuna searches you list, and ranks them against your profile. The model lists which required skills you have and which you're missing, and code turns those facts into the fit score.
 - Drafts answers to application questions, splits each draft into claims and checks every claim against your resume. Anything your resume doesn't back up is flagged.
 - Fills application forms from your profile on any page where you click the Job Copilot toolbar icon, and loads by itself on Greenhouse, Lever, Internshala and Unstop.
 - Records an application when you submit a form it filled, or any Greenhouse or Lever form, and tracks its status. Jobs you applied to elsewhere, such as on LinkedIn or Naukri, can be added by hand. Applications with no reply for 28 days are marked as no response. With Gmail connected (read-only), recruiter emails update the status.
@@ -25,14 +25,17 @@ The extension never submits an application for you. It fills in fields, and you 
 
 | Feature | Status |
 |---|---|
-| Resume parsing and profile editing | Works from the side panel with bullet-level ID tracking |
-| Adding a job from the current page | Works from the side panel on any page once you click the Job Copilot toolbar icon there. LinkedIn and Naukri are strictly blocked |
-| Job discovery and fit scoring | Works from the Jobs tab: searches cached jobs, computes real semantic embeddings via `fastembed` with LLM reranking, and highlights selected jobs |
-| Scam and prompt injection check | Works automatically on job selection and via API; flags scam risks and prompt injections without storing arbitrary listings |
-| Application question drafting | Works from the Draft tab and Open Questions review: drafts answers, attributes claims against resume, and enables one-click copying or filling |
-| Form filling and AI field mapping | **Fill this page** fills profile fields with local rules, queries backend AI mapping for leftover fields, isolates open questions, and handles resume attachment |
-| Application tracker and dashboard | Works; records come from forms Job Copilot filled, Greenhouse and Lever submissions, and **Track application** for everything else |
-| Gmail status updates | Works from the Tracker tab (`Connect Gmail` / `Sync now`) and background alarm. Persists low-confidence matches for review and deduplicates processed emails (requires Google OAuth Client ID setup) |
+| Resume parsing and profile editing | Works from the Profile tab. Each bullet keeps a stable id |
+| Adding a job from the current page | Works from the Jobs tab on any page once you click the Job Copilot toolbar icon there. LinkedIn and Naukri are never read |
+| Finding jobs | Works once you list job sources (see [Job sources](#job-sources)). The backend fetches them a few seconds after it starts and then daily, and drops postings older than 30 days. **Find jobs** on the Jobs tab ranks the 10 best fits |
+| Fit scoring | Works. A job you add from a page is scored on its own. Ranking uses the `fastembed` embedding model, which the backend downloads the first time it ranks jobs. Without it, ranking falls back to a simpler word match and the backend logs a warning |
+| Scam and prompt injection check | Runs when you select a job on the Jobs tab, for fetched jobs and jobs you added |
+| Drafting answers | Works from the Draft tab for the selected job, with **Copy**. Claims your resume doesn't back up are flagged |
+| Form filling | **Fill this page** fills what your profile answers, asks the AI about the remaining text fields, and attaches your newest resume to a resume upload field. Open questions wait until you approve a drafted answer. It fills only the page itself, or a form frame from the same site or a known job site |
+| Application tracker | Works. Applications come from forms Job Copilot filled, from Greenhouse and Lever submissions, and from **Track application** for everything else |
+| Gmail status updates | Needs your own Google OAuth client ID ([setup guide](docs/guide/setup.md#6-optional-set-up-gmail-sync)). Then **Connect Gmail** and **Sync now** on the Tracker tab, plus a sync every 3 hours. Matches the model is unsure of wait for you to confirm |
+
+An automated end-to-end test drives the fill, submit and track flow through the side panel in Chromium. It has not yet been checked by hand in a real Chrome window.
 
 ## Install
 
@@ -51,6 +54,8 @@ To set up by hand, you need Node 22, npm, Python 3.12 and [uv](https://docs.astr
 
    Or run `docker compose up -d backend` from the repository root.
 
+   To find jobs, list job sources in `.env` before you start the backend (see [Job sources](#job-sources)).
+
 2. In a second terminal, build the extension from the repository root:
 
    ```bash
@@ -63,6 +68,19 @@ To set up by hand, you need Node 22, npm, Python 3.12 and [uv](https://docs.astr
 4. Right-click the Job Copilot icon and choose **Options**. Under **AI provider**, enter your provider's base URL, a model and your key (see [Choose an AI provider](#choose-an-ai-provider)), click **Store provider**, then **Test connection**. If your backend is not at `http://127.0.0.1:8000`, change **Backend URL** on the same page and click **Save Settings**.
 5. Click the toolbar icon to open the side panel.
 
+## Job sources
+
+The backend fetches public job postings from the sources you list in `.env` in the repository root. Restart the backend after you change them.
+
+| Setting | What it lists | Example |
+| --- | --- | --- |
+| `JC_GREENHOUSE_BOARDS` | Greenhouse board names, the part after `boards.greenhouse.io/` | `stripe,airbnb` |
+| `JC_LEVER_COMPANIES` | Lever company names, the part after `jobs.lever.co/` | `netflix` |
+| `JC_ADZUNA_QUERIES` | Adzuna searches. Also needs `ADZUNA_APP_ID` and `ADZUNA_APP_KEY` from [developer.adzuna.com](https://developer.adzuna.com) | `software intern,data analyst` |
+| `JC_ADZUNA_COUNTRY` | Adzuna's two-letter country code | `in` (the default) |
+
+If one source fails, the others still load. With no sources listed, **Find jobs** says the backend has no jobs yet, and you can still add jobs from pages you open.
+
 ## Choose an AI provider
 
 Job Copilot works with any API that speaks the OpenAI chat completions format. Pick a model that supports structured output (a JSON schema response format). Some common choices:
@@ -74,6 +92,8 @@ Job Copilot works with any API that speaks the OpenAI chat completions format. P
 | Ollama, on your computer | `http://localhost:11434/v1` | None |
 
 If the backend runs in Docker, `localhost` means the container, so reach Ollama on your computer at `http://host.docker.internal:11434/v1` instead.
+
+The backend calls only https providers on the internet and providers on the computer it runs on. To use one elsewhere on your network, such as Ollama on another machine, add its base URL to `JC_LLM_BASE_URLS` in `.env`. On a backend other people can reach, always set `JC_LLM_BASE_URLS` ([self-hosting guide](docs/guide/self-hosting.md)).
 
 If no provider is set up, the side panel says so, and AI requests return a "No AI provider set up" message instead of failing silently.
 

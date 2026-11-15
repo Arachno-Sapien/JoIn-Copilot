@@ -6,13 +6,13 @@ Job Copilot keeps your personal data in your browser. Some features have to send
 
 ## What stays in your browser
 
-Your profile, your uploaded resume files and your applications (with their status history) are stored in your browser's IndexedDB. Your settings, including your AI provider settings, API key and backend URL, are stored in `chrome.storage.local`, which Chrome does not sync to your other devices.
+Your profile, your uploaded resume files, your applications (with their status history) and the jobs you saved with their fit scores are stored in your browser's IndexedDB. With Gmail sync on, it also keeps the id of each email it has read, so it reads none twice, and, for a status change you have not confirmed yet, the email's subject and date. Your settings, including your AI provider settings, API key and backend URL, are stored in `chrome.storage.local`, which Chrome does not sync to your other devices.
 
 Job Copilot never asks for passwords and has no user accounts.
 
 ## What the backend stores
 
-The backend's SQLite database holds public job postings only. It keeps no profiles, resumes, drafts, applications, emails or keys, and it never logs request bodies. AI answers are cached in memory only, so they are gone when the backend restarts.
+The backend's SQLite database holds public job postings only, fetched from the Greenhouse, Lever and Adzuna sources its owner lists. The first time it ranks jobs, it downloads a public embedding model, which then runs on the backend itself. It keeps no profiles, resumes, drafts, applications, emails or keys, and it never logs request bodies. AI answers are cached in memory only, so they are gone when the backend restarts.
 
 ## What leaves your browser
 
@@ -23,8 +23,9 @@ Each feature sends only what it needs to your backend, and the backend sends it 
 - Job matching: your profile and the jobs being ranked go to `/jobs/search`.
 - Drafting an answer: the question, the job and your profile go to `/draft`. The draft is then checked claim by claim against your resume, which also runs on your AI provider.
 - Form filling: the form's field labels and options, plus your profile, go to `/fill/map-fields`.
-- Scam check: the backend sends the job posting to your AI provider.
-- Gmail sync, which is off until you connect Gmail: the extension reads your mail through Google's read-only Gmail access. Each email's sender, subject, date and text, plus the company and role of each of your applications, go to `/email/classify`. Emails are never saved. Only the status change an email causes is stored, in your browser.
+- Scam check: the job posting goes to `/jobs/{id}/scam-check`, and the backend sends it to your AI provider. A job you added from a page is checked without being saved on the backend.
+- Form filling also writes your profile details into the form on the page, and attaches your newest resume to a resume upload field. Nothing is sent to the site until you submit the form yourself. Job Copilot fills only the page itself, or a form frame from the same site or a known job site.
+- Gmail sync, which is off until you connect Gmail: the extension reads your mail through Google's read-only Gmail access. Each email's sender, subject, date and text, plus the company and role of each of your applications, go to `/email/classify`. Email text is never saved. What is kept, in your browser only, is listed under "What stays in your browser".
 
 ## Your AI provider
 
