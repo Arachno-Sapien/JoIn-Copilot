@@ -223,6 +223,7 @@ describe('Drafting and using answers in FillReview', () => {
         openQuestions={[{ name: 'essay_why_us', label: 'Why do you want to work here?' }]}
         selectedJob={sampleJob}
         profile={sampleProfile}
+        target={{ tabId: 99, frameId: 0 }}
       />
     );
 
@@ -250,7 +251,7 @@ describe('Drafting and using answers in FillReview', () => {
         values: {
           essay_why_us: 'I love writing scalable web applications.',
         },
-      });
+      }, { frameId: 0 });
     });
 
     expect(screen.getByText('Answer filled on page!')).toBeDefined();

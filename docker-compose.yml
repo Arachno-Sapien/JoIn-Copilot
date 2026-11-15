@@ -4,8 +4,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      # Loopback only: the backend calls whatever provider URL a request names, so keep it
-      # off the network unless JC_LLM_BASE_URLS is set (docs/guide/self-hosting.md).
+      # Loopback only: without JC_LLM_BASE_URLS the backend calls any internet provider a
+      # request names, so keep it off the network until that is set (docs/guide/self-hosting.md).
       - "127.0.0.1:8000:8000"
     # Optional settings (for example ADZUNA_APP_KEY) come from your .env; copy .env.example to start.
     # No model key goes here: the extension sends each user's own provider and key per request.

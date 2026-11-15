@@ -9,9 +9,11 @@ only calls the providers you list.
 
 import asyncio
 import contextvars
+import ipaddress
 import logging
 import re
 from typing import Any, NamedTuple
+from urllib.parse import urlsplit
 
 import httpx
 
@@ -58,7 +60,10 @@ class ProviderNotAllowedError(ProviderError):
 
     def __init__(self) -> None:
         super().__init__("This backend does not allow that AI provider URL")
-        self.detail = "Ask the backend's owner which providers JC_LLM_BASE_URLS allows."
+        self.detail = (
+            "Without JC_LLM_BASE_URLS the backend calls only https providers on the internet and "
+            "providers on this computer. To use another one, add its base URL to JC_LLM_BASE_URLS."
+        )
 
 
 class KeyRejectedError(ProviderError):
@@ -95,15 +100,71 @@ class RequestFailedError(ProviderError):
         self.detail = f"Request id {request_id}." if request_id else None
 
 
+# Names that mean the machine running the backend, for a local model server such as Ollama.
+LOCAL_HOSTS = {"localhost", "host.docker.internal"}
+
+
+def _url_key(url: str) -> tuple[str, str, int | None, str]:
+    parts = urlsplit(url.strip())
+    return parts.scheme.lower(), (parts.hostname or "").lower(), parts.port, parts.path.rstrip("/")
+
+
+def _is_local(host: str) -> bool:
+    if host in LOCAL_HOSTS:
+        return True
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False
+
+
+def _allowlist() -> set[tuple[str, str, int | None, str]]:
+    return {_url_key(u) for u in settings.JC_LLM_BASE_URLS.split(",") if u.strip()}
+
+
 def connection() -> Connection:
-    """The current request's provider. Raises unless a base URL and model were sent."""
+    """The current request's provider. Raises unless a base URL and model were sent.
+
+    With JC_LLM_BASE_URLS set, only the URLs it lists are called. Without it, only https
+    providers and providers on this computer are, and respond() also refuses host names
+    that resolve to private addresses.
+    """
     conn = request_connection.get()
     if not conn.base_url or not conn.model:
         raise NotConfiguredError()
-    allowed = [u.strip().rstrip("/") for u in settings.JC_LLM_BASE_URLS.split(",") if u.strip()]
-    if allowed and conn.base_url.rstrip("/") not in allowed:
+    try:
+        target = _url_key(conn.base_url)
+    except ValueError as err:  # for example a port that is not a number
+        raise ProviderNotAllowedError() from err
+    scheme, host = target[0], target[1]
+    allowed = _allowlist()
+    if allowed:
+        if target not in allowed:
+            raise ProviderNotAllowedError()
+    elif not host or scheme not in ("http", "https") or (scheme == "http" and not _is_local(host)):
         raise ProviderNotAllowedError()
     return conn
+
+
+async def _resolve(host: str) -> list[str]:
+    infos = await asyncio.get_running_loop().getaddrinfo(host, None)
+    return [info[4][0] for info in infos]
+
+
+async def _refuse_private_addresses(host: str) -> None:
+    """Keeps a backend without an allowlist from calling into its own network."""
+    if _is_local(host) or _allowlist():
+        return
+    try:
+        addresses = await _resolve(host)
+    except OSError:
+        return  # A name that does not resolve cannot be reached either.
+    # ponytail: httpx resolves the name again, so DNS rebinding can slip past this check;
+    # a backend other people can reach must set JC_LLM_BASE_URLS (docs/guide/self-hosting.md).
+    for address in addresses:
+        ip = ipaddress.ip_address(address.split("%")[0])
+        if not (ip.is_global or ip.is_loopback):
+            raise ProviderNotAllowedError()
 
 
 async def _sleep(seconds: float) -> None:
@@ -122,6 +183,7 @@ def _error_message(response: httpx.Response) -> str:
 async def respond(*, instructions: str, user_input: str, schema_name: str, json_schema: dict[str, Any]) -> str:
     """Ask the model for JSON matching json_schema and return its text."""
     conn = connection()
+    await _refuse_private_addresses(_url_key(conn.base_url)[1])
     body: dict[str, Any] = {
         "model": conn.model,
         "messages": [

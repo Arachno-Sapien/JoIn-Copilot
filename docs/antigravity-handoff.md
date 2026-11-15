@@ -497,7 +497,7 @@ For the owner to add to the plan. Sequential, one leaf at a time.
 
 ## 13. Not part of this handoff
 
-- **Provider allowlist default.** `JC_LLM_BASE_URLS` allows any provider when it is empty. Whether to refuse by default is the owner's decision. Do not change it.
+- **Provider allowlist default.** When `JC_LLM_BASE_URLS` is empty, the backend allows only https providers on the internet and providers on the same machine (`backend/app/llm/provider.py`). Do not loosen this.
 - **New job sites.** Internshala and Unstop use the generic adapter. A site-specific adapter follows the `site-adapter` skill and needs a saved page snapshot first.
 - **Workday**, **backend user accounts**, **stored credentials** and **scraping** are non-goals in `docs/design.md`.
 

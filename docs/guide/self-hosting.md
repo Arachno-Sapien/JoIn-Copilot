@@ -13,7 +13,7 @@ docker compose up -d
 
 No AI key goes in `.env`. Each user enters their own AI provider and key on the extension's options page.
 
-On a backend other people can reach, set `JC_LLM_BASE_URLS` in `.env` to the providers you allow, for example `JC_LLM_BASE_URLS=https://api.openai.com/v1,https://openrouter.ai/api/v1`. Otherwise anyone who can reach the backend can make it send requests to any URL, including addresses inside your network.
+On a backend other people can reach, set `JC_LLM_BASE_URLS` in `.env` to the providers you allow, for example `JC_LLM_BASE_URLS=https://api.openai.com/v1,https://openrouter.ai/api/v1`. Without it the backend calls any https provider on the internet and any provider on the server itself (`localhost`, `host.docker.internal`). It refuses private and cloud metadata addresses, but a host name can still be pointed at one between its check and the call, and services on the server itself stay reachable. A provider on your own network, such as an Ollama on another machine, works only once you list it here.
 
 The backend listens on port 8000 on the server's loopback address only. Check it on the server with `curl http://127.0.0.1:8000/health`, which should answer `{"status":"ok"}`, then reach it from other machines through the HTTPS proxy below.
 

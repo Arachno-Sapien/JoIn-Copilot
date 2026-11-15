@@ -44,14 +44,19 @@ export default defineContentScript({
         });
       });
 
+      // Names this frame, so the side panel can send profile data to this frame alone.
+      // Not a secret: the page cannot read a content script's variables.
+      const frameToken = Math.random().toString(36).slice(2);
+
       chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         if (message?.type === 'LIST_FIELDS') {
           // A frame without fields stays silent so the frame holding the form answers.
           const { fields } = scan();
-          if (fields.length > 0) sendResponse({ fields, url: window.location.href });
+          if (fields.length > 0) sendResponse({ fields, url: window.location.href, frame: frameToken });
           return;
         }
         if (message?.type !== 'FILL_REQUEST') return;
+        if (message.frame && message.frame !== frameToken) return; // meant for another frame
 
         const { root, fields } = scan();
         if (!root || fields.length === 0) return;

@@ -4,6 +4,7 @@ import { Job } from '../../lib/schemas/job';
 import { Profile } from '../../lib/schemas/profile';
 import { draftAnswer } from '../../lib/api/draft';
 import { apiClient } from '../../lib/api/client';
+import { fillAnswer, FormTarget } from '../../lib/fill/page';
 import * as ui from '../ui';
 
 export interface FillReviewProps {
@@ -13,6 +14,7 @@ export interface FillReviewProps {
   aiNotice?: string;
   selectedJob?: Job | null;
   profile?: Profile | null;
+  target?: FormTarget;
 }
 
 interface OpenQuestionState {
@@ -30,6 +32,7 @@ export const FillReview: React.FC<FillReviewProps> = ({
   aiNotice,
   selectedJob,
   profile,
+  target,
 }) => {
   const [questionStates, setQuestionStates] = useState<Record<string, OpenQuestionState>>({});
 
@@ -94,21 +97,8 @@ export const FillReview: React.FC<FillReviewProps> = ({
   };
 
   const handleUseAnswer = async (field: FormField, answer: string) => {
-    // Only say "filled" when the page reports it filled this field.
-    let ok = false;
-    try {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      const reply = tab?.id
-        ? await chrome.tabs.sendMessage(tab.id, {
-            type: 'FILL_REQUEST',
-            jobId: 'page',
-            values: { [field.name]: answer },
-          })
-        : undefined;
-      ok = !!reply?.filled?.some((f: FilledField) => f.name === field.name);
-    } catch {
-      // The tab was closed or reloaded.
-    }
+    // Only to the frame the form was filled in, and only "filled" when the page says so.
+    const ok = target ? await fillAnswer(target, field.name, answer) : false;
     setQuestionStates((prev) => ({
       ...prev,
       [field.name]: {

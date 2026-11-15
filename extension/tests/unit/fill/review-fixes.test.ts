@@ -100,6 +100,64 @@ describe('fill engine', () => {
   });
 });
 
+describe('fillActivePage with frames', () => {
+  const profile: any = { name: 'Asha Rao', email: 'asha@example.test', phone: '', location: '', links: {}, experience: [], education: [] };
+  const emailField = [{ name: 'email', type: 'email' }];
+
+  // Each frame answers only when it has fields, and a fill only when it is the target.
+  function openTabWithFrames(frames: Array<{ frameId: number; url: string; fields: any[]; frame: string }>) {
+    const sendMessage = vi.fn(async (_tab: number, message: any, options?: { frameId?: number }) => {
+      const candidates = frames.filter((f) => options?.frameId === undefined || f.frameId === options.frameId);
+      const frame = candidates.find(
+        (f) => f.fields.length && (message.type === 'LIST_FIELDS' || !message.frame || message.frame === f.frame)
+      );
+      if (!frame) return undefined;
+      if (message.type === 'LIST_FIELDS') return { fields: frame.fields, url: frame.url, frame: frame.frame };
+      return {
+        filled: Object.entries(message.values).map(([name, value]) => ({ name, value })),
+        skipped: [],
+        verify: { verified: [], mismatches: [] },
+      };
+    });
+    (globalThis as any).chrome = {
+      tabs: { query: vi.fn(async () => [{ id: 7, url: frames[0].url }]), sendMessage },
+      scripting: { executeScript: vi.fn(async () => {}) },
+    };
+    return sendMessage;
+  }
+
+  const fills = (send: ReturnType<typeof vi.fn>) => send.mock.calls.filter(([, m]) => m.type === 'FILL_REQUEST');
+
+  it('sends the fill only to the top frame when the form is there', async () => {
+    const send = openTabWithFrames([
+      { frameId: 0, url: 'https://careers.example.test/apply', fields: emailField, frame: 'top' },
+      { frameId: 4, url: 'https://ads.example.net/x', fields: emailField, frame: 'ad' },
+    ]);
+    await fillActivePage(profile);
+    expect(fills(send)).toHaveLength(1);
+    expect(fills(send)[0][2]).toEqual({ frameId: 0 });
+  });
+
+  it('fills a Greenhouse form embedded in a company page, and only that frame', async () => {
+    const send = openTabWithFrames([
+      { frameId: 0, url: 'https://careers.example.test/apply', fields: [], frame: 'top' },
+      { frameId: 4, url: 'https://boards.greenhouse.io/embed/job_app?for=acme', fields: emailField, frame: 'gh' },
+    ]);
+    const result = await fillActivePage(profile);
+    expect(result.filled).toHaveLength(1);
+    expect(fills(send)[0][1].frame).toBe('gh');
+  });
+
+  it('never sends profile data to a frame from another site', async () => {
+    const send = openTabWithFrames([
+      { frameId: 0, url: 'https://careers.example.test/apply', fields: [], frame: 'top' },
+      { frameId: 4, url: 'https://ads.example.net/newsletter', fields: emailField, frame: 'ad' },
+    ]);
+    await expect(fillActivePage(profile)).rejects.toThrow(/another site/);
+    expect(fills(send)).toHaveLength(0);
+  });
+});
+
 describe('fillActivePage', () => {
   const profile: any = {
     name: 'Asha Rao',

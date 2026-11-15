@@ -57,6 +57,7 @@ export const FillPage: React.FC<FillPageProps> = ({ profile, selectedJob }) => {
           skipped={result.skipped}
           openQuestions={result.openQuestions}
           aiNotice={result.aiNotice}
+          target={result.target}
           selectedJob={selectedJob}
           profile={profile}
         />

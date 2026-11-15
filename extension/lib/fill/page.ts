@@ -1,7 +1,7 @@
 import { mapAllFields } from '../field-mapper';
 import { FilledField, FormField } from '../messaging';
 import { Profile } from '../schemas/profile';
-import { BLOCKED_SITES, NO_ACCESS_MESSAGE, hostOf } from '../sites';
+import { BLOCKED_SITES, FORM_FRAME_HOSTS, NO_ACCESS_MESSAGE, OTHER_SITE_FRAME_MESSAGE, hostOf } from '../sites';
 import { mapFields } from '../api/fill';
 import { apiClient } from '../api/client';
 import { db } from '../db';
@@ -15,6 +15,20 @@ export interface PageFillResult {
   skipped: FormField[];
   openQuestions?: FormField[];
   aiNotice?: string;
+  target?: FormTarget;
+}
+
+/** Where the form is: a tab, and in it either a frame id or a frame's own token. */
+export interface FormTarget {
+  tabId: number;
+  frameId?: number;
+  frame?: string;
+}
+
+interface Listed {
+  fields: FormField[];
+  url?: string;
+  frame?: string;
 }
 
 interface FillReply {
@@ -37,12 +51,20 @@ export async function fillActivePage(profile: Profile): Promise<PageFillResult> 
     );
   }
 
-  // ponytail: with several frames holding forms, the first frame to answer wins.
-  const ask = <T>(message: unknown): Promise<T | undefined> =>
-    chrome.tabs.sendMessage(tabId, message).catch(() => undefined);
+  // The top frame first. Another frame only if it is this site or a job site, so profile
+  // data never goes to, say, an ad or newsletter frame from a third party.
+  // ponytail: of several frames with forms, the first to answer is the one checked.
+  const findForm = async () => {
+    const top = await sendTo<Listed>({ tabId, frameId: 0 }, { type: 'LIST_FIELDS' });
+    if (top?.fields?.length) return { listed: top, target: { tabId, frameId: 0 } as FormTarget };
+    const framed = await sendTo<Listed>({ tabId }, { type: 'LIST_FIELDS' });
+    if (!framed?.fields?.length) return undefined;
+    if (!framed.frame || !isTrustedFrame(framed.url, tab.url)) throw new Error(OTHER_SITE_FRAME_MESSAGE);
+    return { listed: framed, target: { tabId, frame: framed.frame } as FormTarget };
+  };
 
-  let listed = await ask<{ fields: FormField[] }>({ type: 'LIST_FIELDS' });
-  if (!listed) {
+  let form = await findForm();
+  if (!form) {
     // The content script loads by itself only on the sites in the manifest. Elsewhere,
     // add it to this tab, which Chrome allows once the user clicked the toolbar icon here.
     const inject = (allFrames: boolean) =>
@@ -52,9 +74,10 @@ export async function fillActivePage(profile: Profile): Promise<PageFillResult> 
       .catch(() => {
         throw new Error(NO_ACCESS_MESSAGE);
       });
-    listed = await ask<{ fields: FormField[] }>({ type: 'LIST_FIELDS' });
+    form = await findForm();
   }
-  if (!listed?.fields?.length) throw new Error('No form fields found on this page.');
+  if (!form) throw new Error('No form fields found on this page.');
+  const { listed, target } = form;
 
   // 1. Run local rules first
   const values: Record<string, string> = {};
@@ -148,7 +171,7 @@ export async function fillActivePage(profile: Profile): Promise<PageFillResult> 
     }
   }
 
-  const reply = await ask<FillReply>({ type: 'FILL_REQUEST', jobId: 'page', values, files });
+  const reply = await sendTo<FillReply>(target, { type: 'FILL_REQUEST', jobId: 'page', values, files });
   if (!reply) throw new Error('The page did not answer. Reload it and try again.');
 
   // A field the page emptied again was not really filled.
@@ -167,6 +190,32 @@ export async function fillActivePage(profile: Profile): Promise<PageFillResult> 
     skipped: mergedSkipped,
     openQuestions,
     aiNotice,
+    target,
   };
+}
+
+/** Fills one approved answer into the frame that holds the form. True if the page took it. */
+export async function fillAnswer(target: FormTarget, name: string, value: string): Promise<boolean> {
+  const reply = await sendTo<FillReply>(target, { type: 'FILL_REQUEST', jobId: 'page', values: { [name]: value } });
+  return !!reply?.filled?.some((f) => f.name === name);
+}
+
+function isTrustedFrame(frameUrl: string | undefined, tabUrl: string | undefined): boolean {
+  try {
+    const frame = new URL(frameUrl ?? '');
+    return frame.origin === new URL(tabUrl ?? '').origin || FORM_FRAME_HOSTS.test(frame.hostname);
+  } catch {
+    return false;
+  }
+}
+
+/** frameId picks a frame by Chrome's id; frame is the token a frame's content script answers to. */
+function sendTo<T>(target: FormTarget, message: Record<string, unknown>): Promise<T | undefined> {
+  const body = target.frame ? { ...message, frame: target.frame } : message;
+  const sent =
+    target.frameId === undefined
+      ? chrome.tabs.sendMessage(target.tabId, body)
+      : chrome.tabs.sendMessage(target.tabId, body, { frameId: target.frameId });
+  return Promise.resolve(sent).catch(() => undefined);
 }
 

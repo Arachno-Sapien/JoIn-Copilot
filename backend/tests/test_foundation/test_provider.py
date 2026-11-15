@@ -231,3 +231,54 @@ async def test_llm_check_says_when_the_model_ignores_structured_output():
         response = await client.post("/llm/check", headers=HEADERS)
     assert response.status_code == 502
     assert "structured output" in response.json()["error"]
+
+
+async def _call_with(base_url):
+    token = provider.request_connection.set(Connection(base_url, MODEL, KEY))
+    try:
+        return await call()
+    finally:
+        provider.request_connection.reset(token)
+
+
+@respx.mock
+@pytest.mark.parametrize(
+    "base_url",
+    [
+        "http://169.254.169.254/v1",  # cloud metadata
+        "https://10.0.0.5/v1",  # inside the network
+        "http://llm.example.test/v1",  # the key would cross the internet unencrypted
+        "file:///etc/passwd",
+    ],
+)
+async def test_without_an_allowlist_only_internet_https_and_this_computer_are_called(base_url):
+    route = respx.route().mock(return_value=httpx.Response(200, json=reply("x")))
+    with pytest.raises(ProviderNotAllowedError):
+        await _call_with(base_url)
+    assert route.call_count == 0
+
+
+@respx.mock
+async def test_a_host_name_that_resolves_inside_the_network_is_refused(conn, monkeypatch):
+    route = respx.post(URL).mock(return_value=httpx.Response(200, json=reply("x")))
+
+    async def resolve(host):
+        return ["192.168.1.20"]
+
+    monkeypatch.setattr(provider, "_resolve", resolve)
+    with pytest.raises(ProviderNotAllowedError):
+        await call()
+    assert route.call_count == 0
+
+
+@respx.mock
+async def test_ollama_on_this_computer_works_without_an_allowlist():
+    respx.post("http://localhost:11434/v1/chat/completions").mock(return_value=httpx.Response(200, json=reply("x")))
+    assert await _call_with("http://localhost:11434/v1") == "x"
+
+
+@respx.mock
+async def test_the_allowlist_compares_urls_not_spelling(monkeypatch):
+    respx.post("http://10.0.0.5:8080/v1/chat/completions").mock(return_value=httpx.Response(200, json=reply("x")))
+    monkeypatch.setattr(settings, "JC_LLM_BASE_URLS", "HTTP://10.0.0.5:8080/v1/")
+    assert await _call_with("http://10.0.0.5:8080/v1") == "x"
