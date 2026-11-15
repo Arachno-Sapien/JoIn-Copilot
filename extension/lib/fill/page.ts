@@ -56,7 +56,8 @@ export async function fillActivePage(profile: Profile): Promise<PageFillResult> 
   // ponytail: of several frames with forms, the first to answer is the one checked.
   const findForm = async () => {
     const top = await sendTo<Listed>({ tabId, frameId: 0 }, { type: 'LIST_FIELDS' });
-    if (top?.fields?.length) return { listed: top, target: { tabId, frameId: 0 } as FormTarget };
+    // The token too: if the tab moves on to another page, that page's script ignores the fill.
+    if (top?.fields?.length) return { listed: top, target: { tabId, frameId: 0, frame: top.frame } as FormTarget };
     const framed = await sendTo<Listed>({ tabId }, { type: 'LIST_FIELDS' });
     if (!framed?.fields?.length) return undefined;
     if (!framed.frame || !isTrustedFrame(framed.url, tab.url)) throw new Error(OTHER_SITE_FRAME_MESSAGE);

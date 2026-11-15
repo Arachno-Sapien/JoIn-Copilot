@@ -136,6 +136,7 @@ describe('fillActivePage with frames', () => {
     await fillActivePage(profile);
     expect(fills(send)).toHaveLength(1);
     expect(fills(send)[0][2]).toEqual({ frameId: 0 });
+    expect(fills(send)[0][1].frame).toBe('top'); // a page the tab navigates to later ignores it
   });
 
   it('fills a Greenhouse form embedded in a company page, and only that frame', async () => {
