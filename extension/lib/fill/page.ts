@@ -88,11 +88,12 @@ export async function fillActivePage(profile: Profile): Promise<PageFillResult> 
         })),
       });
 
-      const fieldByName = new Map(listed.fields.map((f) => [f.name, f]));
+      // Only the fields we sent: the model cannot aim a value at a field we did not ask about.
+      const fieldByName = new Map(leftoverFields.map((f) => [f.name, f]));
 
       for (const mapping of response.mappings) {
         const field = fieldByName.get(mapping.field_id);
-        if (!field) continue;
+        if (!field || values[field.name]) continue;
 
         if (mapping.is_flagged) {
           aiSkippedFields.push({
@@ -118,7 +119,7 @@ export async function fillActivePage(profile: Profile): Promise<PageFillResult> 
   const resumeFields = listed.fields.filter((f) => {
     if (f.type !== 'file') return false;
     const text = `${f.name} ${f.label || ''} ${f.placeholder || ''}`.toLowerCase();
-    return text.includes('resume') || text.includes('cv');
+    return /\b(resume|cv|curriculum vitae)\b/.test(text);
   });
 
   if (resumeFields.length > 0) {

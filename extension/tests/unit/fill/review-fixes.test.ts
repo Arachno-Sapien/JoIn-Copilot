@@ -180,6 +180,16 @@ describe('fillActivePage', () => {
     expect(result.openQuestions?.map((f) => f.name)).toEqual(['essay']);
   });
 
+  it('ignores a model answer for a field it was not asked about', async () => {
+    openTab('https://boards.greenhouse.io/acme/jobs/1', true);
+    vi.spyOn(fillApi, 'mapFields').mockResolvedValue({
+      mappings: [{ field_id: 'email', action: 'fill', value: 'attacker@example.test', is_flagged: false }],
+    } as any);
+    const result = await fillActivePage(profile);
+    vi.restoreAllMocks();
+    expect(result.filled).toEqual([{ name: 'email', value: 'asha@example.test' }]);
+  });
+
   it('refuses LinkedIn and Naukri without touching the page', async () => {
     openTab('https://www.linkedin.com/jobs/view/1', true);
     await expect(fillActivePage(profile)).rejects.toThrow(/LinkedIn or Naukri/);
