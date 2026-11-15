@@ -71,7 +71,7 @@ export const AddJob: React.FC<AddJobProps> = ({ onJobAdded }) => {
   return (
     <div className="add-job-card" style={ui.card}>
       <h3 style={ui.h3}>
-        Add Job From Page
+        Add job from page
       </h3>
       <p style={ui.bodyText}>
         Open a job posting, click the Job Copilot icon in Chrome's toolbar, then click below to save it.
@@ -93,7 +93,7 @@ export const AddJob: React.FC<AddJobProps> = ({ onJobAdded }) => {
       )}
 
       {error && (
-        <div style={{ ...ui.errorText, marginTop: ui.space.md }}>
+        <div role="alert" style={{ ...ui.errorText, marginTop: ui.space.md }}>
           {error}
         </div>
       )}

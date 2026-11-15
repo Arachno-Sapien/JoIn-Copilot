@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { setupSubmissionDetector } from '../../../lib/fill/submission';
 import { discoverFields, fillFieldWithEngine } from '../../../lib/fill/engine';
 import { fillActivePage } from '../../../lib/fill/page';
+import * as fillApi from '../../../lib/api/fill';
 
 beforeEach(() => {
   document.body.innerHTML = '';
@@ -84,6 +85,15 @@ describe('fill engine', () => {
     expect((document.querySelector('input') as HTMLInputElement).value).toBe('yes');
   });
 
+  it('never fills a field the user cannot see', async () => {
+    document.body.innerHTML = '<input name="email" style="opacity:0">';
+    const input = document.querySelector('input') as HTMLInputElement;
+    input.checkVisibility = () => false; // jsdom has no layout
+    const [field] = discoverFields(document);
+    expect(await fillFieldWithEngine(field, 'asha@example.test')).toBe(false);
+    expect(input.value).toBe('');
+  });
+
   it('lists fields whose id has characters that break a CSS selector', () => {
     document.body.innerHTML = '<label for=\'a"b\'>Name</label><input id=\'a"b\'>';
     expect(discoverFields(document)[0].label).toBe('Name');
@@ -155,6 +165,19 @@ describe('fillActivePage', () => {
     const result = await fillActivePage(profile);
     expect(result.filled).toEqual([]);
     expect(result.skipped.map((f) => f.name)).toEqual(['essay', 'email']);
+  });
+
+  it('never fills an open question on its own, even if the model sent a value for it', async () => {
+    openTab('https://boards.greenhouse.io/acme/jobs/1', true);
+    vi.spyOn(fillApi, 'mapFields').mockResolvedValue({
+      mappings: [
+        { field_id: 'essay', action: 'fill', value: 'Written by the model', is_open_question: true, is_flagged: false },
+      ],
+    } as any);
+    const result = await fillActivePage(profile);
+    vi.restoreAllMocks();
+    expect(result.filled.map((f) => f.name)).toEqual(['email']);
+    expect(result.openQuestions?.map((f) => f.name)).toEqual(['essay']);
   });
 
   it('refuses LinkedIn and Naukri without touching the page', async () => {

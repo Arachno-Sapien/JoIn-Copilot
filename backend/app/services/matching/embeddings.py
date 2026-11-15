@@ -1,8 +1,14 @@
+import functools
 import hashlib
+import logging
 import math
 import os
 import re
 from collections.abc import Sequence
+
+from app.config import settings
+
+logger = logging.getLogger(__name__)
 
 EMBED_DIM = 384
 
@@ -38,42 +44,52 @@ def _fake_embed(text: str, dim: int = EMBED_DIM) -> list[float]:
     return vec
 
 
+@functools.lru_cache(maxsize=1)
+def load_fastembed_model(model_name: str):
+    from fastembed import TextEmbedding
+
+    return TextEmbedding(model_name=model_name)
+
+
+_warned_models: set[str] = set()
+
+
+def get_embedding_model(model_name: str):
+    try:
+        return load_fastembed_model(model_name)
+    except Exception as exc:  # noqa: BLE001
+        if model_name not in _warned_models:
+            logger.warning(
+                "Embedding model '%s' failed to load (%s); fake embedding is in use.",
+                model_name,
+                type(exc).__name__,
+            )
+            _warned_models.add(model_name)
+        return None
+
+
 class EmbeddingService:
     def __init__(self) -> None:
-        self.mode = os.environ.get("JC_EMBED_MODE", "fake").lower()
+        self.mode = (os.environ.get("JC_EMBED_MODE") or settings.JC_EMBED_MODE).lower()
+        self.model_name = settings.JC_EMBED_MODEL
         self._model = None
         if self.mode != "fake":
-            try:
-                from fastembed import TextEmbedding
-
-                self._model = TextEmbedding(model_name="BAAI/bge-small-en-v1.5")
-            except Exception:  # noqa: BLE001
-                try:
-                    from sentence_transformers import SentenceTransformer
-
-                    self._model = SentenceTransformer("BAAI/bge-small-en-v1.5")
-                except Exception:  # noqa: BLE001
-                    self._model = None
+            self._model = get_embedding_model(self.model_name)
 
     def embed_text(self, text: str) -> list[float]:
-        if self.mode == "fake" or self._model is None:
-            return _fake_embed(text)
-
-        # Real model embedding
-        try:
-            if hasattr(self._model, "embed"):  # fastembed
-                embeddings = list(self._model.embed([text]))
-                return [float(x) for x in embeddings[0]]
-            elif hasattr(self._model, "encode"):  # sentence-transformers
-                emb = self._model.encode(text)
-                return [float(x) for x in emb]
-        except Exception:  # noqa: BLE001
-            return _fake_embed(text)
-
-        return _fake_embed(text)
+        return self.embed_batch([text])[0]
 
     def embed_batch(self, texts: Sequence[str]) -> list[list[float]]:
-        return [self.embed_text(t) for t in texts]
+        if not texts:
+            return []
+        if self.mode == "fake" or self._model is None:
+            return [_fake_embed(t) for t in texts]
+
+        try:
+            embeddings = list(self._model.embed(texts))
+            return [[float(x) for x in emb] for emb in embeddings]
+        except Exception:  # noqa: BLE001
+            return [_fake_embed(t) for t in texts]
 
 
 def cosine_similarity(v1: Sequence[float], v2: Sequence[float]) -> float:
@@ -83,3 +99,4 @@ def cosine_similarity(v1: Sequence[float], v2: Sequence[float]) -> float:
     if norm1 == 0 or norm2 == 0:
         return 0.0
     return float(dot / (norm1 * norm2))
+

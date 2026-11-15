@@ -129,7 +129,7 @@ export const TrackerTable: React.FC<TrackerTableProps> = ({ applications, onStat
                     textTransform: 'capitalize',
                   }}
                 >
-                  {app.status.replace('_', ' ')}
+                  {app.status.replaceAll('_', ' ')}
                 </span>
               </div>
             </div>

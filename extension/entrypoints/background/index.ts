@@ -24,11 +24,6 @@ export default defineBackground(() => {
           .then((app) => sendResponse({ success: true, application: app }))
           .catch((err) => sendResponse({ success: false, error: err.message }));
         return true;
-      } else if (message?.type === 'SYNC_GMAIL_MANUAL') {
-        syncGmail()
-          .then((result) => sendResponse({ success: true, result }))
-          .catch((err) => sendResponse({ success: false, error: err.message }));
-        return true;
       }
     });
   }

@@ -56,6 +56,7 @@ export default defineContentScript({
         const { root, fields } = scan();
         if (!root || fields.length === 0) return;
         const values: Record<string, string> = message.values || {};
+        const files: Record<string, { name: string; type: string; base64: string }> = message.files || {};
         const filled: Array<{ name: string; value: any }> = [];
         const skipped: FormField[] = [];
         const toVerify: Array<{ field: FormField; intendedValue: string }> = [];
@@ -64,6 +65,28 @@ export default defineContentScript({
           for (const field of fields) {
             const key = field.name || field.id || '';
             const val = values[key];
+            const fileData = files[key];
+
+            if (fileData) {
+              try {
+                const byteChars = atob(fileData.base64);
+                const byteNums = new Uint8Array(byteChars.length);
+                for (let i = 0; i < byteChars.length; i++) {
+                  byteNums[i] = byteChars.charCodeAt(i);
+                }
+                const file = new File([byteNums], fileData.name, { type: fileData.type });
+                if (await adapter.fillField(field, file)) {
+                  filled.push({ name: key, value: fileData.name });
+                } else {
+                  skipped.push(field);
+                }
+              } catch {
+                skipped.push(field);
+              }
+              await new Promise((r) => setTimeout(r, 10));
+              continue;
+            }
+
             if (val === undefined || val === null) {
               skipped.push(field);
               continue;

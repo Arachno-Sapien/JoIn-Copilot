@@ -43,6 +43,13 @@ def calculate_profile_experience_years(profile: Profile) -> float:
     return round(total_months / 12.0, 2)
 
 
+def _matches_avoid_keyword(kw: str, text: str) -> bool:
+    has_special = any(not (c.isalnum() or c.isspace()) for c in kw)
+    if has_special:
+        return kw in text
+    return bool(re.search(rf"\b{re.escape(kw)}\b", text))
+
+
 def hard_filter_jobs(jobs: list[Job], profile: Profile) -> list[Job]:
     prefs = profile.preferences
     avoid_keywords = [kw.strip().lower() for kw in (prefs.avoid_keywords or []) if kw.strip()]
@@ -57,7 +64,7 @@ def hard_filter_jobs(jobs: list[Job], profile: Profile) -> list[Job]:
         # 1. Avoid keywords rule
         if avoid_keywords:
             text_to_check = f"{job.title} {job.company} {job.description}".lower()
-            if any(re.search(rf"\b{re.escape(kw)}\b", text_to_check) or kw in text_to_check for kw in avoid_keywords):
+            if any(_matches_avoid_keyword(kw, text_to_check) for kw in avoid_keywords):
                 continue
 
         # 2. Remote preference rule

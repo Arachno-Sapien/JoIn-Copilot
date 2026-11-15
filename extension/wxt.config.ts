@@ -3,7 +3,8 @@ import { defineConfig } from 'wxt';
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   modules: [],
-  manifest: {
+  // A function, so WXT has loaded extension/.env into import.meta.env before this runs.
+  manifest: () => ({
     name: 'Job Copilot',
     description: 'AI Job Search Copilot Extension',
     version: '0.1.0',
@@ -26,7 +27,10 @@ export default defineConfig({
       'https://www.googleapis.com/*',
     ],
     oauth2: {
-      client_id: 'dummy-client-id.apps.googleusercontent.com',
+      client_id:
+        (import.meta as any).env?.WXT_GOOGLE_CLIENT_ID ||
+        process.env.WXT_GOOGLE_CLIENT_ID ||
+        'dummy-client-id.apps.googleusercontent.com',
       scopes: ['https://www.googleapis.com/auth/gmail.readonly'],
     },
     action: {
@@ -35,5 +39,5 @@ export default defineConfig({
     side_panel: {
       default_path: 'sidepanel.html',
     },
-  },
+  }),
 });

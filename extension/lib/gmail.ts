@@ -1,7 +1,7 @@
 import { db } from './db';
 import { updateApplicationStatus } from './tracker';
 import { classifyEmail } from './api/email';
-import { getGmailAuthToken } from './gmail-auth';
+import { getGmailAuthToken, removeGmailCachedAuthToken } from './gmail-auth';
 import {
   CandidateApplication,
   EmailClassifyResponse,
@@ -93,6 +93,7 @@ export async function handleEmailClassificationResult(params: {
     confidence,
     subject: params.email.subject,
     date: params.email.date,
+    messageId: (params.email as any).id || '',
   };
 
   return pending;
@@ -118,8 +119,17 @@ export async function syncGmailWithMessages(options: {
   const pendingConfirmations: PendingConfirmation[] = [];
 
   for (const message of options.messages) {
+    const msgId = (message as any).id;
+    if (msgId) {
+      const alreadyProcessed = await db.processedEmails.get(msgId);
+      if (alreadyProcessed) {
+        continue;
+      }
+    }
+
     try {
-      const result = await classifier(message, candidates);
+      const { id, ...emailForBackend } = message as any;
+      const result = await classifier(emailForBackend, candidates);
       const pending = await handleEmailClassificationResult({
         classification: result,
         email: message,
@@ -127,9 +137,14 @@ export async function syncGmailWithMessages(options: {
       });
 
       if (pending) {
+        await db.pendingConfirmations.put(pending);
         pendingConfirmations.push(pending);
       } else if (result.matched_application_id) {
         updatedCount++;
+      }
+
+      if (msgId) {
+        await db.processedEmails.put({ id: msgId, processedAt: new Date().toISOString() });
       }
     } catch {
       failed++; // Continue processing other messages
@@ -158,25 +173,57 @@ export async function getLastSyncTime(): Promise<Date | null> {
 }
 
 export async function syncGmail(): Promise<{ updatedCount: number; pendingConfirmations: PendingConfirmation[] }> {
-  const token = await getGmailAuthToken(false);
+  let token = await getGmailAuthToken(false);
   const applications = await db.applications.toArray();
   const trackedCompanies = Array.from(new Set(applications.map((a) => a.job_snapshot.company)));
   const lastSyncTime = await getLastSyncTime();
+
+  // Clean up processedEmails older than 90 days
+  try {
+    const cutoff = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+    await db.processedEmails.where('processedAt').below(cutoff).delete();
+  } catch {
+    // Fail soft if dexie cleanup fails
+  }
 
   const query = buildGmailQuery({
     trackedCompanies,
     lastSyncTime,
   });
 
-  const messageIds = await searchGmailMessageIds(token, query);
-  const messages: EmailInput[] = [];
+  let messageIds: string[];
+  try {
+    messageIds = await searchGmailMessageIds(token, query);
+  } catch (err: any) {
+    if (err?.message?.includes('401')) {
+      await removeGmailCachedAuthToken(token);
+      token = await getGmailAuthToken(false);
+      // retry once. If this throws (e.g. 401 again), it propagates.
+      messageIds = await searchGmailMessageIds(token, query);
+    } else {
+      throw err;
+    }
+  }
 
+  const messages: (EmailInput & { id: string })[] = [];
   for (const id of messageIds.slice(0, 20)) {
+    const already = await db.processedEmails.get(id);
+    if (already) continue;
+
     try {
       const msg = await fetchGmailMessage(token, id);
       messages.push(msg);
-    } catch {
-      // Skip failed message fetch
+    } catch (err: any) {
+      if (err?.message?.includes('401')) {
+        await removeGmailCachedAuthToken(token);
+        token = await getGmailAuthToken(false);
+        try {
+          const msg = await fetchGmailMessage(token, id);
+          messages.push(msg);
+        } catch {
+          // Skip if retry failed
+        }
+      }
     }
   }
 
@@ -188,6 +235,9 @@ async function searchGmailMessageIds(token: string, query: string): Promise<stri
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` },
   });
+  if (res.status === 401) {
+    throw new Error('Gmail search failed: 401');
+  }
   if (!res.ok) {
     throw new Error(`Gmail search failed: ${res.status}`);
   }
@@ -209,27 +259,62 @@ function decodeBase64Url(str: string): string {
   }
 }
 
+function htmlToText(html: string): string {
+  if (typeof DOMParser !== 'undefined') {
+    try {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      return doc.body.textContent || '';
+    } catch {
+      // fallback
+    }
+  }
+  return html
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 /** Body text of a Gmail message payload: plain text if any part has it, otherwise HTML. Parts can nest. */
 export function extractBody(payload: any, mimeType = 'text/plain'): string {
-  const find = (part: any): string => {
+  const find = (part: any, target: string): string => {
     if (!part) return '';
-    if (part.body?.data && (part.mimeType === mimeType || !part.parts?.length && !part.mimeType)) {
+    if (part.body?.data && (part.mimeType === target || (!part.parts?.length && !part.mimeType))) {
       return decodeBase64Url(part.body.data);
     }
     for (const child of part.parts || []) {
-      const text = find(child);
+      const text = find(child, target);
       if (text) return text;
     }
     return '';
   };
-  return find(payload) || (mimeType === 'text/plain' ? extractBody(payload, 'text/html') : '');
+
+  if (mimeType === 'text/html') {
+    return find(payload, 'text/html');
+  }
+
+  const plain = find(payload, 'text/plain');
+  if (plain) {
+    return plain.slice(0, 8000);
+  }
+
+  const html = find(payload, 'text/html');
+  if (html) {
+    return htmlToText(html).slice(0, 8000);
+  }
+
+  return '';
 }
 
-async function fetchGmailMessage(token: string, id: string): Promise<EmailInput> {
+export async function fetchGmailMessage(token: string, id: string): Promise<EmailInput & { id: string }> {
   const url = `https://gmail.googleapis.com/gmail/v1/users/me/messages/${id}?format=full`;
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` },
   });
+  if (res.status === 401) {
+    throw new Error(`Failed to fetch message ${id}: 401`);
+  }
   if (!res.ok) {
     throw new Error(`Failed to fetch message ${id}: ${res.status}`);
   }
@@ -247,6 +332,7 @@ async function fetchGmailMessage(token: string, id: string): Promise<EmailInput>
   const body = extractBody(data.payload);
 
   return {
+    id,
     sender,
     subject,
     date,

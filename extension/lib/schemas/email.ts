@@ -48,4 +48,5 @@ export interface PendingConfirmation {
   confidence: number;
   subject: string;
   date: string;
+  messageId: string;
 }

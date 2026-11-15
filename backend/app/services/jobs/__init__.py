@@ -3,6 +3,7 @@ from app.services.jobs.cache import JobCache
 from app.services.jobs.dedup import deduplicate_jobs, normalize_company_name
 from app.services.jobs.greenhouse import GreenhouseFetcher, map_greenhouse_response
 from app.services.jobs.lever import LeverFetcher, map_lever_response
+from app.services.jobs.refresh import refresh_jobs
 from app.services.jobs.scheduler import JobSchedulerService, get_job_scheduler
 
 __all__ = [
@@ -18,4 +19,5 @@ __all__ = [
     "map_greenhouse_response",
     "map_lever_response",
     "normalize_company_name",
+    "refresh_jobs",
 ]

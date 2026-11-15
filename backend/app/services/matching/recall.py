@@ -40,10 +40,11 @@ def embedding_recall(
     profile_text = build_profile_text(profile)
     profile_vec = embedder.embed_text(profile_text)
 
+    job_texts = [build_job_text(job) for job in jobs]
+    job_vecs = embedder.embed_batch(job_texts)
+
     matches: list[CandidateMatch] = []
-    for job in jobs:
-        job_text = build_job_text(job)
-        job_vec = embedder.embed_text(job_text)
+    for job, job_vec in zip(jobs, job_vecs):
         sim = cosine_similarity(profile_vec, job_vec)
         matches.append(CandidateMatch(job=job, similarity=sim))
 

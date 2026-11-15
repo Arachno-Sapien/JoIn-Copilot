@@ -1,3 +1,5 @@
+import asyncio
+
 from app.llm.client import acomplete
 from app.schemas.job import Job
 from app.schemas.profile import Profile
@@ -8,7 +10,8 @@ async def rerank_candidates(
     profile: Profile,
     candidates: list[Job] | list[CandidateMatch],
 ) -> list[RerankResult]:
-    results: list[RerankResult] = []
+    if not candidates:
+        return []
 
     profile_skills_str = ", ".join(f"{s.name} ({s.level})" for s in profile.skills)
     profile_exp_str = "\n".join(
@@ -18,7 +21,9 @@ async def rerank_candidates(
     )
     profile_summary_str = f"{profile.name} located in {profile.location}."
 
-    for item in candidates:
+    semaphore = asyncio.Semaphore(4)
+
+    async def _rerank_one(item: Job | CandidateMatch) -> RerankResult:
         job = item.job if isinstance(item, CandidateMatch) else item
         inputs = {
             "job_title": job.title,
@@ -32,14 +37,15 @@ async def rerank_candidates(
             "profile_experience": profile_exp_str,
         }
 
-        raw = await acomplete(
-            tier="small",
-            template="rerank.v1.md",
-            inputs=inputs,
-            schema=RerankFacts,
-        )
+        async with semaphore:
+            raw = await acomplete(
+                tier="small",
+                template="rerank.v1.md",
+                inputs=inputs,
+                schema=RerankFacts,
+            )
 
         facts = raw if isinstance(raw, RerankFacts) else RerankFacts.model_validate(raw)
-        results.append(RerankResult(job=job, facts=facts))
+        return RerankResult(job=job, facts=facts)
 
-    return results
+    return list(await asyncio.gather(*(_rerank_one(c) for c in candidates)))

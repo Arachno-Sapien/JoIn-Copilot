@@ -25,6 +25,12 @@ class Settings(BaseSettings):
     JC_DB_PATH: str = "data/jobs.sqlite"
     JC_SCHEDULER: str = "on"  # "on" or "off"
 
+    # Job sources
+    JC_GREENHOUSE_BOARDS: str = ""
+    JC_LEVER_COMPANIES: str = ""
+    JC_ADZUNA_QUERIES: str = ""
+    JC_ADZUNA_COUNTRY: str = "in"
+
     # CORS
     JC_CORS_ORIGIN_REGEX: str = r"^chrome-extension://[a-p]{32}$"
 

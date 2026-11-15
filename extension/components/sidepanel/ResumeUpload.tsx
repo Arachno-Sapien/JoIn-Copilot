@@ -67,7 +67,7 @@ export const ResumeUpload: React.FC<ResumeUploadProps> = ({ onProfileLoaded }) =
       </label>
 
       {loading && <div style={ui.statusText}>Parsing resume with AI...</div>}
-      {error && <div style={ui.errorText}>{error}</div>}
+      {error && <div role="alert" style={ui.errorText}>{error}</div>}
 
       {profile && (
         <div style={{ marginTop: ui.space.lg, borderTop: `1px solid ${ui.color.border}`, paddingTop: ui.space.md }}>

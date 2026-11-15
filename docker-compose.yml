@@ -14,3 +14,6 @@ services:
         required: false
     environment:
       JC_LLM_MODE: ${JC_LLM_MODE:-live}
+      FASTEMBED_CACHE_PATH: /app/data/models
+    volumes:
+      - ./backend/data:/app/data

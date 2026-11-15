@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import APIRouter
 
 from app.schemas.search import RankedJob, SearchRequest, SearchResponse
@@ -29,7 +31,8 @@ async def search_jobs(request: SearchRequest) -> SearchResponse:
 
     # 3. Stage 2: Embedding recall (capped at limit or 50)
     recall_limit = min(request.limit, 50) if request.limit else 50
-    recalled = embedding_recall(request.profile, filtered, limit=recall_limit)
+    # In a thread: embedding hundreds of jobs takes seconds and would freeze other requests.
+    recalled = await asyncio.to_thread(embedding_recall, request.profile, filtered, limit=recall_limit)
 
     # 4. Stage 3: LLM reranking (structured facts)
     reranked = await rerank_candidates(request.profile, recalled)

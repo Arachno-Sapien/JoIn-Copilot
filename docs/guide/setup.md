@@ -77,3 +77,15 @@ If you see "Connected. <your model> answered with structured output.", you're do
 ## 5. Point the extension at your backend
 
 The extension expects the backend at `http://127.0.0.1:8000`. If yours runs somewhere else, change **Backend URL** on the options page and click **Save Settings**.
+
+## 6. (Optional) Set up Gmail sync
+
+To enable automated application status updates from confirmation and interview emails, set up a Google OAuth client ID:
+
+1. Create a project in [Google Cloud Console](https://console.cloud.google.com/) and enable the **Gmail API**.
+2. Configure the OAuth consent screen with the single scope `https://www.googleapis.com/auth/gmail.readonly`.
+3. Create an OAuth client of type **Chrome Extension** using the extension's ID from `chrome://extensions`.
+4. Set `WXT_GOOGLE_CLIENT_ID` to that client ID (in your shell, or in a file named `.env` inside `extension/`; the `.env` in the project root is for the backend only) and rebuild the extension (`npm run build`).
+
+> [!NOTE]
+> The extension ID changes with the directory it is loaded from unless the manifest has a fixed `key`. Do not commit or add a private key or client secret.

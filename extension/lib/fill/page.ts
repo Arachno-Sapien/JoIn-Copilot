@@ -2,6 +2,9 @@ import { mapAllFields } from '../field-mapper';
 import { FilledField, FormField } from '../messaging';
 import { Profile } from '../schemas/profile';
 import { BLOCKED_SITES, NO_ACCESS_MESSAGE, hostOf } from '../sites';
+import { mapFields } from '../api/fill';
+import { apiClient } from '../api/client';
+import { db } from '../db';
 import type { VerificationResult } from './verify';
 
 // Where WXT builds entrypoints/content/index.ts.
@@ -10,9 +13,13 @@ const CONTENT_SCRIPT = 'content-scripts/content.js';
 export interface PageFillResult {
   filled: FilledField[];
   skipped: FormField[];
+  openQuestions?: FormField[];
+  aiNotice?: string;
 }
 
-interface FillReply extends PageFillResult {
+interface FillReply {
+  filled: FilledField[];
+  skipped: FormField[];
   verify: VerificationResult;
 }
 
@@ -49,20 +56,116 @@ export async function fillActivePage(profile: Profile): Promise<PageFillResult> 
   }
   if (!listed?.fields?.length) throw new Error('No form fields found on this page.');
 
-  // Messages carry text only, so the resume file is left for the user to attach.
+  // 1. Run local rules first
   const values: Record<string, string> = {};
   for (const [name, value] of Object.entries(mapAllFields(listed.fields, profile))) {
     if (typeof value === 'string' && value) values[name] = value;
   }
 
-  const reply = await ask<FillReply>({ type: 'FILL_REQUEST', jobId: 'page', values });
+  // 2. Leftover fields for AI mapping
+  const excludedTypes = new Set(['file', 'password', 'checkbox', 'radio', 'hidden']);
+  const leftoverFields = listed.fields.filter((field) => {
+    if (values[field.name]) return false;
+    const type = (field.type || 'text').toLowerCase();
+    if (excludedTypes.has(type)) return false;
+    if (field.manual) return false;
+    return true;
+  });
+
+  let aiNotice: string | undefined;
+  const openQuestions: FormField[] = [];
+  const aiSkippedFields: FormField[] = [];
+
+  if (leftoverFields.length > 0) {
+    try {
+      const response = await mapFields(apiClient, {
+        profile,
+        fields: leftoverFields.map((field) => ({
+          id: field.name,
+          label: field.label || field.placeholder || field.name,
+          type: field.type || 'text',
+          options: field.options,
+        })),
+      });
+
+      const fieldByName = new Map(listed.fields.map((f) => [f.name, f]));
+
+      for (const mapping of response.mappings) {
+        const field = fieldByName.get(mapping.field_id);
+        if (!field) continue;
+
+        if (mapping.is_flagged) {
+          aiSkippedFields.push({
+            ...field,
+            reason: mapping.flag_reason || 'Flagged by safety check',
+          });
+        } else if (mapping.action === 'open_question' || mapping.is_open_question) {
+          // Checked before 'fill': model-written prose is filled only after the user approves it.
+          openQuestions.push(field);
+        } else if (mapping.action === 'fill' && mapping.value && typeof mapping.value === 'string') {
+          values[mapping.field_id] = mapping.value;
+        } else if (mapping.action === 'skip') {
+          aiSkippedFields.push(field);
+        }
+      }
+    } catch (err: any) {
+      aiNotice = `AI field mapping failed: ${err?.message || 'backend unavailable'}`;
+    }
+  }
+
+  // 3. Attach resume if any file input mentions resume or CV
+  const files: Record<string, { name: string; type: string; base64: string }> = {};
+  const resumeFields = listed.fields.filter((f) => {
+    if (f.type !== 'file') return false;
+    const text = `${f.name} ${f.label || ''} ${f.placeholder || ''}`.toLowerCase();
+    return text.includes('resume') || text.includes('cv');
+  });
+
+  if (resumeFields.length > 0) {
+    try {
+      const resumes = await db.resumes.toArray();
+      if (resumes.length > 0) {
+        resumes.sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime());
+        const newest = resumes[0];
+        const buffer = await newest.data.arrayBuffer();
+        let binary = '';
+        const bytes = new Uint8Array(buffer);
+        for (let i = 0; i < bytes.byteLength; i++) {
+          binary += String.fromCharCode(bytes[i]);
+        }
+        const base64 = btoa(binary);
+        for (const rf of resumeFields) {
+          files[rf.name] = {
+            name: newest.filename,
+            type: newest.data.type || 'application/pdf',
+            base64,
+          };
+        }
+      }
+    } catch {
+      // Fail soft
+    }
+  }
+
+  const reply = await ask<FillReply>({ type: 'FILL_REQUEST', jobId: 'page', values, files });
   if (!reply) throw new Error('The page did not answer. Reload it and try again.');
 
   // A field the page emptied again was not really filled.
   const rejected = reply.verify.mismatches.filter((m) => m.status === 'rejected').map((m) => m.field);
   const rejectedNames = new Set(rejected.map((f) => f.name));
+  const openQuestionNames = new Set(openQuestions.map((f) => f.name));
+  const aiSkippedByName = new Map(aiSkippedFields.map((f) => [f.name, f]));
+
+  const mergedSkipped = [
+    ...reply.skipped.filter((f) => !openQuestionNames.has(f.name)).map((f) => aiSkippedByName.get(f.name) || f),
+    ...rejected,
+  ];
+
   return {
     filled: reply.filled.filter((f) => !rejectedNames.has(f.name)),
-    skipped: [...reply.skipped, ...rejected],
+    skipped: mergedSkipped,
+    openQuestions,
+    aiNotice,
   };
 }
+

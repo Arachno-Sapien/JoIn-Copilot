@@ -1,13 +1,21 @@
 import React from 'react';
 import { ScoredJob } from '../../lib/schemas/search';
+import { ListedJob } from '../../lib/db';
 import * as ui from '../ui';
 
 export interface JobListProps {
-  jobs: ScoredJob[];
-  onSelectJob?: (job: ScoredJob) => void;
+  jobs: (ScoredJob | ListedJob)[];
+  selectedJobId?: string | null;
+  onSelectJob?: (job: ListedJob | ScoredJob) => void;
+  onRemoveJob?: (job: ListedJob | ScoredJob) => void;
 }
 
-export const JobList: React.FC<JobListProps> = ({ jobs, onSelectJob }) => {
+export const JobList: React.FC<JobListProps> = ({
+  jobs,
+  selectedJobId,
+  onSelectJob,
+  onRemoveJob,
+}) => {
   return (
     <div className="job-list-container" style={{ display: 'flex', flexDirection: 'column', gap: ui.space.md }}>
       {jobs.length === 0 ? (
@@ -20,12 +28,31 @@ export const JobList: React.FC<JobListProps> = ({ jobs, onSelectJob }) => {
           const scamRisk = rawJob.scam_risk;
           const scamReasons: string[] = rawJob.scam_reasons || [];
           const injectionWarning: string | undefined = rawJob.injection_warning;
+          const isSelected = selectedJobId === item.job.id;
+
+          const rawScore = (item as any).score ?? item.fit_score;
 
           return (
             <div
               key={item.job.id}
+              role="button"
+              data-testid="job-card"
+              tabIndex={0}
+              aria-current={isSelected ? 'true' : undefined}
               onClick={() => onSelectJob?.(item)}
-              style={{ ...ui.card, padding: ui.space.md, cursor: onSelectJob ? 'pointer' : 'default' }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onSelectJob?.(item);
+                }
+              }}
+              style={{
+                ...ui.card,
+                padding: ui.space.md,
+                cursor: 'pointer',
+                border: `1px solid ${isSelected ? ui.color.primary : ui.color.border}`,
+                boxShadow: isSelected ? `0 0 0 1px ${ui.color.primary}` : undefined,
+              }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: ui.space.sm }}>
                 <div style={{ minWidth: 0, overflowWrap: 'anywhere' }}>
@@ -56,21 +83,49 @@ export const JobList: React.FC<JobListProps> = ({ jobs, onSelectJob }) => {
                   )}
 
                   {/* Fit Score Badge */}
-                  {(() => {
-                    const score = (item as any).score ?? item.fit_score ?? 0;
-                    return (
-                      <div
-                        style={{
-                          ...ui.badge,
-                          backgroundColor: score >= 80 ? ui.color.badgeSuccess : score >= 60 ? ui.color.badgeWarning : ui.color.badgeDanger,
-                          color: score >= 80 ? ui.color.success : score >= 60 ? ui.color.warning : ui.color.danger,
-                          fontSize: ui.font.sm,
-                        }}
-                      >
-                        Fit {score}%
-                      </div>
-                    );
-                  })()}
+                  {rawScore === null || rawScore === undefined ? (
+                    <div
+                      style={{
+                        ...ui.badge,
+                        backgroundColor: ui.color.badgeNeutral,
+                        color: ui.color.textMuted,
+                        fontSize: ui.font.sm,
+                      }}
+                    >
+                      Not scored
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        ...ui.badge,
+                        backgroundColor:
+                          rawScore >= 80 ? ui.color.badgeSuccess : rawScore >= 60 ? ui.color.badgeWarning : ui.color.badgeDanger,
+                        color:
+                          rawScore >= 80 ? ui.color.success : rawScore >= 60 ? ui.color.warning : ui.color.danger,
+                        fontSize: ui.font.sm,
+                      }}
+                    >
+                      Fit {rawScore}%
+                    </div>
+                  )}
+
+                  {onRemoveJob && (
+                    <button
+                      type="button"
+                      aria-label={`Remove ${item.job.title}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRemoveJob(item);
+                      }}
+                      style={{
+                        ...ui.secondaryButton,
+                        padding: '2px 8px',
+                        fontSize: ui.font.xs,
+                      }}
+                    >
+                      Remove
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -125,3 +180,4 @@ export const JobList: React.FC<JobListProps> = ({ jobs, onSelectJob }) => {
     </div>
   );
 };
+

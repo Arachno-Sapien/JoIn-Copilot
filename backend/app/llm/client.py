@@ -103,7 +103,10 @@ def _prepare[T: BaseModel](
         # Checked before the cache, so a cached answer never hides a missing provider.
         provider.connection()
 
-    key = make_cache_key(template, inputs, tier, model)
+    # Keyed by provider as well as model: an answer from one provider must never be
+    # served to a request that named another.
+    base_url = (provider.request_connection.get().base_url or "").rstrip("/")
+    key = make_cache_key(template, inputs, tier, f"{base_url}|{model}")
     cached = cache_get(key)
     if cached is not None:
         return key, _validate(schema, cached)

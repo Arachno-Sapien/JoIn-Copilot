@@ -58,4 +58,41 @@ describe('Scam schemas and API client', () => {
     );
     expect(result.job_id).toBe('job/with:special/chars');
   });
+
+  it('calls apiClient.post with the job in the body when passed a Job object', async () => {
+    const job = {
+      id: 'job-manual-456',
+      source: 'manual' as const,
+      source_id: 's456',
+      url: 'https://example.com/job',
+      title: 'Dev',
+      company: 'Startup',
+      location: 'Remote',
+      remote: 'remote' as const,
+      job_type: 'full-time' as const,
+      required_skills: [],
+      nice_to_have_skills: [],
+      description: 'Job desc',
+      fetched_at: '2026-10-18T10:00:00Z',
+    };
+
+    const mockResponse = {
+      job_id: 'job-manual-456',
+      risk_level: 'low' as const,
+      reasons: [],
+      rule_signals: [],
+      llm_flags: [],
+      injection_warning: null,
+    };
+
+    const postSpy = vi.spyOn(apiClient, 'post').mockResolvedValue(mockResponse);
+
+    const result = await checkJobScam(job);
+    expect(postSpy).toHaveBeenCalledWith(
+      '/jobs/job-manual-456/scam-check',
+      { job },
+      ScamCheckResponseSchema
+    );
+    expect(result.job_id).toBe('job-manual-456');
+  });
 });

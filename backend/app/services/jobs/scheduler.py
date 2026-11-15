@@ -1,17 +1,24 @@
+import asyncio
 import logging
 import os
+from datetime import datetime, timedelta
 from typing import Any
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.config import settings
+from app.services.jobs.refresh import refresh_jobs
 
 logger = logging.getLogger(__name__)
 
 
 def refresh_jobs_daily() -> None:
     logger.info("Executing scheduled daily job refresh...")
-    # Background sync task will fetch configured boards and update cache
+    try:
+        count = asyncio.run(refresh_jobs())
+        logger.info("Daily job refresh completed: %d jobs cached.", count)
+    except Exception as exc:  # noqa: BLE001
+        logger.error("Daily job refresh failed: %s", type(exc).__name__)
 
 
 class JobSchedulerService:
@@ -38,6 +45,7 @@ class JobSchedulerService:
                 id="daily_job_refresh",
                 name="Daily Job Refresh",
                 replace_existing=True,
+                next_run_time=datetime.now() + timedelta(seconds=5),
             )
             self.scheduler.start()
             logger.info("APScheduler started with daily_job_refresh.")

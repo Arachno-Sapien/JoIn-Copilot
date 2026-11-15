@@ -64,3 +64,52 @@ async def test_check_job_safety_combines_rules_and_classifier(fake_llm):
     result = await check_job_safety(job)
     assert result.job_id == "j-safe"
     assert result.risk_level == "low"
+
+
+@pytest.mark.asyncio
+async def test_scam_check_endpoint_with_job_body(fake_llm):
+    from httpx import ASGITransport, AsyncClient
+
+    from app.main import app
+
+    fake_llm.register_handler(
+        "scam_check.v1.md",
+        lambda inputs: {
+            "risk_level": "low",
+            "flags": [],
+            "reasoning": "Normal legitimate job.",
+        },
+    )
+
+    manual_job = Job(
+        id="j-manual-1",
+        source="manual",
+        source_id="s-manual",
+        title="Frontend Dev",
+        company="ManualCorp",
+        location="Remote",
+        remote="remote",
+        job_type="full-time",
+        required_skills=["React"],
+        nice_to_have_skills=[],
+        experience_years_min=1,
+        description="Write React components.",
+        url="https://manualcorp.com/j1",
+        fetched_at="2026-10-18T10:00:00Z",
+    )
+
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        # 1. Job passed in body is checked without cache row
+        resp = await client.post(
+            f"/jobs/{manual_job.id}/scam-check",
+            json={"job": manual_job.model_dump()},
+        )
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["job_id"] == "j-manual-1"
+        assert data["risk_level"] == "low"
+
+        # 2. Unknown id with empty body is 404
+        resp_404 = await client.post("/jobs/non-existent-job-id/scam-check", json={})
+        assert resp_404.status_code == 404
+

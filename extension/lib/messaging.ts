@@ -10,6 +10,7 @@ export const FormFieldSchema = z.object({
   required: z.boolean().default(false).optional(),
   options: z.array(z.string()).optional(),
   manual: z.boolean().optional(),
+  reason: z.string().optional(),
 });
 
 export const FilledFieldSchema = z.object({
@@ -27,6 +28,15 @@ export const FillRequestMessageSchema = z.object({
   type: z.literal('FILL_REQUEST'),
   jobId: z.string(),
   values: z.record(z.string()).optional(),
+  files: z
+    .record(
+      z.object({
+        name: z.string(),
+        type: z.string(),
+        base64: z.string(),
+      })
+    )
+    .optional(),
 });
 
 export const FillResultMessageSchema = z.object({

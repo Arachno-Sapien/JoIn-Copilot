@@ -182,6 +182,14 @@ export function highlightField(element: HTMLElement): void {
   element.style.outlineOffset = '1px';
 }
 
+function isVisibleToUser(el: HTMLElement): boolean {
+  if (typeof el.checkVisibility !== 'function') return true; // no layout engine (tests)
+  if (!el.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })) return false;
+  const box = el.getBoundingClientRect();
+  // Not a 1px speck, and not parked off the left or top edge of the page.
+  return box.width > 1 && box.height > 1 && box.right + window.scrollX > 0 && box.bottom + window.scrollY > 0;
+}
+
 /**
  * Fills a FormField with a given string or File.
  */
@@ -192,6 +200,12 @@ export async function fillFieldWithEngine(field: FormField, value: string | File
 
   const el = findElementForField(root, field);
   if (!el) {
+    return false;
+  }
+
+  // A page could hide fields named "email" or "phone" to collect profile data. File
+  // inputs are exempt: sites often hide the real one behind a styled button.
+  if (!(el instanceof HTMLInputElement && el.type === 'file') && !isVisibleToUser(el)) {
     return false;
   }
 

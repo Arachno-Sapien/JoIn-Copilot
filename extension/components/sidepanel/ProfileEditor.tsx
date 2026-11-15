@@ -12,6 +12,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ initialProfile, on
   const [profile, setProfile] = useState<Profile>(initialProfile);
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleFieldChange = (field: keyof Profile, value: any) => {
     setProfile((prev) => ({
@@ -19,6 +20,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ initialProfile, on
       [field]: value,
     }));
     setSavedSuccess(false);
+    setError(null);
   };
 
   const handleSkillLevelChange = (skillIndex: number, newLevel: SkillLevel) => {
@@ -34,17 +36,21 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ initialProfile, on
       };
     });
     setSavedSuccess(false);
+    setError(null);
   };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
+    setError(null);
     try {
       await db.profile.put({ ...profile, id: 'main' });
       setSavedSuccess(true);
       if (onSaved) {
         onSaved(profile);
       }
+    } catch (err: any) {
+      setError(err?.message || 'Failed to save profile');
     } finally {
       setSaving(false);
     }
@@ -131,6 +137,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ initialProfile, on
           </button>
           {savedSuccess && <span style={ui.successText}>Saved!</span>}
         </div>
+        {error && <div role="alert" style={{ ...ui.errorText, marginTop: ui.space.sm }}>{error}</div>}
       </div>
     </form>
   );

@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { fillActivePage, PageFillResult } from '../../lib/fill/page';
 import { Profile } from '../../lib/schemas/profile';
+import { Job } from '../../lib/schemas/job';
 import { FillReview } from './FillReview';
 import * as ui from '../ui';
 
 export interface FillPageProps {
   profile: Profile | null;
+  selectedJob?: Job | null;
 }
 
-export const FillPage: React.FC<FillPageProps> = ({ profile }) => {
+export const FillPage: React.FC<FillPageProps> = ({ profile, selectedJob }) => {
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<PageFillResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +51,16 @@ export const FillPage: React.FC<FillPageProps> = ({ profile }) => {
           </div>
         )}
       </div>
-      {result && <FillReview filled={result.filled} skipped={result.skipped} />}
+      {result && (
+        <FillReview
+          filled={result.filled}
+          skipped={result.skipped}
+          openQuestions={result.openQuestions}
+          aiNotice={result.aiNotice}
+          selectedJob={selectedJob}
+          profile={profile}
+        />
+      )}
     </div>
   );
 };

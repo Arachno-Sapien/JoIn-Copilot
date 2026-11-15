@@ -50,6 +50,9 @@ export async function deleteAllUserData(): Promise<void> {
   await db.profile.clear();
   await db.applications.clear();
   await db.resumes.clear();
+  await db.jobs.clear();
+  await db.pendingConfirmations.clear();
+  await db.processedEmails.clear();
 
   if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
     await chrome.storage.local.clear();

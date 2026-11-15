@@ -1,6 +1,7 @@
 import json
 import os
 import sqlite3
+from datetime import UTC, datetime, timedelta
 
 from app.config import settings
 from app.schemas.job import Job
@@ -145,3 +146,13 @@ class JobCache:
             )
             rows = cursor.fetchall()
             return [self._row_to_job(r) for r in rows]
+
+    def delete_older_than(self, days: int) -> int:
+        self.init_db()
+        cutoff = (datetime.now(UTC) - timedelta(days=days)).isoformat()
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM jobs WHERE fetched_at < ?", (cutoff,))
+            deleted = cursor.rowcount
+            conn.commit()
+            return deleted

@@ -25,12 +25,14 @@ The extension never submits an application for you. It fills in fields, and you 
 
 | Feature | Status |
 |---|---|
-| Resume parsing and profile editing | Works from the side panel |
-| Adding a job from the current page | Works from the side panel on any page once you click the Job Copilot toolbar icon there. LinkedIn and Naukri are never read |
-| Form filling | **Fill this page** fills the fields your profile answers (name, email, phone, links, education) and lists the rest. The resume file, checkboxes and AI-mapped fields are left to you for now |
+| Resume parsing and profile editing | Works from the side panel with bullet-level ID tracking |
+| Adding a job from the current page | Works from the side panel on any page once you click the Job Copilot toolbar icon there. LinkedIn and Naukri are strictly blocked |
+| Job discovery and fit scoring | Works from the Jobs tab: searches cached jobs, computes real semantic embeddings via `fastembed` with LLM reranking, and highlights selected jobs |
+| Scam and prompt injection check | Works automatically on job selection and via API; flags scam risks and prompt injections without storing arbitrary listings |
+| Application question drafting | Works from the Draft tab and Open Questions review: drafts answers, attributes claims against resume, and enables one-click copying or filling |
+| Form filling and AI field mapping | **Fill this page** fills profile fields with local rules, queries backend AI mapping for leftover fields, isolates open questions, and handles resume attachment |
 | Application tracker and dashboard | Works; records come from forms Job Copilot filled, Greenhouse and Lever submissions, and **Track application** for everything else |
-| Gmail status updates | Needs a real Google OAuth client ID in `extension/wxt.config.ts` |
-| Job matching, drafting, AI field mapping, scam check | Backend endpoints work; the side panel does not call them yet |
+| Gmail status updates | Works from the Tracker tab (`Connect Gmail` / `Sync now`) and background alarm. Persists low-confidence matches for review and deduplicates processed emails (requires Google OAuth Client ID setup) |
 
 ## Install
 

@@ -61,6 +61,76 @@ def test_embedding_service_deterministic():
     assert len(batch) == 2
 
 
+def test_embedding_service_model_fallback_on_error(monkeypatch, caplog):
+    import logging
+
+    from app.services.matching import embeddings
+
+    monkeypatch.setenv("JC_EMBED_MODE", "model")
+    embeddings._warned_models.clear()
+
+    def _failing_loader(model_name: str):
+        raise RuntimeError("Model download blocked or unavailable")
+
+    monkeypatch.setattr(embeddings, "load_fastembed_model", _failing_loader)
+
+    with caplog.at_level(logging.WARNING):
+        service = EmbeddingService()
+        vec = service.embed_text("Python backend engineer")
+
+    assert len(vec) == embeddings.EMBED_DIM
+    # Exactly one warning logged naming the model and stating fake embedding in use
+    warnings = [r.message for r in caplog.records if r.levelno == logging.WARNING]
+    assert len(warnings) == 1
+    assert "fake embedding is in use" in warnings[0]
+
+
+def test_embedding_recall_calls_embed_batch_once(monkeypatch):
+    from unittest.mock import MagicMock
+
+    from app.schemas.job import Job
+
+    prof = sample_profile()
+    job1 = Job(
+        id="j1",
+        source="manual",
+        source_id="s1",
+        title="Job 1",
+        company="Co 1",
+        location="Remote",
+        remote="remote",
+        job_type="full-time",
+        required_skills=[],
+        nice_to_have_skills=[],
+        description="Desc 1",
+        url="https://example.com/1",
+        fetched_at="2026-10-18T10:00:00Z",
+    )
+    job2 = Job(
+        id="j2",
+        source="manual",
+        source_id="s2",
+        title="Job 2",
+        company="Co 2",
+        location="Remote",
+        remote="remote",
+        job_type="full-time",
+        required_skills=[],
+        nice_to_have_skills=[],
+        description="Desc 2",
+        url="https://example.com/2",
+        fetched_at="2026-10-18T10:00:00Z",
+    )
+
+    mock_service = MagicMock(spec=EmbeddingService)
+    mock_service.embed_text.return_value = [1.0] + [0.0] * 383
+    mock_service.embed_batch.return_value = [[1.0] + [0.0] * 383, [0.5] + [0.0] * 383]
+
+    matches = embedding_recall(prof, [job1, job2], service=mock_service)
+    assert len(matches) == 2
+    mock_service.embed_batch.assert_called_once()
+
+
 def test_experience_calculation_variations():
     prof = sample_profile()
     years = calculate_profile_experience_years(prof)
@@ -70,6 +140,68 @@ def test_experience_calculation_variations():
 def test_hard_filter_empty_list():
     prof = sample_profile()
     assert hard_filter_jobs([], prof) == []
+
+
+def test_avoid_keywords_word_boundaries():
+    from app.schemas.job import Job
+
+    prof = sample_profile()
+    prof.preferences.avoid_keywords = ["intern", "c++"]
+
+    job_intl = Job(
+        id="j1",
+        source="manual",
+        source_id="s1",
+        title="International Specialist",
+        company="Global Corp",
+        location="New York",
+        remote="onsite",
+        job_type="full-time",
+        required_skills=[],
+        nice_to_have_skills=[],
+        experience_years_min=0,
+        description="Working on international expansion",
+        url="https://example.com/j1",
+        fetched_at="2026-10-18T10:00:00Z",
+    )
+    job_intern = Job(
+        id="j2",
+        source="manual",
+        source_id="s2",
+        title="Software Intern",
+        company="Tech Corp",
+        location="New York",
+        remote="onsite",
+        job_type="internship",
+        required_skills=[],
+        nice_to_have_skills=[],
+        experience_years_min=0,
+        description="Intern role",
+        url="https://example.com/j2",
+        fetched_at="2026-10-18T10:00:00Z",
+    )
+    job_cpp = Job(
+        id="j3",
+        source="manual",
+        source_id="s3",
+        title="Developer",
+        company="Systems Inc",
+        location="New York",
+        remote="onsite",
+        job_type="full-time",
+        required_skills=[],
+        nice_to_have_skills=[],
+        experience_years_min=0,
+        description="Must know c++ and algorithms",
+        url="https://example.com/j3",
+        fetched_at="2026-10-18T10:00:00Z",
+    )
+
+    filtered = hard_filter_jobs([job_intl, job_intern, job_cpp], prof)
+    # job_intl should remain because "intern" should not match "international"
+    # job_intern should be removed by word-boundary "intern"
+    # job_cpp should be removed by substring "c++"
+    assert [j.id for j in filtered] == ["j1"]
 
 
 def test_embedding_recall_empty_list():
