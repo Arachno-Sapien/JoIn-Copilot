@@ -20,6 +20,7 @@ const SCOPE_DIR = ".unlazy/job-copilot";
 export const ALLOWED_PERMISSIONS = ["sidePanel", "storage", "alarms", "identity", "activeTab", "scripting"];
 export const ALLOWED_HOSTS = [
   "https://boards.greenhouse.io/*", "https://job-boards.greenhouse.io/*", "https://jobs.lever.co/*",
+  "https://internshala.com/*", "https://unstop.com/*",
   "https://gmail.googleapis.com/*", "https://www.googleapis.com/*",
 ];
 const BROAD_HOSTS = ["<all_urls>", "*://*/*", "http://*/*", "https://*/*"];

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getBackendUrl, setBackendUrl } from '../../lib/settings';
+import * as ui from '../ui';
 
 export const GeneralSettings: React.FC = () => {
   const [url, setUrl] = useState('');
@@ -17,17 +18,17 @@ export const GeneralSettings: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '20px', backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-      <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 600, color: '#111827' }}>
+    <div style={{ ...ui.card, padding: ui.space.xl }}>
+      <h3 style={ui.h3}>
         Backend Connection
       </h3>
-      <p style={{ fontSize: '13px', color: '#6b7280', margin: '0 0 16px 0' }}>
+      <p style={ui.bodyText}>
         Configure the local or remote Job Copilot backend server.
       </p>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '500px' }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: ui.space.md, maxWidth: '500px' }}>
         <div>
-          <label htmlFor="backend-url" style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#374151', marginBottom: '6px' }}>
+          <label htmlFor="backend-url" style={ui.label}>
             Backend URL
           </label>
           <input
@@ -37,34 +38,18 @@ export const GeneralSettings: React.FC = () => {
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="http://localhost:8000"
-            style={{
-              width: '100%',
-              padding: '8px 12px',
-              borderRadius: '6px',
-              border: '1px solid #d1d5db',
-              fontSize: '14px',
-              boxSizing: 'border-box',
-            }}
+            style={ui.input}
           />
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: ui.space.md }}>
           <button
             type="submit"
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#4f46e5',
-              color: '#ffffff',
-              border: 'none',
-              borderRadius: '6px',
-              fontWeight: 500,
-              cursor: 'pointer',
-              fontSize: '13px',
-            }}
+            style={ui.primaryButton}
           >
             Save Settings
           </button>
-          {saved && <span style={{ fontSize: '13px', color: '#059669' }}>Saved!</span>}
+          {saved && <span style={ui.successText}>Saved!</span>}
         </div>
       </form>
     </div>

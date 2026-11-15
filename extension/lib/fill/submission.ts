@@ -3,6 +3,8 @@ import { ApplicationSubmittedMessage } from '../messaging';
 export interface SubmissionContext {
   jobId?: string;
   url?: string;
+  /** For unknown sites: report only pages where Job Copilot filled a field, so searches and logins are ignored. */
+  onlyFilled?: boolean;
 }
 
 /**
@@ -19,7 +21,7 @@ export function extractCurrentAnswers(form: Element): Record<string, any> {
     if (!key) return;
 
     const type = (control.getAttribute('type') || control.tagName.toLowerCase()).toLowerCase();
-    if (type === 'hidden' || type === 'submit' || type === 'button' || type === 'reset') {
+    if (type === 'hidden' || type === 'submit' || type === 'button' || type === 'reset' || type === 'password') {
       return;
     }
 
@@ -61,6 +63,7 @@ export function setupSubmissionDetector(
 
   const trigger = (targetForm?: Element) => {
     if (hasTriggered) return;
+    if (context.onlyFilled && !document.documentElement.hasAttribute('data-jc-filled-page')) return;
     hasTriggered = true;
 
     const formElement = targetForm || (root instanceof Element ? root : document.querySelector('form') || document.body);
@@ -85,16 +88,19 @@ export function setupSubmissionDetector(
 
   // 2. Listen for user click on buttons or inputs intended for submission
   const handleClick = (e: Event) => {
-    const target = e.target as HTMLElement | null;
-    if (!target) return;
+    // The button itself, also when the click landed on text or an icon inside it.
+    const control = (e.target as Element | null)?.closest?.(
+      'button, input[type="submit"], input[type="button"], [role="button"]'
+    );
+    if (!control) return;
 
-    const isSubmitType = target.getAttribute('type') === 'submit';
-    const text = (target.textContent || (target as HTMLInputElement).value || '').toLowerCase();
-    const isSubmitButton = target.tagName === 'BUTTON' || target.tagName === 'INPUT';
-    const hasSubmitText = text.includes('submit') || text.includes('apply');
+    // Only a control inside the form counts: an "Apply" button elsewhere just opens or scrolls to it.
+    // A page without a <form> element counts only when Job Copilot filled it.
+    const form = control.closest('form') || (context.onlyFilled ? document.body : null);
+    if (!form || (root instanceof Element && !root.contains(control) && !form.contains(root))) return;
 
-    if (isSubmitType || (isSubmitButton && hasSubmitText)) {
-      const form = target.closest('form') || (root instanceof Element ? root : undefined);
+    const text = (control.textContent || (control as HTMLInputElement).value || '').toLowerCase();
+    if (control.getAttribute('type') === 'submit' || text.includes('submit') || text.includes('apply')) {
       trigger(form);
     }
   };

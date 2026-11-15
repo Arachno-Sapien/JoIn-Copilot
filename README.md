@@ -15,7 +15,8 @@ It is still under development: see [What works today](#what-works-today).
 - Turns a PDF resume into a structured profile you can review and edit. Each bullet gets a stable id, so later checks can point to it.
 - Ranks cached jobs against your profile. The model lists which required skills you have and which you're missing, and code turns those facts into the fit score.
 - Drafts answers to application questions, splits each draft into claims and checks every claim against your resume. Anything your resume doesn't back up is flagged.
-- Records an application when you submit a Greenhouse or Lever form and tracks its status. Applications with no reply for 28 days are marked as no response. With Gmail connected (read-only), recruiter emails update the status.
+- Fills application forms from your profile on any page where you click the Job Copilot toolbar icon, and loads by itself on Greenhouse, Lever, Internshala and Unstop.
+- Records an application when you submit a form it filled, or any Greenhouse or Lever form, and tracks its status. Jobs you applied to elsewhere, such as on LinkedIn or Naukri, can be added by hand. Applications with no reply for 28 days are marked as no response. With Gmail connected (read-only), recruiter emails update the status.
 - Warns about postings that look like scams or that contain text trying to give the AI instructions.
 
 The extension never submits an application for you. It fills in fields, and you review them and click submit.
@@ -25,10 +26,11 @@ The extension never submits an application for you. It fills in fields, and you 
 | Feature | Status |
 |---|---|
 | Resume parsing and profile editing | Works from the side panel |
-| Adding a job from the current page | Works from the side panel on Greenhouse and Lever job pages. LinkedIn and Naukri are never read |
-| Application tracker and dashboard | Works; records come from submissions on Greenhouse and Lever pages |
+| Adding a job from the current page | Works from the side panel on any page once you click the Job Copilot toolbar icon there. LinkedIn and Naukri are never read |
+| Form filling | **Fill this page** fills the fields your profile answers (name, email, phone, links, education) and lists the rest. The resume file, checkboxes and AI-mapped fields are left to you for now |
+| Application tracker and dashboard | Works; records come from forms Job Copilot filled, Greenhouse and Lever submissions, and **Track application** for everything else |
 | Gmail status updates | Needs a real Google OAuth client ID in `extension/wxt.config.ts` |
-| Job matching, drafting, form filling, scam check | Backend endpoints work; the side panel does not call them yet |
+| Job matching, drafting, AI field mapping, scam check | Backend endpoints work; the side panel does not call them yet |
 
 ## Install
 

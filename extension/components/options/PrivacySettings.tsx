@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import * as ui from '../ui';
 
 export const PrivacySettings: React.FC = () => {
   const [gmailSyncEnabled, setGmailSyncEnabled] = useState(true);
@@ -39,18 +40,18 @@ export const PrivacySettings: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '20px', backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-      <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 600, color: '#111827' }}>
+    <div style={{ ...ui.card, padding: ui.space.xl }}>
+      <h3 style={ui.h3}>
         Privacy & Background Sync
       </h3>
-      <p style={{ fontSize: '13px', color: '#6b7280', margin: '0 0 16px 0' }}>
+      <p style={ui.bodyText}>
         Control automated background tasks and data synchronization.
       </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '500px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: ui.space.lg, maxWidth: '500px' }}>
         <label
           htmlFor="gmail-sync-toggle"
-          style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
+          style={{ display: 'flex', alignItems: 'center', gap: ui.space.md, cursor: 'pointer' }}
         >
           <input
             id="gmail-sync-toggle"
@@ -58,13 +59,13 @@ export const PrivacySettings: React.FC = () => {
             type="checkbox"
             checked={gmailSyncEnabled}
             onChange={handleToggleGmailSync}
-            style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+            style={{ width: '18px', height: '18px', cursor: 'pointer', flexShrink: 0, accentColor: ui.color.primary }}
           />
           <div>
-            <div style={{ fontSize: '14px', fontWeight: 500, color: '#1f2937' }}>
+            <div style={{ fontSize: ui.font.lg, fontWeight: 500, color: ui.color.text }}>
               Enable Gmail Sync
             </div>
-            <div style={{ fontSize: '12px', color: '#6b7280' }}>
+            <div style={{ fontSize: ui.font.sm, color: ui.color.textMuted }}>
               Periodically check for application updates using targeted searches on alarms.
             </div>
           </div>

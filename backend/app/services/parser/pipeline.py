@@ -15,6 +15,8 @@ async def parse_resume_pipeline(pdf_bytes: bytes) -> Profile:
             status_code=422,
             detail="Scanned or image-only PDF detected. Please upload a text-based resume.",
         ) from err
+    except RuntimeError as err:  # PyMuPDF's errors for a broken or non-PDF file
+        raise HTTPException(status_code=422, detail="This file could not be read as a PDF.") from err
 
     # First attempt with small model
     try:

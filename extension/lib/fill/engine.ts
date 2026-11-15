@@ -61,7 +61,7 @@ export function discoverFields(root: Element | Document): FormField[] {
         let labelText = '';
         if (el.id) {
           const doc = el.ownerDocument || document;
-          const labelEl = doc.querySelector(`label[for="${el.id}"]`);
+          const labelEl = doc.querySelector(`label[for="${escapeCss(el.id)}"]`);
           if (labelEl) labelText = labelEl.textContent?.trim() || '';
         }
         if (!labelText) {
@@ -142,7 +142,7 @@ export function findElementForField(root: Element | Document, field: FormField):
       const inputs = current.querySelectorAll<HTMLElement>('input, textarea, select');
       for (const input of Array.from(inputs)) {
         if (input.id) {
-          const l = doc.querySelector(`label[for="${input.id}"]`);
+          const l = doc.querySelector(`label[for="${escapeCss(input.id)}"]`);
           if (l && l.textContent && l.textContent.toLowerCase().includes(field.label.toLowerCase())) {
             return input;
           }
@@ -176,6 +176,8 @@ export function findElementForField(root: Element | Document, field: FormField):
  */
 export function highlightField(element: HTMLElement): void {
   element.setAttribute('data-jc-filled', 'true');
+  // Stays after the form is replaced by a thank-you message; the submission detector reads it.
+  element.ownerDocument.documentElement.setAttribute('data-jc-filled-page', 'true');
   element.style.outline = '2px solid #22c55e';
   element.style.outlineOffset = '1px';
 }
@@ -228,11 +230,21 @@ export async function fillFieldWithEngine(field: FormField, value: string | File
     }
 
     if (el instanceof HTMLSelectElement) {
-      const stringVal = String(value);
-      el.value = stringVal;
+      // The mapped value is usually the option's visible text, not its value attribute.
+      const wanted = String(value).trim().toLowerCase();
+      const option = Array.from(el.options).find(
+        (o) => o.value.toLowerCase() === wanted || o.text.trim().toLowerCase() === wanted
+      );
+      if (!option) return false;
+      el.value = option.value;
       el.dispatchEvent(new Event('change', { bubbles: true }));
       highlightField(el);
       return true;
+    }
+
+    // Ticking a box is a choice (consent, eligibility), so it is left to the user.
+    if (el instanceof HTMLInputElement && (el.type === 'checkbox' || el.type === 'radio')) {
+      return false;
     }
 
     if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {

@@ -304,9 +304,9 @@ type Message =
 | `alarms` | Periodic Gmail sync |
 | `identity` | Google OAuth for Gmail, without handling passwords |
 | `activeTab` + `scripting` | Read or fill the current tab when the user clicks the extension, on any site, without broad host permissions |
-| Host permissions for supported ATS domains only (e.g. `boards.greenhouse.io`, `jobs.lever.co`) | Lets content scripts run automatically on known application pages |
+| Host permissions for supported job sites only (`boards.greenhouse.io`, `job-boards.greenhouse.io`, `jobs.lever.co`, `internshala.com`, `unstop.com`) | Lets content scripts run automatically on known application pages |
 
-**Why not `<all_urls>`:** broad host permissions trigger a frightening install warning, slow Chrome Web Store review, and give the extension more power than it needs. `activeTab` grants temporary access to the current tab only when the user clicks, which covers the "add this job from any site" feature.
+**Why not `<all_urls>`:** broad host permissions trigger a frightening install warning, slow Chrome Web Store review, and give the extension more power than it needs. `activeTab` grants temporary access to the current tab only when the user clicks, which covers adding a job and filling a form on any site. The background worker opens the side panel from `chrome.action.onClicked`: when Chrome opens the panel itself (`openPanelOnActionClick: true`), the click grants no `activeTab` access.
 
 ### 6.5 Site adapters
 

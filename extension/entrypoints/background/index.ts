@@ -1,5 +1,5 @@
 import { defineBackground } from 'wxt/sandbox';
-import { setupSidePanelBehavior } from './sidepanel';
+import { ensureAlarm, setupSidePanelBehavior } from './sidepanel';
 import { handleApplicationSubmitted, handleTrackerAlarm } from '../../lib/tracker';
 import { syncGmail } from '../../lib/gmail';
 import { hideStorageFromContentScripts } from '../../lib/ai/provider';
@@ -20,7 +20,7 @@ export default defineBackground(() => {
       if (message?.type === 'PAGE_FORM_DETECTED') {
         // Form detected on page
       } else if (message?.type === 'APPLICATION_SUBMITTED') {
-        handleApplicationSubmitted(message)
+        handleApplicationSubmitted(message, { job: message.job })
           .then((app) => sendResponse({ success: true, application: app }))
           .catch((err) => sendResponse({ success: false, error: err.message }));
         return true;
@@ -35,9 +35,8 @@ export default defineBackground(() => {
 
   // Periodic alarms-based scheduler (MV3 compliant, never setInterval)
   if (typeof chrome !== 'undefined' && chrome.alarms) {
-    chrome.alarms.create('keepalive_or_sync', { periodInMinutes: 60 });
-    chrome.alarms.create('no_response_sweep', { periodInMinutes: 60 * 24 });
-    chrome.alarms.create('gmail_sync', { periodInMinutes: 180 });
+    ensureAlarm('no_response_sweep', 60 * 24).catch(() => {});
+    ensureAlarm('gmail_sync', 180).catch(() => {});
 
     chrome.alarms.onAlarm.addListener((alarm) => {
       if (alarm.name === 'no_response_sweep') {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { exportDataAsJson, exportDataAsCsv, deleteAllUserData } from '../../lib/export';
+import * as ui from '../ui';
 
 export const DataExport: React.FC = () => {
   const [status, setStatus] = useState<string | null>(null);
@@ -51,74 +52,47 @@ export const DataExport: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '20px', backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-      <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 600, color: '#111827' }}>
+    <div style={{ ...ui.card, padding: ui.space.xl }}>
+      <h3 style={ui.h3}>
         Data Management & Export
       </h3>
-      <p style={{ fontSize: '13px', color: '#6b7280', margin: '0 0 16px 0' }}>
+      <p style={ui.bodyText}>
         Export your data in standard formats or delete all local data stored in the browser.
       </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '500px' }}>
-        <div style={{ display: 'flex', gap: '12px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: ui.space.lg, maxWidth: '500px' }}>
+        <div style={{ display: 'flex', gap: ui.space.md, flexWrap: 'wrap' }}>
           <button
             type="button"
             onClick={handleExportJson}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#4f46e5',
-              color: '#ffffff',
-              border: 'none',
-              borderRadius: '6px',
-              fontWeight: 500,
-              cursor: 'pointer',
-              fontSize: '13px',
-            }}
+            style={ui.primaryButton}
           >
             Export as JSON
           </button>
           <button
             type="button"
             onClick={handleExportCsv}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#4f46e5',
-              color: '#ffffff',
-              border: 'none',
-              borderRadius: '6px',
-              fontWeight: 500,
-              cursor: 'pointer',
-              fontSize: '13px',
-            }}
+            style={ui.primaryButton}
           >
             Export as CSV
           </button>
         </div>
 
-        <div style={{ borderTop: '1px solid #f3f4f6', paddingTop: '16px', marginTop: '8px' }}>
-          <div style={{ fontSize: '14px', fontWeight: 600, color: '#b91c1c', marginBottom: '6px' }}>
+        <div style={{ borderTop: `1px solid ${ui.color.border}`, paddingTop: ui.space.lg }}>
+          <div style={{ ...ui.h4, color: ui.color.danger }}>
             Danger Zone
           </div>
           <button
             type="button"
             onClick={handleDeleteAll}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#ef4444',
-              color: '#ffffff',
-              border: 'none',
-              borderRadius: '6px',
-              fontWeight: 500,
-              cursor: 'pointer',
-              fontSize: '13px',
-            }}
+            style={ui.dangerButton}
           >
             Delete All Data
           </button>
         </div>
 
         {status && (
-          <div style={{ fontSize: '13px', color: '#374151', padding: '8px', backgroundColor: '#f9fafb', borderRadius: '4px' }}>
+          <div role="status" style={{ ...ui.statusText, padding: ui.space.sm, backgroundColor: ui.color.bg, borderRadius: ui.radius.sm }}>
             {status}
           </div>
         )}

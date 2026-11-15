@@ -24,10 +24,10 @@ function clickAddJob() {
 }
 
 describe('AddJob', () => {
-  it('says which job sites it works on', () => {
+  it('says to click the toolbar icon first', () => {
     openTab('https://boards.greenhouse.io/acme/jobs/1');
     render(<AddJob />);
-    expect(screen.getByText(/Greenhouse or Lever/)).toBeDefined();
+    expect(screen.getByText(/icon in Chrome's toolbar/)).toBeDefined();
   });
 
   // Project rule 5: never read LinkedIn or Naukri pages.
@@ -58,7 +58,7 @@ describe('AddJob', () => {
       )
     );
     clickAddJob();
-    await waitFor(() => expect(screen.getByText(/works on Greenhouse and Lever job pages/)).toBeDefined());
+    await waitFor(() => expect(screen.getByText(/can't reach this page yet/)).toBeDefined());
     expect(screen.queryByText(/manifest/)).toBeNull();
   });
 });

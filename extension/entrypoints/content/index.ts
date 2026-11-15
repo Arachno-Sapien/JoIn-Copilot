@@ -8,83 +8,84 @@ export default defineContentScript({
   matches: contentScriptDefinition.matches,
   allFrames: contentScriptDefinition.allFrames,
   main() {
+    // The side panel injects this script on sites outside the manifest; run once per page.
+    const page = window as unknown as { __jobCopilotContent?: boolean };
+    if (page.__jobCopilotContent) return;
+    page.__jobCopilotContent = true;
+
     try {
-      const url = new URL(window.location.href);
-      const adapter = getAdapterForUrl(url);
-      if (!adapter) return;
-
-      const formRoot = adapter.findFormRoot(document);
-      if (!formRoot) return;
-
-      const fields = adapter.listFields(formRoot);
-      if (fields.length === 0) return;
-
-      // Notify background that a form was detected
-      const detectedMsg: PageFormDetectedMessage = {
-        type: 'PAGE_FORM_DETECTED',
-        fields,
-        url: window.location.href,
+      if (typeof chrome === 'undefined' || !chrome.runtime?.sendMessage) return;
+      const adapter = getAdapterForUrl(new URL(window.location.href));
+      const send = (message: unknown) => {
+        chrome.runtime.sendMessage(message).catch(() => {});
+      };
+      // Scan when asked, not once at load: many sites render their form later.
+      const scan = () => {
+        const root = adapter.findFormRoot(document);
+        return { root, fields: root ? adapter.listFields(root) : [] };
       };
 
-      if (typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
-        chrome.runtime.sendMessage(detectedMsg).catch(() => {});
+      const found = scan().fields;
+      if (found.length > 0) {
+        const detected: PageFormDetectedMessage = {
+          type: 'PAGE_FORM_DETECTED',
+          fields: found,
+          url: window.location.href,
+        };
+        send(detected);
       }
 
-      // Setup submission detection
-      adapter.detectSubmission(formRoot, (payload: any) => {
-        if (typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
-          chrome.runtime.sendMessage(payload).catch(() => {});
-        }
+      // Listens only; never submits. The tracker gets the page's job title with the answers.
+      adapter.detectSubmission(document, (payload: any) => {
+        const job = adapter.extractJob(document);
+        send({
+          ...payload,
+          job: { title: job.title || document.title, company: job.company || window.location.hostname },
+        });
       });
 
-      // Listen for FILL_REQUEST from background
-      if (typeof chrome !== 'undefined' && chrome.runtime?.onMessage) {
-        chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-          if (message?.type === 'FILL_REQUEST') {
-            const values: Record<string, string> = message.values || {};
-            const filledList: Array<{ name: string; value: any }> = [];
-            const skippedList: FormField[] = [];
-            const fieldsToVerify: Array<{ field: FormField; intendedValue: string }> = [];
+      chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+        if (message?.type === 'LIST_FIELDS') {
+          // A frame without fields stays silent so the frame holding the form answers.
+          const { fields } = scan();
+          if (fields.length > 0) sendResponse({ fields, url: window.location.href });
+          return;
+        }
+        if (message?.type !== 'FILL_REQUEST') return;
 
-            // Paced fill
-            (async () => {
-              for (const field of fields) {
-                const key = field.name || field.id || '';
-                const val = values[key];
-                if (val !== undefined && val !== null) {
-                  const success = await adapter.fillField(field, val);
-                  if (success) {
-                    filledList.push({ name: key, value: val });
-                    fieldsToVerify.push({ field, intendedValue: String(val) });
-                  } else {
-                    skippedList.push(field);
-                  }
-                  // Small pacing delay
-                  await new Promise((r) => setTimeout(r, 10));
-                } else {
-                  skippedList.push(field);
-                }
-              }
+        const { root, fields } = scan();
+        if (!root || fields.length === 0) return;
+        const values: Record<string, string> = message.values || {};
+        const filled: Array<{ name: string; value: any }> = [];
+        const skipped: FormField[] = [];
+        const toVerify: Array<{ field: FormField; intendedValue: string }> = [];
 
-              // Verify pass
-              const verifyResult = verifyFields(formRoot, fieldsToVerify);
-
-              const fillResultMsg: FillResultMessage = {
-                type: 'FILL_RESULT',
-                filled: filledList,
-                skipped: skippedList,
-              };
-
-              if (typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
-                chrome.runtime.sendMessage(fillResultMsg).catch(() => {});
-              }
-              sendResponse({ success: true, verify: verifyResult });
-            })();
-
-            return true; // async sendResponse
+        (async () => {
+          for (const field of fields) {
+            const key = field.name || field.id || '';
+            const val = values[key];
+            if (val === undefined || val === null) {
+              skipped.push(field);
+              continue;
+            }
+            if (await adapter.fillField(field, val)) {
+              filled.push({ name: key, value: val });
+              toVerify.push({ field, intendedValue: String(val) });
+            } else {
+              skipped.push(field);
+            }
+            // Paced: some forms validate on blur and misbehave when everything changes at once.
+            await new Promise((r) => setTimeout(r, 10));
           }
-        });
-      }
+
+          const verify = verifyFields(root, toVerify);
+          const result: FillResultMessage = { type: 'FILL_RESULT', filled, skipped };
+          send(result);
+          sendResponse({ success: true, filled, skipped, verify });
+        })();
+
+        return true; // async sendResponse
+      });
     } catch {
       // Ignore errors in content script execution
     }

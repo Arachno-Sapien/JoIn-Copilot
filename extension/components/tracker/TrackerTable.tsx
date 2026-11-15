@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Application, ApplicationStatus } from '../../lib/schemas/application';
+import * as ui from '../ui';
 
 export interface TrackerTableProps {
   applications: Application[];
@@ -36,18 +37,18 @@ export const TrackerTable: React.FC<TrackerTableProps> = ({ applications, onStat
   }, [applications, statusFilter, sortBy]);
 
   return (
-    <div className="tracker-table-container" style={{ padding: '16px', fontFamily: 'sans-serif' }}>
+    <div className="tracker-table-container" style={{ fontFamily: 'inherit', minWidth: 0 }}>
       <div
         className="tracker-controls"
-        style={{ display: 'flex', gap: '12px', marginBottom: '16px', alignItems: 'center' }}
+        style={{ display: 'flex', gap: ui.space.md, marginBottom: ui.space.lg, alignItems: 'center', flexWrap: 'wrap' }}
       >
-        <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: ui.font.md, color: ui.color.text }}>
           <span>Filter by status:</span>
           <select
             aria-label="Filter by status"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid #ccc' }}
+            style={ui.select}
           >
             <option value="all">All</option>
             <option value="applied">Applied</option>
@@ -61,13 +62,13 @@ export const TrackerTable: React.FC<TrackerTableProps> = ({ applications, onStat
           </select>
         </label>
 
-        <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: ui.font.md, color: ui.color.text }}>
           <span>Sort by:</span>
           <select
             aria-label="Sort by"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid #ccc' }}
+            style={ui.select}
           >
             <option value="applied_desc">Newest First</option>
             <option value="applied_asc">Oldest First</option>
@@ -76,9 +77,9 @@ export const TrackerTable: React.FC<TrackerTableProps> = ({ applications, onStat
         </label>
       </div>
 
-      <div className="tracker-rows" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div className="tracker-rows" style={{ display: 'flex', flexDirection: 'column', gap: ui.space.sm, overflowX: 'auto', maxWidth: '100%' }}>
         {filteredAndSorted.length === 0 ? (
-          <div style={{ color: '#666', fontStyle: 'italic', padding: '12px 0' }}>No applications found.</div>
+          <div style={{ ...ui.emptyText, padding: `${ui.space.md} 0` }}>No applications found.</div>
         ) : (
           filteredAndSorted.map((app) => (
             <div
@@ -88,46 +89,43 @@ export const TrackerTable: React.FC<TrackerTableProps> = ({ applications, onStat
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                padding: '12px',
-                border: '1px solid #e5e7eb',
-                borderRadius: '6px',
-                backgroundColor: '#ffffff',
+                gap: ui.space.sm,
+                padding: ui.space.md,
+                border: `1px solid ${ui.color.border}`,
+                borderRadius: ui.radius.md,
+                backgroundColor: ui.color.surface,
               }}
             >
-              <div>
-                <div style={{ fontWeight: '600', fontSize: '14px', color: '#111827' }}>
+              <div style={{ minWidth: 0, overflowWrap: 'anywhere' }}>
+                <div style={{ fontWeight: 600, fontSize: ui.font.lg, color: ui.color.text }}>
                   {app.job_snapshot.company}
                 </div>
-                <div style={{ fontSize: '13px', color: '#4b5563' }}>{app.job_snapshot.title}</div>
-                <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '2px' }}>
+                <div style={{ fontSize: ui.font.md, color: ui.color.textMuted }}>{app.job_snapshot.title}</div>
+                <div style={{ fontSize: ui.font.xs, color: ui.color.textSubtle, marginTop: '2px' }}>
                   Applied: {new Date(app.applied_at).toLocaleDateString()}
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: ui.space.sm, flexShrink: 0 }}>
                 <span
                   style={{
-                    display: 'inline-block',
-                    padding: '3px 8px',
-                    borderRadius: '9999px',
-                    fontSize: '11px',
-                    fontWeight: '500',
+                    ...ui.badge,
                     backgroundColor:
                       app.status === 'offer'
-                        ? '#dcfce7'
+                        ? ui.color.badgeSuccess
                         : app.status === 'rejected'
-                        ? '#fee2e2'
+                        ? ui.color.badgeDanger
                         : app.status === 'interview'
-                        ? '#e0e7ff'
-                        : '#f3f4f6',
+                        ? ui.color.badgePrimary
+                        : ui.color.badgeNeutral,
                     color:
                       app.status === 'offer'
-                        ? '#166534'
+                        ? ui.color.success
                         : app.status === 'rejected'
-                        ? '#991b1b'
+                        ? ui.color.danger
                         : app.status === 'interview'
-                        ? '#3730a3'
-                        : '#374151',
+                        ? ui.color.primary
+                        : ui.color.textMuted,
                     textTransform: 'capitalize',
                   }}
                 >

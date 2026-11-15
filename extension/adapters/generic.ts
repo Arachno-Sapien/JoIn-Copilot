@@ -37,7 +37,8 @@ export class GenericAdapter implements SiteAdapter {
     const callback = isFn ? rootOrOnSubmit : onSubmitOrRoot;
     const root = isFn ? (typeof document !== 'undefined' ? document : null) : rootOrOnSubmit;
     if (!root || !callback) return;
-    setupSubmissionDetector(root, callback);
+    // Any page can end up here, so only pages Job Copilot filled are recorded as applications.
+    setupSubmissionDetector(root, callback, { onlyFilled: true });
   }
 }
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { DraftResponse } from '../../lib/schemas/draft';
+import * as ui from '../ui';
 
 export interface DraftViewProps {
   initialDraft: DraftResponse;
@@ -21,26 +22,28 @@ export const DraftView: React.FC<DraftViewProps> = ({ initialDraft, onApplyRewri
   };
 
   return (
-    <div className="draft-view-card" style={{ padding: '16px', border: '1px solid #e5e7eb', borderRadius: '8px', backgroundColor: '#fff' }}>
-      <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}>Application Answer Draft</h3>
+    <div className="draft-view-card" style={ui.card}>
+      <h3 style={ui.h3}>Application Answer Draft</h3>
 
       <div
         style={{
-          padding: '12px',
-          backgroundColor: '#f9fafb',
-          border: '1px solid #e5e7eb',
-          borderRadius: '6px',
-          fontSize: '13px',
-          lineHeight: '1.5',
-          color: '#1f2937',
-          marginBottom: '16px',
+          padding: ui.space.md,
+          backgroundColor: ui.color.bg,
+          border: `1px solid ${ui.color.border}`,
+          borderRadius: ui.radius.md,
+          fontSize: ui.font.md,
+          lineHeight: 1.6,
+          color: ui.color.text,
+          marginBottom: ui.space.lg,
+          whiteSpace: 'pre-wrap',
+          overflowWrap: 'anywhere',
         }}
       >
         {currentText}
       </div>
 
-      <div style={{ marginBottom: '16px' }}>
-        <h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#374151' }}>
+      <div style={{ marginBottom: ui.space.lg }}>
+        <h4 style={ui.h4}>
           Fabrication & Verification Checks
         </h4>
 
@@ -57,29 +60,30 @@ export const DraftView: React.FC<DraftViewProps> = ({ initialDraft, onApplyRewri
                 data-testid={`claim-${status}`}
                 data-status-color={color}
                 style={{
-                  padding: '10px',
-                  borderRadius: '6px',
-                  border: `1px solid ${isUnsupported ? '#fca5a5' : isPartly ? '#fcd34d' : '#86efac'}`,
-                  backgroundColor: isUnsupported ? '#fef2f2' : isPartly ? '#fffbeb' : '#f0fdf4',
+                  padding: ui.space.md,
+                  borderRadius: ui.radius.md,
+                  border: `1px solid ${isUnsupported ? ui.color.dangerBorder : isPartly ? ui.color.warningBorder : ui.color.successBorder}`,
+                  backgroundColor: isUnsupported ? ui.color.dangerTint : isPartly ? ui.color.warningTint : ui.color.successTint,
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '13px', fontWeight: '500', color: '#111827' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: ui.space.sm }}>
+                  <span style={{ fontSize: ui.font.md, fontWeight: 500, color: ui.color.text, overflowWrap: 'anywhere' }}>
                     "{claim.claim}"
                   </span>
                   <span
                     style={{
-                      fontSize: '11px',
-                      fontWeight: '600',
+                      fontSize: ui.font.xs,
+                      fontWeight: 700,
                       textTransform: 'uppercase',
-                      color: isUnsupported ? '#b91c1c' : isPartly ? '#b45309' : '#15803d',
+                      whiteSpace: 'nowrap',
+                      color: isUnsupported ? ui.color.danger : isPartly ? ui.color.warning : ui.color.success,
                     }}
                   >
                     {status.replace('_', ' ')}
                   </span>
                 </div>
                 {claim.reason && (
-                  <div style={{ fontSize: '12px', color: '#4b5563', marginTop: '4px' }}>
+                  <div style={{ fontSize: ui.font.sm, color: ui.color.textMuted, marginTop: ui.space.xs }}>
                     <strong>Reason:</strong> {claim.reason}
                   </div>
                 )}
@@ -90,24 +94,15 @@ export const DraftView: React.FC<DraftViewProps> = ({ initialDraft, onApplyRewri
       </div>
 
       {rewriteText && (
-        <div style={{ borderTop: '1px solid #f3f4f6', paddingTop: '12px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '13px', color: '#4b5563' }}>
+        <div style={{ borderTop: `1px solid ${ui.color.border}`, paddingTop: ui.space.md }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: ui.space.sm }}>
+            <span style={ui.statusText}>
               {appliedRewrite ? 'Rewritten draft applied.' : 'Verified rewrite available.'}
             </span>
             <button
               type="button"
               onClick={handleRewrite}
-              style={{
-                padding: '6px 14px',
-                backgroundColor: appliedRewrite ? '#10b981' : '#2563eb',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '12px',
-                fontWeight: '500',
-                cursor: 'pointer',
-              }}
+              style={appliedRewrite ? { ...ui.primaryButton, backgroundColor: ui.color.success, borderColor: ui.color.success } : ui.primaryButton}
             >
               {appliedRewrite ? 'Rewrite Applied' : 'Apply Rewrite'}
             </button>

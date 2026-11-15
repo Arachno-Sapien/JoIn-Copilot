@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { db } from '../../lib/db';
 import { Profile, SkillLevel } from '../../lib/schemas/profile';
+import * as ui from '../ui';
 
 export interface ProfileEditorProps {
   initialProfile: Profile;
@@ -50,65 +51,65 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ initialProfile, on
   };
 
   return (
-    <form onSubmit={handleSave} style={{ padding: '16px', border: '1px solid #e5e7eb', borderRadius: '8px', backgroundColor: '#fff' }}>
-      <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px' }}>Edit Profile</h3>
+    <form onSubmit={handleSave} style={ui.card}>
+      <h3 style={ui.h3}>Edit Profile</h3>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <label style={{ display: 'flex', flexDirection: 'column', fontSize: '13px' }}>
-          <span style={{ fontWeight: '500', marginBottom: '2px' }}>Name:</span>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: ui.space.md }}>
+        <label style={{ display: 'flex', flexDirection: 'column', fontSize: ui.font.md }}>
+          <span style={ui.label}>Name:</span>
           <input
             type="text"
             aria-label="Name"
             value={profile.name}
             onChange={(e) => handleFieldChange('name', e.target.value)}
-            style={{ padding: '6px 8px', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '13px' }}
+            style={ui.input}
           />
         </label>
 
-        <label style={{ display: 'flex', flexDirection: 'column', fontSize: '13px' }}>
-          <span style={{ fontWeight: '500', marginBottom: '2px' }}>Email:</span>
+        <label style={{ display: 'flex', flexDirection: 'column', fontSize: ui.font.md }}>
+          <span style={ui.label}>Email:</span>
           <input
             type="email"
             aria-label="Email"
             value={profile.email}
             onChange={(e) => handleFieldChange('email', e.target.value)}
-            style={{ padding: '6px 8px', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '13px' }}
+            style={ui.input}
           />
         </label>
 
-        <label style={{ display: 'flex', flexDirection: 'column', fontSize: '13px' }}>
-          <span style={{ fontWeight: '500', marginBottom: '2px' }}>Phone:</span>
+        <label style={{ display: 'flex', flexDirection: 'column', fontSize: ui.font.md }}>
+          <span style={ui.label}>Phone:</span>
           <input
             type="tel"
             aria-label="Phone"
             value={profile.phone}
             onChange={(e) => handleFieldChange('phone', e.target.value)}
-            style={{ padding: '6px 8px', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '13px' }}
+            style={ui.input}
           />
         </label>
 
-        <label style={{ display: 'flex', flexDirection: 'column', fontSize: '13px' }}>
-          <span style={{ fontWeight: '500', marginBottom: '2px' }}>Location:</span>
+        <label style={{ display: 'flex', flexDirection: 'column', fontSize: ui.font.md }}>
+          <span style={ui.label}>Location:</span>
           <input
             type="text"
             aria-label="Location"
             value={profile.location}
             onChange={(e) => handleFieldChange('location', e.target.value)}
-            style={{ padding: '6px 8px', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '13px' }}
+            style={ui.input}
           />
         </label>
 
         <div style={{ marginTop: '8px' }}>
-          <span style={{ fontWeight: '500', fontSize: '13px', display: 'block', marginBottom: '6px' }}>Skills & Levels:</span>
+          <span style={{ ...ui.label, marginBottom: ui.space.sm }}>Skills & Levels:</span>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {profile.skills.map((skill, index) => (
-              <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '13px', color: '#374151' }}>{skill.name}</span>
+              <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: ui.space.sm }}>
+                <span style={{ fontSize: ui.font.md, color: ui.color.text, overflowWrap: 'anywhere' }}>{skill.name}</span>
                 <select
                   aria-label={`${skill.name} level`}
                   value={skill.level}
                   onChange={(e) => handleSkillLevelChange(index, e.target.value as SkillLevel)}
-                  style={{ padding: '4px 6px', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '12px' }}
+                  style={ui.select}
                 >
                   <option value="beginner">Beginner</option>
                   <option value="intermediate">Intermediate</option>
@@ -124,20 +125,11 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ initialProfile, on
           <button
             type="submit"
             disabled={saving}
-            style={{
-              padding: '6px 16px',
-              backgroundColor: '#2563eb',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '13px',
-              fontWeight: '500',
-              cursor: 'pointer',
-            }}
+            style={ui.primaryButton}
           >
             {saving ? 'Saving...' : 'Save Profile'}
           </button>
-          {savedSuccess && <span style={{ fontSize: '12px', color: '#16a34a' }}>Saved!</span>}
+          {savedSuccess && <span style={ui.successText}>Saved!</span>}
         </div>
       </div>
     </form>

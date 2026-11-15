@@ -8,6 +8,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from pydantic import ValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.draft import router as draft_router
@@ -60,6 +61,15 @@ async def validation_error(request: Request, exc: RequestValidationError) -> JSO
 async def provider_error(request: Request, exc: ProviderError) -> JSONResponse:
     body = ErrorResponse(error=str(exc), detail=exc.detail)
     return JSONResponse(body.model_dump(exclude_none=True), status_code=exc.status_code)
+
+
+async def model_answer_error(request: Request, exc: ValidationError) -> JSONResponse:
+    # The model's answer did not fit the schema. Say so without echoing it: it can hold personal data.
+    body = ErrorResponse(
+        error="The AI model's answer was not in the format Job Copilot asked for",
+        detail="Try again, or pick a model that supports structured output.",
+    )
+    return JSONResponse(body.model_dump(exclude_none=True), status_code=502)
 
 
 async def use_llm_connection(request: Request, call_next):
@@ -121,6 +131,7 @@ def create_app() -> FastAPI:
     app.add_exception_handler(StarletteHTTPException, http_error)
     app.add_exception_handler(RequestValidationError, validation_error)
     app.add_exception_handler(ProviderError, provider_error)
+    app.add_exception_handler(ValidationError, model_answer_error)
     app.include_router(health_router)
     app.include_router(extract_router)
     app.include_router(profile_router)

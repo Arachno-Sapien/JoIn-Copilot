@@ -26,6 +26,7 @@ export const PageFormDetectedMessageSchema = z.object({
 export const FillRequestMessageSchema = z.object({
   type: z.literal('FILL_REQUEST'),
   jobId: z.string(),
+  values: z.record(z.string()).optional(),
 });
 
 export const FillResultMessageSchema = z.object({
@@ -39,6 +40,7 @@ export const ApplicationSubmittedMessageSchema = z.object({
   jobId: z.string(),
   url: z.string(),
   answers: z.record(z.any()).optional(),
+  job: z.object({ title: z.string(), company: z.string() }).optional(),
 });
 
 export const MessageSchema = z.discriminatedUnion('type', [

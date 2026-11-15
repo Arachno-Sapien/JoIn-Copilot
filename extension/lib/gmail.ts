@@ -114,6 +114,7 @@ export async function syncGmailWithMessages(options: {
   }));
 
   let updatedCount = 0;
+  let failed = 0;
   const pendingConfirmations: PendingConfirmation[] = [];
 
   for (const message of options.messages) {
@@ -131,12 +132,14 @@ export async function syncGmailWithMessages(options: {
         updatedCount++;
       }
     } catch {
-      // Continue processing other messages
+      failed++; // Continue processing other messages
     }
   }
 
-  // Update sync timestamp in chrome.storage if available
-  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+  // If every email failed (backend or AI provider down), keep the old sync time so the
+  // next sync reads these emails again instead of skipping them for good.
+  const allFailed = failed > 0 && failed === options.messages.length;
+  if (!allFailed && typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
     await chrome.storage.local.set({ [LAST_SYNC_KEY]: new Date().toISOString() });
   }
 
@@ -206,6 +209,22 @@ function decodeBase64Url(str: string): string {
   }
 }
 
+/** Body text of a Gmail message payload: plain text if any part has it, otherwise HTML. Parts can nest. */
+export function extractBody(payload: any, mimeType = 'text/plain'): string {
+  const find = (part: any): string => {
+    if (!part) return '';
+    if (part.body?.data && (part.mimeType === mimeType || !part.parts?.length && !part.mimeType)) {
+      return decodeBase64Url(part.body.data);
+    }
+    for (const child of part.parts || []) {
+      const text = find(child);
+      if (text) return text;
+    }
+    return '';
+  };
+  return find(payload) || (mimeType === 'text/plain' ? extractBody(payload, 'text/html') : '');
+}
+
 async function fetchGmailMessage(token: string, id: string): Promise<EmailInput> {
   const url = `https://gmail.googleapis.com/gmail/v1/users/me/messages/${id}?format=full`;
   const res = await fetch(url, {
@@ -225,21 +244,7 @@ async function fetchGmailMessage(token: string, id: string): Promise<EmailInput>
   const dateStr = getHeader('Date');
   const date = dateStr ? new Date(dateStr).toISOString() : new Date().toISOString();
 
-  // Extract body text
-  let body = '';
-  if (data.payload?.body?.data) {
-    body = decodeBase64Url(data.payload.body.data);
-  } else if (data.payload?.parts) {
-    for (const part of data.payload.parts) {
-      if (part.mimeType === 'text/plain' && part.body?.data) {
-        body = decodeBase64Url(part.body.data);
-        break;
-      }
-      if (part.mimeType === 'text/html' && part.body?.data && !body) {
-        body = decodeBase64Url(part.body.data);
-      }
-    }
-  }
+  const body = extractBody(data.payload);
 
   return {
     sender,

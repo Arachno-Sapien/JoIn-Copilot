@@ -2,20 +2,11 @@ import React, { useState } from 'react';
 import { extractJob } from '../../lib/api/extract';
 import { ApiClient } from '../../lib/api/client';
 import { Job } from '../../lib/schemas/job';
+import { BLOCKED_SITES, NO_ACCESS_MESSAGE, hostOf } from '../../lib/sites';
+import * as ui from '../ui';
 
-// Project rule 5: never read LinkedIn or Naukri pages.
-const BLOCKED_SITES = /(^|\.)(linkedin\.com|naukri\.com)$/;
 const BLOCKED_MESSAGE =
   "Job Copilot doesn't read LinkedIn or Naukri pages. Open this job on the company's own careers page, then try again.";
-const NO_ACCESS_MESSAGE = "Job Copilot can't read this page. It works on Greenhouse and Lever job pages.";
-
-function hostOf(url: string | undefined): string {
-  try {
-    return new URL(url ?? '').hostname;
-  } catch {
-    return '';
-  }
-}
 
 export interface AddJobProps {
   onJobAdded?: (job: Job) => void;
@@ -46,7 +37,8 @@ export const AddJob: React.FC<AddJobProps> = ({ onJobAdded }) => {
         throw new Error(BLOCKED_MESSAGE);
       }
 
-      // Read the page text. Chrome refuses on sites outside the extension's host permissions.
+      // Read the page text. Chrome allows it on the manifest's sites and on a tab where the
+      // user clicked the toolbar icon.
       const injectionResults = await chrome.scripting
         .executeScript({
           target: { tabId: activeTab.id },
@@ -77,40 +69,31 @@ export const AddJob: React.FC<AddJobProps> = ({ onJobAdded }) => {
   };
 
   return (
-    <div className="add-job-card" style={{ padding: '16px', border: '1px solid #e5e7eb', borderRadius: '8px', backgroundColor: '#fff' }}>
-      <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px', color: '#111827' }}>
+    <div className="add-job-card" style={ui.card}>
+      <h3 style={ui.h3}>
         Add Job From Page
       </h3>
-      <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '12px' }}>
-        Open a job posting on Greenhouse or Lever, then click below to save it to Job Copilot.
+      <p style={ui.bodyText}>
+        Open a job posting, click the Job Copilot icon in Chrome's toolbar, then click below to save it.
       </p>
 
       <button
         type="button"
         onClick={handleAddJob}
         disabled={loading}
-        style={{
-          padding: '8px 16px',
-          backgroundColor: '#4f46e5',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '6px',
-          fontSize: '13px',
-          fontWeight: '500',
-          cursor: loading ? 'not-allowed' : 'pointer',
-        }}
+        style={ui.primaryButton}
       >
         {loading ? 'Extracting Job...' : 'Add Job from Page'}
       </button>
 
       {successMessage && (
-        <div style={{ marginTop: '10px', fontSize: '13px', color: '#15803d', fontWeight: '500' }}>
+        <div style={{ ...ui.successText, marginTop: ui.space.md }}>
           {successMessage}
         </div>
       )}
 
       {error && (
-        <div style={{ marginTop: '10px', fontSize: '13px', color: '#b91c1c' }}>
+        <div style={{ ...ui.errorText, marginTop: ui.space.md }}>
           {error}
         </div>
       )}

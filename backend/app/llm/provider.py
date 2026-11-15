@@ -10,6 +10,7 @@ only calls the providers you list.
 import asyncio
 import contextvars
 import logging
+import re
 from typing import Any, NamedTuple
 
 import httpx
@@ -83,6 +84,9 @@ class TruncatedError(ProviderError):
         super().__init__("The AI provider's answer was cut off at the output limit, so it was not used")
         self.partial_text = partial_text
         self.detail = f"Partial output (not used): {partial_text[:1000]}"
+
+
+CODE_FENCE = re.compile(r"^```(?:json)?\s*(.*?)\s*```$", re.DOTALL | re.IGNORECASE)
 
 
 class RequestFailedError(ProviderError):
@@ -172,6 +176,7 @@ async def respond(*, instructions: str, user_input: str, schema_name: str, json_
             if not text:
                 logger.warning("AI provider reply empty (%s), x-request-id=%s", choice.get("finish_reason"), request_id)
                 raise RequestFailedError("The AI provider sent an empty answer", request_id)
-            return text
+            # Some models wrap the JSON in a Markdown code fence despite the response format.
+            return CODE_FENCE.sub(r"\1", text.strip())
 
     raise AssertionError("unreachable")  # the loop always returns or raises

@@ -42,7 +42,8 @@ async def classify_email(
         # If model returned an unknown ID, clear it or match by company if obvious
         matched_id = None
         for c in candidates:
-            if c.company.lower() in email.subject.lower() or c.company.lower() in email.sender.lower():
+            # An empty company is a substring of everything, so it must never match.
+            if c.company.strip() and (c.company.lower() in email.subject.lower() or c.company.lower() in email.sender.lower()):
                 matched_id = c.id
                 break
         result.matched_application_id = matched_id

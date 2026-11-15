@@ -2,24 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { z } from 'zod';
 import { ApiError, apiClient } from '../../lib/api/client';
 import { PROVIDER_EXAMPLES, clearProvider, getProvider, saveProvider } from '../../lib/ai/provider';
+import * as ui from '../ui';
 
 type Status = { tone: 'ok' | 'error' | 'info'; text: string };
 
-const TONE_COLOR: Record<Status['tone'], string> = { ok: '#059669', error: '#b91c1c', info: '#374151' };
+const TONE_COLOR: Record<Status['tone'], string> = { ok: ui.color.success, error: ui.color.danger, info: ui.color.textMuted };
 const CheckSchema = z.object({ ok: z.literal(true), model: z.string() });
 
-const buttonStyle = (primary: boolean): React.CSSProperties => ({
-  padding: '8px 16px',
-  backgroundColor: primary ? '#4f46e5' : '#ffffff',
-  color: primary ? '#ffffff' : '#374151',
-  border: primary ? 'none' : '1px solid #d1d5db',
-  borderRadius: '6px',
-  fontWeight: 500,
-  cursor: 'pointer',
-  fontSize: '13px',
-});
-const labelStyle: React.CSSProperties = { display: 'block', fontSize: '13px', fontWeight: 500, color: '#374151', marginBottom: '6px' };
-const inputStyle: React.CSSProperties = { width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '14px', boxSizing: 'border-box' };
+const buttonStyle = (primary: boolean): React.CSSProperties => (primary ? ui.primaryButton : ui.secondaryButton);
+const labelStyle = ui.label;
+const inputStyle = ui.input;
 
 function isHttpUrl(value: string): boolean {
   try {
@@ -97,15 +89,15 @@ export const AiProvider: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '20px', backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-      <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 600, color: '#111827' }}>AI provider</h3>
-      <p style={{ fontSize: '13px', color: '#6b7280', margin: '0 0 8px 0' }}>
+    <div style={{ ...ui.card, padding: ui.space.xl }}>
+      <h3 style={ui.h3}>AI provider</h3>
+      <p style={{ ...ui.bodyText, margin: `0 0 ${ui.space.sm}` }}>
         All AI features (resume parsing, job extraction, matching, drafting, email and scam checks) run on the
         OpenAI-compatible provider and model you choose, with your own key. These settings are stored only on this
         device and are sent only to your Job Copilot backend, which calls the provider. Pick a model that supports
         structured (JSON schema) output.
       </p>
-      <p style={{ fontSize: '13px', color: '#6b7280', margin: '0 0 16px 0' }}>
+      <p style={ui.bodyText}>
         Examples:{' '}
         {PROVIDER_EXAMPLES.map((example, i) => (
           <React.Fragment key={example.name}>
@@ -113,7 +105,7 @@ export const AiProvider: React.FC = () => {
             <button
               type="button"
               onClick={() => setBaseUrl(example.baseUrl)}
-              style={{ border: 'none', background: 'none', padding: 0, color: '#4f46e5', textDecoration: 'underline', cursor: 'pointer', fontSize: '13px' }}
+              style={ui.linkButton}
             >
               {example.name}
             </button>
@@ -121,7 +113,7 @@ export const AiProvider: React.FC = () => {
         ))}
       </p>
 
-      <form onSubmit={save} style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '500px' }}>
+      <form onSubmit={save} style={{ display: 'flex', flexDirection: 'column', gap: ui.space.md, maxWidth: '500px' }}>
         <div>
           <label htmlFor="llm-base-url" style={labelStyle}>Base URL</label>
           <input
@@ -161,7 +153,7 @@ export const AiProvider: React.FC = () => {
             style={inputStyle}
           />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: ui.space.md, flexWrap: 'wrap' }}>
           <button type="submit" disabled={!baseUrl.trim() || !model.trim()} style={buttonStyle(true)}>
             Store provider
           </button>
@@ -175,7 +167,7 @@ export const AiProvider: React.FC = () => {
           )}
         </div>
         {status && (
-          <p role="status" style={{ margin: 0, fontSize: '13px', color: TONE_COLOR[status.tone] }}>
+          <p role="status" style={{ margin: 0, fontSize: ui.font.md, color: TONE_COLOR[status.tone], fontWeight: status.tone === 'error' ? 600 : 400 }}>
             {status.text}
           </p>
         )}
