@@ -2,7 +2,7 @@ import { defineBackground } from 'wxt/sandbox';
 import { setupSidePanelBehavior } from './sidepanel';
 import { handleApplicationSubmitted, handleTrackerAlarm } from '../../lib/tracker';
 import { syncGmail } from '../../lib/gmail';
-import { hideStorageFromContentScripts } from '../../lib/ai/bharatcode';
+import { hideStorageFromContentScripts } from '../../lib/ai/provider';
 
 export default defineBackground(() => {
   // Configure side panel to open on action click

@@ -1,6 +1,6 @@
 # Setup guide
 
-This guide gets Job Copilot running on your computer: the backend, the Chrome extension and your BharatCode key.
+This guide gets Job Copilot running on your computer: the backend, the Chrome extension and your AI provider.
 
 ## Quick setup on Windows
 
@@ -18,12 +18,12 @@ If it installs anything, close the window and run it again so Windows can find t
 - Python 3.12 and [uv](https://docs.astral.sh/uv/)
 - Node.js 22 and npm
 - Google Chrome
-- A BharatCode API key (step 4 shows how to get one)
+- An AI provider: an API key for any OpenAI-compatible service, or a local model server such as Ollama (step 4 covers both)
 - Docker, only if you want to run the backend in a container
 
 ## 1. Start the backend
 
-The backend extracts resume text, ranks jobs and calls BharatCode for the extension. It stores no personal data.
+The backend extracts resume text, ranks jobs and calls your AI provider for the extension. It stores no personal data.
 
 From the repository root:
 
@@ -66,13 +66,13 @@ The built extension goes to `extension/.output/chrome-mv3`.
 
 Job Copilot now appears in the toolbar. Click its icon to open the side panel.
 
-## 4. Add your BharatCode key
+## 4. Set up your AI provider
 
-1. Get a key at [bharatcode.ai/account](https://bharatcode.ai/account). It is free for students who verify an `.ac.in` or `.edu.in` email. The Lite and Pro plans also include API access.
+1. Choose a provider that speaks the OpenAI chat completions format, and a model on it that supports structured (JSON schema) output. For example, OpenAI (`https://api.openai.com/v1`), OpenRouter (`https://openrouter.ai/api/v1`) or Ollama on your computer (`http://localhost:11434/v1`, no key needed). If the backend runs in Docker, use `http://host.docker.internal:11434/v1` for Ollama.
 2. Right-click the Job Copilot icon and choose **Options**.
-3. Paste the key, click **Store key**, then click **Test connection**.
+3. Under **AI provider**, enter the base URL, the model id and your key, if the provider needs one. Click **Store provider**, then click **Test connection**.
 
-If you see "Connected. Your key can use qwen-3.8-27b.", you're done. If it says your account has no API access yet, finish the student email verification or choose a plan at bharatcode.ai/account, then test again.
+If you see "Connected. <your model> answered with structured output.", you're done. Otherwise the message shows what the provider said, such as a rejected key or an unknown model.
 
 ## 5. Point the extension at your backend
 

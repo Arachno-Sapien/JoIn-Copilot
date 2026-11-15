@@ -5,13 +5,13 @@ import pytest
 import respx
 from pydantic import BaseModel
 
-from app.llm import bharatcode
+from app.llm import provider as llm_provider
 from app.llm.client import MockLLMUnregisteredError, acomplete, complete
 
-URL = f"{bharatcode.BASE_URL}/responses"
+BASE_URL = "https://llm.example.test/v1"
+URL = f"{BASE_URL}/chat/completions"
 REPLY = {
-    "status": "completed",
-    "output": [{"type": "message", "content": [{"type": "output_text", "text": '{"summary": "from provider", "score": 7}'}]}],
+    "choices": [{"message": {"role": "assistant", "content": '{"summary": "from provider", "score": 7}'}, "finish_reason": "stop"}],
 }
 FORBIDDEN = {"tools", "tool_choice", "functions", "function_call", "previous_response_id"}
 
@@ -23,7 +23,7 @@ class DummyOutput(BaseModel):
 
 @pytest.fixture
 def provider():
-    """Mock BharatCode, so any provider call is visible and offline."""
+    """Mock the provider, so any provider call is visible and offline."""
     with respx.mock(assert_all_called=False) as mock:
         yield mock.post(URL).mock(return_value=httpx.Response(200, json=REPLY))
 
@@ -31,13 +31,13 @@ def provider():
 @pytest.fixture
 def live_mode(monkeypatch, tmp_path):
     monkeypatch.setenv("JC_LLM_MODE", "live")
-    token = bharatcode.request_key.set("test-key-not-real")
+    token = llm_provider.request_connection.set(llm_provider.Connection(BASE_URL, "example-model", "test-key-not-real"))
     template = tmp_path / "rank.v1.md"
     template.write_text(
         "---\nuntrusted:\n  - job\n---\nsystem:\nRank the job.\nuser:\n{{ job }}\n", encoding="utf-8"
     )
     yield str(template)
-    bharatcode.request_key.reset(token)
+    llm_provider.request_connection.reset(token)
 
 
 def sent(route):
@@ -106,16 +106,17 @@ async def test_acomplete_serves_registered_fakes(fake_llm, provider):
     assert provider.call_count == 0
 
 
-async def test_acomplete_asks_bharatcode_for_structured_output_without_tools(live_mode, provider):
+async def test_acomplete_asks_the_provider_for_structured_output_without_tools(live_mode, provider):
     result = await acomplete(template=live_mode, inputs={"job": "Backend role"}, schema=DummyOutput, tier="small")
     assert result == DummyOutput(summary="from provider", score=7)
     request, body = sent(provider)
     assert request.headers["authorization"] == "Bearer test-key-not-real"
-    assert body["model"] == "qwen-3.8-27b"
-    assert body["store"] is False
-    assert body["text"]["format"]["type"] == "json_schema"
-    assert body["text"]["format"]["schema"]["properties"].keys() == {"summary", "score"}
-    assert "<untrusted_data>" in body["input"]
+    assert body["model"] == "example-model"
+    assert body["response_format"]["type"] == "json_schema"
+    assert body["response_format"]["json_schema"]["schema"]["properties"].keys() == {"summary", "score"}
+    system, user = body["messages"]
+    assert (system["role"], user["role"]) == ("system", "user")
+    assert "<untrusted_data>" in user["content"]
     assert not FORBIDDEN & body.keys()
 
 

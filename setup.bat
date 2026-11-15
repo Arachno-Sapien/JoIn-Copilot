@@ -72,8 +72,9 @@ echo  Load the extension in Chrome:
 echo    1. Open chrome://extensions and turn on Developer mode, top right.
 echo    2. Click Load unpacked and choose this folder:
 echo       %CD%\extension\.output\chrome-mv3
-echo    3. Right-click the Job Copilot icon and choose Options. Paste your BharatCode key,
-echo       click Store key, then click Test connection.
+echo    3. Right-click the Job Copilot icon and choose Options. Under AI provider, enter an
+echo       OpenAI-compatible base URL, a model and your key, click Store provider, then
+echo       click Test connection.
 echo.
 echo  The backend must be running whenever you use Job Copilot. To start it later, run:
 echo    cd /d "%CD%\backend"

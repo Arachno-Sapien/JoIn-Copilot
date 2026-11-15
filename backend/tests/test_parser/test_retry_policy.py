@@ -1,15 +1,15 @@
 import pytest
 
-from app.llm.bharatcode import BusyError, MissingKeyError, TruncatedError
+from app.llm.provider import BusyError, NotConfiguredError, TruncatedError
 from app.services.parser import pipeline
 
 
 @pytest.mark.parametrize(
     "error",
-    [BusyError("req-1"), TruncatedError('{"name": "half', "req-2"), MissingKeyError()],
-    ids=["busy", "truncated", "no key"],
+    [BusyError("req-1"), TruncatedError('{"name": "half', "req-2"), NotConfiguredError()],
+    ids=["busy", "truncated", "no provider"],
 )
-async def test_bharatcode_failures_are_reported_not_retried(monkeypatch, error):
+async def test_provider_failures_are_reported_not_retried(monkeypatch, error):
     calls = []
 
     async def failing_acomplete(**kwargs):

@@ -22,7 +22,6 @@ export default defineConfig({
       'https://jobs.lever.co/*',
       'https://gmail.googleapis.com/*',
       'https://www.googleapis.com/*',
-      'https://bharatcode.ai/*',
     ],
     oauth2: {
       client_id: 'dummy-client-id.apps.googleusercontent.com',

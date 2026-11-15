@@ -10,9 +10,12 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=ENV_FILE, env_file_encoding="utf-8", extra="ignore")
 
     # LLM Settings
-    # The model is fixed (app/llm/bharatcode.py) and the key comes from the extension.
+    # Each user's provider (base URL, model, key) comes from the extension per request.
     JC_LLM_MODE: str = "live"  # "live" or "mock"
     JC_LLM_FIXTURES: str | None = None
+    # Comma-separated provider base URLs this backend may call. Empty allows any, which
+    # suits a backend only you use; set it on a shared server.
+    JC_LLM_BASE_URLS: str = ""
 
     # Embedding Settings
     JC_EMBED_MODE: str = "model"  # "model" or "fake"

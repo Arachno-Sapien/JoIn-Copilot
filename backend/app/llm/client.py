@@ -8,7 +8,7 @@ from typing import Any
 from pydantic import BaseModel
 
 from app.config import settings
-from app.llm import bharatcode
+from app.llm import provider
 from app.llm.cache import (
     cache_get,
     cache_set,
@@ -30,19 +30,6 @@ __all__ = [
 ]
 
 TIERS = ("small", "strong")
-
-# Output budget (reasoning included) and reasoning effort per prompt. None leaves
-# reasoning to the model, for the tasks that need judgment. A truncated answer is
-# reported, never retried with the same budget.
-TASK_LIMITS: dict[str, tuple[int, str | None]] = {
-    "parse_resume": (8000, "none"),
-    "parse_resume_retry": (8000, "none"),
-    "draft": (4000, None),
-    "rewrite": (4000, None),
-    "judge": (2000, None),
-}
-DEFAULT_LIMITS = (2000, "none")
-
 
 class MockLLMUnregisteredError(RuntimeError):
     pass
@@ -86,14 +73,10 @@ def get_mock_registry() -> MockRegistry:
 
 
 def get_model_for_tier(tier: str) -> str:
-    """Both tiers run on the one BharatCode model; the tier still sets the cache key."""
+    """Both tiers run on the user's chosen model; the tier still sets the cache key."""
     if tier not in TIERS:
         raise ValueError(f"unknown model tier {tier!r}; use 'small' or 'strong'")
-    return bharatcode.MODEL
-
-
-def _task_limits(template: str) -> tuple[int, str | None]:
-    return TASK_LIMITS.get(Path(template).name.split(".")[0], DEFAULT_LIMITS)
+    return provider.request_connection.get().model or ""
 
 
 def _validate[T: BaseModel](schema: type[T], value: BaseModel | dict[str, Any]) -> T:
@@ -113,12 +96,12 @@ def _fixture_output(template: str, inputs: dict[str, Any]) -> dict[str, Any] | N
 def _prepare[T: BaseModel](
     template: str, inputs: dict[str, Any], schema: type[T], tier: str
 ) -> tuple[str, T | None]:
-    """Return (cache key, answer). The answer is None when BharatCode must be called."""
+    """Return (cache key, answer). The answer is None when the provider must be called."""
     model = get_model_for_tier(tier)
     mock = (os.environ.get("JC_LLM_MODE") or settings.JC_LLM_MODE) == "mock"
-    if not mock and not bharatcode.request_key.get():
-        # Checked before the cache, so a cached answer never hides the missing-key message.
-        raise bharatcode.MissingKeyError()
+    if not mock:
+        # Checked before the cache, so a cached answer never hides a missing provider.
+        provider.connection()
 
     key = make_cache_key(template, inputs, tier, model)
     cached = cache_get(key)
@@ -146,20 +129,17 @@ async def acomplete[T: BaseModel](
     schema: type[T],
     tier: str = "small",
 ) -> T:
-    """Ask BharatCode for a reply matching schema. Endpoints await this."""
+    """Ask the user's AI provider for a reply matching schema. Endpoints await this."""
     key, answer = _prepare(template, inputs, schema, tier)
     if answer is not None:
         return answer
 
     system, user = render_prompt_template(template, inputs)
-    max_output_tokens, effort = _task_limits(template)
-    text = await bharatcode.respond(
+    text = await provider.respond(
         instructions=system["content"],
         user_input=user["content"],
         schema_name=schema.__name__,
         json_schema=schema.model_json_schema(),
-        max_output_tokens=max_output_tokens,
-        effort=effort,
     )
     answer = schema.model_validate_json(text)
     cache_set(key, answer)

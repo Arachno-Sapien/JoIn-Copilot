@@ -6,11 +6,10 @@ import pytest
 import respx
 from pydantic import BaseModel
 
-from app.llm import bharatcode
+from app.llm import provider
 from app.llm.client import complete, get_model_for_tier
 
 APP_DIR = Path(__file__).resolve().parents[2] / "app"
-ALLOWED = ("bharatcode.py", "qwen-3.8-27b")  # the one model, defined once
 
 # Provider-prefixed ids ("openai/...") and bare model families.
 HARD_CODED_MODEL = re.compile(
@@ -31,7 +30,8 @@ def test_the_pattern_catches_known_model_ids():
         assert HARD_CODED_MODEL.search(sample), sample
 
 
-def test_the_only_model_id_under_app_is_qwen_in_the_bharatcode_client():
+def test_no_model_id_is_hard_coded_under_app():
+    # Each user picks the model in the extension options.
     files = list(APP_DIR.rglob("*.py"))
     assert files, "no Python files found under backend/app"
     hits = []
@@ -40,14 +40,16 @@ def test_the_only_model_id_under_app_is_qwen_in_the_bharatcode_client():
             if line.strip().startswith("#"):
                 continue
             for match in HARD_CODED_MODEL.finditer(line):
-                if (py_file.name, match.group(0)) != ALLOWED:
-                    hits.append(f"{py_file.name}:{idx} {match.group(0)}")
-    assert not hits, f"model ids outside the BharatCode client: {hits}"
+                hits.append(f"{py_file.name}:{idx} {match.group(0)}")
+    assert not hits, f"hard-coded model ids under backend/app: {hits}"
 
 
-def test_both_tiers_use_the_bharatcode_model():
-    assert bharatcode.MODEL == "qwen-3.8-27b"
-    assert get_model_for_tier("small") == get_model_for_tier("strong") == "qwen-3.8-27b"
+def test_both_tiers_use_the_users_model():
+    token = provider.request_connection.set(provider.Connection("https://llm.example.test/v1", "user-model"))
+    try:
+        assert get_model_for_tier("small") == get_model_for_tier("strong") == "user-model"
+    finally:
+        provider.request_connection.reset(token)
 
 
 @pytest.mark.parametrize("tier", ["smal", "large", "", "STRONG"])
@@ -57,12 +59,12 @@ def test_unknown_tier_is_rejected(tier):
 
 
 @respx.mock
-def test_live_call_without_a_key_fails_before_reaching_the_provider(monkeypatch, tmp_path):
-    route = respx.post(f"{bharatcode.BASE_URL}/responses").mock(return_value=httpx.Response(200))
+def test_live_call_without_a_provider_fails_before_any_request(monkeypatch, tmp_path):
+    route = respx.route().mock(return_value=httpx.Response(200))
     monkeypatch.setenv("JC_LLM_MODE", "live")
     template = tmp_path / "t.v1.md"
     template.write_text("Say ok.", encoding="utf-8")
 
-    with pytest.raises(bharatcode.MissingKeyError):
+    with pytest.raises(provider.NotConfiguredError):
         complete(template=str(template), inputs={}, schema=Out, tier="small")
     assert route.call_count == 0

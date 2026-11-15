@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { BHARATCODE_ACCOUNT_URL, getApiKey } from '../../lib/ai/bharatcode';
+import { PROVIDER_STORAGE_KEY, getProvider } from '../../lib/ai/provider';
 
-/** Shown in the side panel while no BharatCode key is saved. */
+/** Shown in the side panel until an AI provider is set up. */
 export const KeyNotice: React.FC = () => {
   const [missing, setMissing] = useState(false);
 
   useEffect(() => {
     if (typeof chrome === 'undefined' || !chrome.storage) return;
-    const refresh = () => getApiKey().then((key) => setMissing(!key)).catch(() => setMissing(false));
+    const refresh = () => getProvider().then((p) => setMissing(!p)).catch(() => setMissing(false));
     refresh();
     const onChange = (changes: Record<string, unknown>) => {
-      if ('bharatcodeApiKey' in changes) refresh();
+      if (PROVIDER_STORAGE_KEY in changes) refresh();
     };
     chrome.storage.onChanged?.addListener(onChange);
     return () => chrome.storage.onChanged?.removeListener(onChange);
@@ -19,11 +19,8 @@ export const KeyNotice: React.FC = () => {
   if (!missing) return null;
   return (
     <div role="alert" style={{ margin: '12px 16px 0', padding: '12px', borderRadius: '8px', border: '1px solid #fcd34d', backgroundColor: '#fffbeb', fontSize: '12px', color: '#78350f' }}>
-      <strong>AI features need your BharatCode API key.</strong> Get one at{' '}
-      <a href={BHARATCODE_ACCOUNT_URL} target="_blank" rel="noreferrer">
-        bharatcode.ai/account
-      </a>{' '}
-      (free for students with an .ac.in or .edu.in email), then paste it in the options.{' '}
+      <strong>AI features need an AI provider.</strong> Add any OpenAI-compatible API (OpenAI, OpenRouter, a local
+      Ollama and others) with its base URL, model and key in the options.{' '}
       <button
         type="button"
         onClick={() => chrome.runtime.openOptionsPage()}

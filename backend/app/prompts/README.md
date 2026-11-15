@@ -19,7 +19,7 @@ Preferred location: {{ location }}
 ```
 
 - The front matter must list every input written by someone other than the user under `untrusted:`, as a list.
-- A `system:` line starts the part sent to BharatCode as `instructions`, and a `user:` line starts the part sent as `input`. Without them, the whole body is the input.
+- A `system:` line starts the system message, and a `user:` line starts the user message. Without them, the whole body is the user message.
 - `{{ name }}` (spaces optional) is replaced by the input of that name in one pass, so a value is never scanned for further placeholders. A placeholder without an input raises `KeyError`. A template that does not exist raises `FileNotFoundError`.
 
 ## Safety

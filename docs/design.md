@@ -267,10 +267,10 @@ All schemas are defined once in Pydantic on the backend and mirrored as Zod sche
 | Context | Responsibility |
 | --- | --- |
 | Background service worker | Messages from content scripts, scheduled jobs (Gmail sync, no-response sweep). Calls the backend only for scheduled Gmail sync |
-| Content scripts | Read job pages, detect forms, fill fields, detect submission. Never call the backend or read the BharatCode key |
+| Content scripts | Read job pages, detect forms, fill fields, detect submission. Never call the backend or read the AI provider settings |
 | Side panel | Main UI: profile, job list, current job, drafts, review. Calls the backend |
 | Dashboard page | Full tracker table and analytics |
-| Options page | Backend URL, BharatCode key and connection test, privacy controls, data export and delete |
+| Options page | Backend URL, AI provider (base URL, model, key) and connection test, privacy controls, data export and delete |
 
 ### 6.2 MV3 service worker lifecycle
 
@@ -279,7 +279,7 @@ Chrome stops an MV3 service worker after about 30 seconds of inactivity. Anythin
 **Decisions that follow:**
 - Never keep state in service worker variables. Read from storage on every event.
 - Use `chrome.alarms` for periodic tasks (Gmail sync), not `setInterval`, which dies with the worker.
-- Extension pages (side panel, options) make the backend and BharatCode calls, since they stay alive while open. Chrome also stops the worker when a fetch takes over 30 seconds, and BharatCode answers can take minutes. The worker calls the backend only for scheduled Gmail sync.
+- Extension pages (side panel, options) make the backend calls, since they stay alive while open. Chrome also stops the worker when a fetch takes over 30 seconds, and model answers can take minutes. The worker calls the backend only for scheduled Gmail sync.
 
 ### 6.3 Messaging
 

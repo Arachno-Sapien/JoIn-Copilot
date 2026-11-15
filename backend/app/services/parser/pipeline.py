@@ -25,7 +25,7 @@ async def parse_resume_pipeline(pdf_bytes: bytes) -> Profile:
             schema=Profile,
         )
     except ValidationError as first_err:
-        # Retry once with the validation error in the prompt. BharatCode failures (busy,
+        # Retry once with the validation error in the prompt. Provider failures (busy,
         # cut off, key) are not schema problems and go straight to the user instead.
         try:
             raw_profile = await acomplete(

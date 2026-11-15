@@ -1,13 +1,13 @@
-import { getApiKey } from '../ai/bharatcode';
+import { getProvider } from '../ai/provider';
 import { getBackendUrl } from '../settings';
 
 /**
- * Calls the Job Copilot backend with the user's BharatCode key (X-BharatCode-Key).
+ * Calls the Job Copilot backend with the user's AI provider settings (X-LLM-* headers).
  * It runs in the extension context that calls it: the side panel and options page,
  * or the background worker for scheduled Gmail sync. Pages call the backend
  * themselves because Chrome stops the background worker when a fetch takes more
- * than 30 seconds, and BharatCode answers can take minutes. Content scripts never
- * import this module and cannot read the key (see hideStorageFromContentScripts).
+ * than 30 seconds, and model answers can take minutes. Content scripts never
+ * import this module and cannot read the settings (see hideStorageFromContentScripts).
  */
 export interface BackendRequest {
   endpoint: string;
@@ -27,8 +27,12 @@ export async function requestBackend(request: BackendRequest): Promise<BackendRe
   const baseUrl = await getBackendUrl();
   const url = `${baseUrl.replace(/\/$/, '')}/${request.endpoint.replace(/^\//, '')}`;
   const headers: Record<string, string> = { Accept: 'application/json' };
-  const key = await getApiKey();
-  if (key) headers['X-BharatCode-Key'] = key;
+  const provider = await getProvider();
+  if (provider) {
+    headers['X-LLM-Base-URL'] = provider.baseUrl;
+    headers['X-LLM-Model'] = provider.model;
+    if (provider.apiKey) headers['X-LLM-Key'] = provider.apiKey;
+  }
 
   let body: BodyInit | undefined;
   if (request.file) {

@@ -21,7 +21,7 @@ def test_compose_defaults_to_live_mode_and_sets_no_model_or_provider_key():
     env = COMPOSE["environment"]
     assert "JC_LLM_MODE" in env
     assert ":-mock" not in str(env["JC_LLM_MODE"])
-    # The model is fixed in code and each user's BharatCode key comes from the extension.
+    # Each user's provider, model and key come from the extension, never from the server.
     assert not {"JC_LLM_SMALL_MODEL", "JC_LLM_STRONG_MODEL", "OPENAI_API_KEY"} & set(env)
 
 

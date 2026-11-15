@@ -2,9 +2,9 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-A Chrome extension that turns your resume into a structured profile, finds and ranks jobs that fit it, drafts application answers it checks against your resume, and tracks every application. All AI features run on the [BharatCode](https://bharatcode.ai/build) API with your own key.
+A Chrome extension that turns your resume into a structured profile, finds and ranks jobs that fit it, drafts application answers it checks against your resume, and tracks every application. All AI features run on the AI provider you choose, such as OpenAI, OpenRouter or a local Ollama, with your own key.
 
-Built for the BharatCode Build League hackathon. It is still under development: see [What works today](#what-works-today).
+It is still under development: see [What works today](#what-works-today).
 
 ## Screenshots and demo
 
@@ -56,43 +56,49 @@ To set up by hand, you need Node 22, npm, Python 3.12 and [uv](https://docs.astr
    ```
 
 3. Load it in Chrome: open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked** and choose `extension/.output/chrome-mv3`.
-4. Right-click the Job Copilot icon and choose **Options**. Paste your BharatCode key, click **Store key**, then **Test connection**. If your backend is not at `http://127.0.0.1:8000`, change **Backend URL** on the same page and click **Save Settings**.
+4. Right-click the Job Copilot icon and choose **Options**. Under **AI provider**, enter your provider's base URL, a model and your key (see [Choose an AI provider](#choose-an-ai-provider)), click **Store provider**, then **Test connection**. If your backend is not at `http://127.0.0.1:8000`, change **Backend URL** on the same page and click **Save Settings**.
 5. Click the toolbar icon to open the side panel.
 
-## Get a BharatCode API key
+## Choose an AI provider
 
-Sign in at [bharatcode.ai/account](https://bharatcode.ai/account) and create a key. Students get free access after verifying an `.ac.in` or `.edu.in` email, and the Lite and Pro plans also include API access. Until your access is active, AI requests fail with a message that says how to get it.
+Job Copilot works with any API that speaks the OpenAI chat completions format. Pick a model that supports structured output (a JSON schema response format). Some common choices:
 
-If no key is saved, the side panel shows how to get one, and AI requests return a "key missing" message instead of failing silently.
+| Provider | Base URL | Key |
+| --- | --- | --- |
+| OpenAI | `https://api.openai.com/v1` | From your OpenAI account |
+| OpenRouter | `https://openrouter.ai/api/v1` | From your OpenRouter account |
+| Ollama, on your computer | `http://localhost:11434/v1` | None |
 
-## Model and endpoints
+If the backend runs in Docker, `localhost` means the container, so reach Ollama on your computer at `http://host.docker.internal:11434/v1` instead.
 
-Every feature uses the model `qwen-3.8-27b` at `https://bharatcode.ai/api/model/v1`, sending your key as `Authorization: Bearer <your key>`.
+If no provider is set up, the side panel says so, and AI requests return a "No AI provider set up" message instead of failing silently.
 
-- Generation uses `POST /responses` with `store: false`, so each call is stateless and resends its full context. Anything the code reads back, such as fit facts and claim verdicts, comes back as structured output (`text.format` with a JSON schema).
-- Test connection on the options page calls `GET /models`, then sends a 16-token `POST /responses`. BharatCode answers `GET /models` for any key, so only the model call proves that the key and its plan work.
-- Output budgets are 8,000 tokens for resume parsing, 4,000 for drafts and rewrites, and 2,000 for everything else. Reasoning effort is `none` except for drafting, rewriting and claim judging.
+## How the model is called
+
+Every feature sends `POST <base URL>/chat/completions` with your model, a system and a user message, and a `json_schema` response format built from a Pydantic schema. Your key goes as `Authorization: Bearer <your key>` when you set one. Each call is stateless and resends its full context, and everything the code reads back, such as fit facts and claim verdicts, is validated against that schema.
+
+Test connection on the options page asks your backend (`POST /llm/check`) for one tiny structured call. It passes only when the URL, model and key work together and the model answers with JSON.
 
 When a call fails:
 
-- A cut-off answer is reported, never parsed and never retried with the same budget.
-- A `503` is retried after 2, 4 and 8 seconds, then shown as "BharatCode is busy, try again".
-- A `402` means the account has no API access yet, and the message says how to get it.
-- The backend logs the `x-request-id` header when BharatCode sends one.
+- A cut-off answer (`finish_reason: length`) is reported, never parsed and never retried.
+- A `429` or `503` is retried after 2, 4 and 8 seconds, then shown as "The AI provider is busy or rate-limited, try again".
+- Any other error shows the provider's own message.
+- The backend logs the `x-request-id` header when the provider sends one.
 
-All model calls go through one module, [`backend/app/llm/bharatcode.py`](backend/app/llm/bharatcode.py). In the extension, the side panel and options page send your key: to BharatCode for the connection test, and to your backend with each request. The background worker sends it only for scheduled Gmail sync. The scripts that run on job sites can't read it.
+All model calls go through one module, [`backend/app/llm/provider.py`](backend/app/llm/provider.py). The extension never calls the provider itself: the side panel and options page send your provider settings to your backend with each request, and the background worker sends them only for scheduled Gmail sync. The scripts that run on job sites can't read them.
 
 ## Privacy
 
-Your resume text, job page text, form field labels, recruiter emails (only if Gmail sync is on) and the profile details each request needs go to BharatCode through your backend, with `store: false`. Your profile, resume files and applications stay in your browser's IndexedDB.
+Your resume text, job page text, form field labels, recruiter emails (only if Gmail sync is on) and the profile details each request needs go to your AI provider through your backend. Your profile, resume files and applications stay in your browser's IndexedDB.
 
-Your API key is stored only in `chrome.storage.local` on your device. It is never synced, bundled, logged or committed. The backend stores public job postings only: it keeps no profiles, resumes or keys, and it never logs request bodies.
+Your provider settings and API key are stored only in `chrome.storage.local` on your device. It is never synced, bundled, logged or committed. The backend stores public job postings only: it keeps no profiles, resumes or keys, and it never logs request bodies.
 
 [PRIVACY.md](PRIVACY.md) has the full details.
 
 ## Development
 
-[CONTRIBUTING.md](CONTRIBUTING.md) lists the project rules and the commands that run the tests and checks. Tests never call BharatCode: the backend runs in mock mode and its HTTP calls are mocked.
+[CONTRIBUTING.md](CONTRIBUTING.md) lists the project rules and the commands that run the tests and checks. Tests never call a real model: the backend runs in mock mode and its HTTP calls are mocked.
 
 ## License
 
